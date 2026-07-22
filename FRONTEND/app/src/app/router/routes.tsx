@@ -4,6 +4,10 @@ import { z } from 'zod';
 import { CASE_STATUSES, RISK_LEVELS } from '@/shared/api/enums';
 import { CustomerShell } from '@/routes/shells/CustomerShell';
 import { ConsoleShell } from '@/routes/shells/ConsoleShell';
+import { Welcome } from '@/routes/auth/Welcome';
+import { CustomerLogin } from '@/routes/auth/CustomerLogin';
+import { CustomerRegister } from '@/routes/auth/CustomerRegister';
+import { StaffLogin } from '@/routes/auth/StaffLogin';
 import { RootLayout } from './RootLayout';
 import { RouteStub } from './RouteStub';
 import {
@@ -65,40 +69,27 @@ const authIndexRoute = createRoute({
    * ekranı patlamamalı.
    */
   validateSearch: z.object({ redirect: z.string().optional() }).catch({}),
-  component: () => (
-    <RouteStub
-      screen="Karşılama / Giriş seçimi"
-      owner="A — Müşteri & Kimlik & Admin"
-      endpoints={['— (statik ekran)']}
-    />
-  ),
+  component: Welcome,
 });
 
-const authOtpRoute = createRoute({
+/** Giriş: purpose=CustomerLogin. Kayıtsız numarada backend ayrım sızdırmaz. */
+const authLoginRoute = createRoute({
   getParentRoute: () => authLayoutRoute,
-  path: '/auth/otp',
-  component: () => (
-    <RouteStub
-      screen="Telefon + OTP doğrulama"
-      owner="A — Müşteri & Kimlik & Admin"
-      endpoints={[
-        'POST /auth/customer/otp/challenges',
-        'POST /auth/customer/otp/verifications',
-      ]}
-    />
-  ),
+  path: '/auth/login',
+  component: CustomerLogin,
+});
+
+/** Kayıt: purpose=CustomerRegister. Ad/soyad doğrulama gövdesinde gider. */
+const authRegisterRoute = createRoute({
+  getParentRoute: () => authLayoutRoute,
+  path: '/auth/register',
+  component: CustomerRegister,
 });
 
 const authStaffRoute = createRoute({
   getParentRoute: () => authLayoutRoute,
   path: '/auth/staff',
-  component: () => (
-    <RouteStub
-      screen="Personel girişi"
-      owner="A — Müşteri & Kimlik & Admin"
-      endpoints={['POST /auth/staff/login']}
-    />
-  ),
+  component: StaffLogin,
 });
 
 /* ======================================================================== */
@@ -408,7 +399,12 @@ const adminAuditRoute = createRoute({
 export const routeTree = rootRoute.addChildren([
   indexRoute,
 
-  authLayoutRoute.addChildren([authIndexRoute, authOtpRoute, authStaffRoute]),
+  authLayoutRoute.addChildren([
+    authIndexRoute,
+    authLoginRoute,
+    authRegisterRoute,
+    authStaffRoute,
+  ]),
 
   customerRoute.addChildren([
     customerHomeRoute,

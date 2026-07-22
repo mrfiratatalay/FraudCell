@@ -19,10 +19,10 @@ import {
   activeTokens,
   findByEmail,
   findByGsm,
+  getRefreshSubject,
   issueToken,
   mockUsers,
   otpChallenges,
-  refreshSubject,
   setRefreshSubject,
   toCurrentUser,
   userFromRequest,
@@ -61,6 +61,9 @@ export const identityHandlers = [
     otpChallenges.set(challengeId, {
       challengeId,
       gsmNumber: digits,
+      // Amaç challenge'da saklanır: doğrulama davranışını bu belirler
+      // (giriş mi, kayıt mı) — backend'deki `challenge.Purpose` ile aynı.
+      purpose: body.purpose,
       expiresAt: Date.now() + OTP_TTL_MS,
       attempts: 0,
     });
@@ -97,19 +100,26 @@ export const identityHandlers = [
 
     if (body.code !== DEMO_OTP_CODE) {
       challenge.attempts += 1;
-      return fail(400, 'OTP_CODE_INVALID', 'Girdiğin kod hatalı.', {
+      return fail(401, 'OTP_CODE_INVALID', 'Girdiğin kod hatalı.', {
         remainingAttempts: OTP_MAX_ATTEMPTS - challenge.attempts,
       });
     }
 
-    otpChallenges.delete(body.challengeId);
-
     let user = findByGsm(challenge.gsmNumber);
 
-    if (!user) {
-      // Kayıtsız numara: müşteri bilgisi aynı istekte gelmeli.
-      if (!body.customer) {
-        return fail(400, 'VALIDATION_FAILED', 'Yeni numara için ad ve soyad gerekli.', {
+    if (challenge.purpose === 'CustomerRegister') {
+      if (user) {
+        return fail(
+          409,
+          'GSM_NUMBER_ALREADY_REGISTERED',
+          'Bu GSM numarasıyla zaten bir hesap mevcut.',
+        );
+      }
+
+      if (!body.customer?.firstName?.trim() || !body.customer?.lastName?.trim()) {
+        // Challenge SİLİNMEZ: kullanıcı bilgileri tamamlayıp aynı kodla
+        // tekrar deneyebilmeli.
+        return fail(400, 'VALIDATION_FAILED', 'Kayıt için ad ve soyad bilgisi zorunludur.', {
           field: 'customer',
         });
       }
@@ -117,16 +127,23 @@ export const identityHandlers = [
       user = {
         id: `usr_customer_${crypto.randomUUID().slice(0, 8)}`,
         role: 'CUSTOMER',
-        firstName: body.customer.firstName,
-        lastName: body.customer.lastName,
-        email: body.customer.email ?? null,
+        firstName: body.customer.firstName.trim(),
+        lastName: body.customer.lastName.trim(),
+        email: body.customer.email?.trim() || null,
         gsmNumber: `${challenge.gsmNumber.slice(0, 3)} *** ** ${challenge.gsmNumber.slice(8)}`,
         rawGsm: challenge.gsmNumber,
         specialties: [],
         regions: [],
       };
       mockUsers.push(user);
+    } else if (!user) {
+      // Giriş amaçlı challenge ve numara kayıtlı değil. Numaranın kayıtlı
+      // OLMADIĞI SIZDIRILMAZ — kayıtlı numaralar tek tek denenerek
+      // çıkarılabilirdi. Bu yüzden genel "kod hatalı" hatası döner.
+      return fail(401, 'OTP_CODE_INVALID', 'Girdiğin kod hatalı.');
     }
+
+    otpChallenges.delete(body.challengeId);
 
     const token = issueToken(user.id);
     const response: VerifyOtpChallengeResponse = {
@@ -172,12 +189,21 @@ export const identityHandlers = [
 
   /* -------------------------------------------------------------- refresh -- */
   http.post(path(endpoints.auth.refresh), () => {
-    // Gerçekte HttpOnly cookie okunur; mock'ta bellekteki özneyi kullanıyoruz.
-    if (!refreshSubject) {
+    // Gerçekte HttpOnly cookie okunur; mock'ta sessionStorage'daki özne.
+    const subject = getRefreshSubject();
+    if (!subject) {
       return fail(401, 'REFRESH_TOKEN_INVALID', 'Oturum bulunamadı.');
     }
 
-    const token = issueToken(refreshSubject);
+    // Kayıt sırasında oluşturulan kullanıcılar bellekte tutulduğu için sayfa
+    // yenilenince kaybolur. Öznesi bulunamayan refresh reddedilir; aksi hâlde
+    // var olmayan bir kullanıcıya token verirdik.
+    if (!mockUsers.some((user) => user.id === subject)) {
+      setRefreshSubject(null);
+      return fail(401, 'REFRESH_TOKEN_INVALID', 'Oturum artık geçerli değil.');
+    }
+
+    const token = issueToken(subject);
     const response: RefreshTokenResponse = {
       accessToken: token,
       accessTokenExpiresAt: new Date(Date.now() + 15 * 60_000).toISOString(),

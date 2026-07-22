@@ -10,7 +10,7 @@
  */
 
 import type { CurrentUserResponse } from '@/shared/api/contract';
-import type { AnalystSpecialty, OperationRegion, Role } from '@/shared/api/enums';
+import type { AnalystSpecialty, OperationRegion, OtpPurpose, Role } from '@/shared/api/enums';
 
 export interface MockUser extends CurrentUserResponse {
   /** Yalnızca personel girişinde kullanılır. */
@@ -91,6 +91,12 @@ export const DEMO_OTP_CODE = '123456';
 interface OtpChallenge {
   challengeId: string;
   gsmNumber: string;
+  /**
+   * Doğrulama davranışını BU belirler (backend `challenge.Purpose`):
+   *   CustomerLogin    → numara kayıtlı değilse genel "kod hatalı" döner
+   *   CustomerRegister → ad/soyad zorunlu, numara kayıtlıysa 409
+   */
+  purpose: OtpPurpose;
   expiresAt: number;
   attempts: number;
 }
@@ -114,15 +120,35 @@ export const OTP_MAX_ATTEMPTS = 3;
 export const activeTokens = new Map<string, string>();
 
 /**
- * Refresh cookie'sini taklit eder. Tarayıcıda gerçek HttpOnly cookie
- * yazamayacağımız için (MSW service worker seviyesinde çalışıyor) refresh
- * durumunu burada tutuyoruz. Sayfa yenilenince sıfırlanır — yani mock modda
- * yenileme sonrası tekrar giriş gerekir. Gerçek backend'de bu sorun yoktur.
+ * Refresh cookie'sini taklit eder.
+ *
+ * Gerçek backend refresh token'ı Secure/HttpOnly cookie'ye yazar; MSW service
+ * worker seviyesinde çalıştığı için böyle bir cookie üretemiyoruz.
+ *
+ * Değer `sessionStorage`'da tutuluyor — modül değişkeninde tutulsaydı sayfa
+ * yenilendiğinde uçar ve mock modda her F5'te tekrar giriş gerekirdi.
+ * Burada saklanan şey ACCESS TOKEN DEĞİL, yalnızca "hangi kullanıcının refresh
+ * hakkı var" bilgisi; access token gerçek uygulamada olduğu gibi yalnızca
+ * bellekte kalır. Sekme kapanınca `sessionStorage` da silinir.
  */
-export let refreshSubject: string | null = null;
+const REFRESH_KEY = 'fraudcell.mock.refreshSubject';
+
+export function getRefreshSubject(): string | null {
+  try {
+    return sessionStorage.getItem(REFRESH_KEY);
+  } catch {
+    // Gizli sekme / storage kapalı: oturum yenilenemez, kullanıcı tekrar girer.
+    return null;
+  }
+}
 
 export function setRefreshSubject(userId: string | null): void {
-  refreshSubject = userId;
+  try {
+    if (userId) sessionStorage.setItem(REFRESH_KEY, userId);
+    else sessionStorage.removeItem(REFRESH_KEY);
+  } catch {
+    // Yut: mock oturumunun kalıcılığı kritik değil.
+  }
 }
 
 export function issueToken(userId: string): string {
