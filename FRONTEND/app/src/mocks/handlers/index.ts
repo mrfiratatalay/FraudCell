@@ -1,5 +1,6 @@
 import type { RequestHandler } from 'msw';
 import { identityHandlers } from './identity';
+import { transactionHandlers } from './transactions';
 
 /**
  * MSW handler kaydı.
@@ -21,9 +22,9 @@ import { identityHandlers } from './identity';
  */
 export const handlers: RequestHandler[] = [
   ...identityHandlers,
+  ...transactionHandlers,
 
   // A tarafı ekleyecek:
-  // ...transactionHandlers,
   // ...staffHandlers,
   // ...auditHandlers,
 

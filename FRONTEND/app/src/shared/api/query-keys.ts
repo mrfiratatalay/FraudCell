@@ -22,7 +22,14 @@ export const queryKeys = {
   /* ------------------------------------------------------------ işlemler -- */
   transactions: {
     all: ['transactions'] as const,
-    list: (filters: Record<string, unknown> = {}) => ['transactions', 'list', filters] as const,
+    /**
+     * Filtre nesnesi anahtarın parçası: farklı filtre = farklı cache girdisi.
+     *
+     * Parametre `Record<string, unknown>` DEĞİL `object`: arayüz (interface)
+     * tipleri index signature taşımadığı için `ListTransactionsQuery` gibi
+     * somut tipler Record'a atanamıyor.
+     */
+    list: (filters: object = {}) => ['transactions', 'list', filters] as const,
     detail: (transactionId: string) => ['transactions', 'detail', transactionId] as const,
   },
 
@@ -57,7 +64,7 @@ export const queryKeys = {
     regions: ['reference', 'regions'] as const,
   },
 
-  auditLogs: (filters: Record<string, unknown> = {}) => ['audit-logs', filters] as const,
+  auditLogs: (filters: object = {}) => ['audit-logs', filters] as const,
 
   /* ----------------------------- backend'i henüz yazılmamış (MSW mock) -- */
   gamification: {

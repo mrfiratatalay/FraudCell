@@ -8,6 +8,13 @@ import { Welcome } from '@/routes/auth/Welcome';
 import { CustomerLogin } from '@/routes/auth/CustomerLogin';
 import { CustomerRegister } from '@/routes/auth/CustomerRegister';
 import { StaffLogin } from '@/routes/auth/StaffLogin';
+import { CustomerHome } from '@/routes/customer/Home';
+import { CustomerTransactions } from '@/routes/customer/Transactions';
+import { NewTransaction } from '@/routes/customer/NewTransaction';
+import { TransactionDetail } from '@/routes/customer/TransactionDetail';
+import { CustomerVerifications } from '@/routes/customer/Verifications';
+import { CustomerNotifications } from '@/routes/customer/Notifications';
+import { CustomerProfile } from '@/routes/customer/Profile';
 import { RootLayout } from './RootLayout';
 import { RouteStub } from './RouteStub';
 import {
@@ -106,13 +113,7 @@ const customerRoute = createRoute({
 const customerHomeRoute = createRoute({
   getParentRoute: () => customerRoute,
   path: '/',
-  component: () => (
-    <RouteStub
-      screen="Müşteri ana sayfası"
-      owner="A — Müşteri & Kimlik & Admin"
-      endpoints={['GET /transactions?limit=5', 'GET /customer/verifications/pending']}
-    />
-  ),
+  component: CustomerHome,
 });
 
 const customerTransactionsRoute = createRoute({
@@ -125,76 +126,37 @@ const customerTransactionsRoute = createRoute({
       cursor: z.string().optional(),
     })
     .catch({}),
-  component: () => (
-    <RouteStub
-      screen="İşlem listesi"
-      owner="A — Müşteri & Kimlik & Admin"
-      endpoints={['GET /transactions']}
-    />
-  ),
+  component: CustomerTransactions,
 });
 
 const customerNewTransactionRoute = createRoute({
   getParentRoute: () => customerRoute,
   path: '/transactions/new',
-  component: () => (
-    <RouteStub
-      screen="Yeni işlem"
-      owner="A — Müşteri & Kimlik & Admin"
-      endpoints={['POST /transactions  (Idempotency-Key zorunlu)']}
-    />
-  ),
+  component: NewTransaction,
 });
 
 const customerTransactionDetailRoute = createRoute({
   getParentRoute: () => customerRoute,
   path: '/transactions/$transactionId',
-  component: () => (
-    <RouteStub
-      screen="İşlem detayı"
-      owner="A — Müşteri & Kimlik & Admin"
-      endpoints={['GET /transactions/{id}']}
-    />
-  ),
+  component: TransactionDetail,
 });
 
 const customerVerificationsRoute = createRoute({
   getParentRoute: () => customerRoute,
   path: '/verifications',
-  component: () => (
-    <RouteStub
-      screen="Bekleyen doğrulamalar"
-      owner="A — Müşteri & Kimlik & Admin"
-      endpoints={[
-        'GET /customer/verifications/pending',
-        'POST /cases/{id}/verification-responses',
-      ]}
-    />
-  ),
+  component: CustomerVerifications,
 });
 
 const customerNotificationsRoute = createRoute({
   getParentRoute: () => customerRoute,
   path: '/notifications',
-  component: () => (
-    <RouteStub
-      screen="Bildirimler"
-      owner="A — Müşteri & Kimlik & Admin"
-      endpoints={['⚠ MSW mock — Notification servisi yazılmadı']}
-    />
-  ),
+  component: CustomerNotifications,
 });
 
 const customerProfileRoute = createRoute({
   getParentRoute: () => customerRoute,
   path: '/profile',
-  component: () => (
-    <RouteStub
-      screen="Profil ve güvenlik"
-      owner="A — Müşteri & Kimlik & Admin"
-      endpoints={['GET /auth/me', 'GET /auth/sessions', 'DELETE /auth/sessions/{id}']}
-    />
-  ),
+  component: CustomerProfile,
 });
 
 /* ======================================================================== */
