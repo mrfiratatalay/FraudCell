@@ -4,6 +4,14 @@ import { z } from 'zod';
 import { CASE_STATUSES, RISK_LEVELS } from '@/shared/api/enums';
 import { CustomerShell } from '@/routes/shells/CustomerShell';
 import { ConsoleShell } from '@/routes/shells/ConsoleShell';
+import { AnalystCaseDetailScreen } from '@/features/cases/screens/AnalystCaseDetailScreen';
+import { AnalystCasesScreen } from '@/features/cases/screens/AnalystCasesScreen';
+import { SupervisorCaseDetailScreen } from '@/features/cases/screens/SupervisorCaseDetailScreen';
+import { SupervisorCasesScreen } from '@/features/cases/screens/SupervisorCasesScreen';
+import { SupervisorQueueScreen } from '@/features/cases/screens/SupervisorQueueScreen';
+import { AnalystPointsScreen } from '@/features/gamification/screens/AnalystPointsScreen';
+import { SupervisorLeaderboardScreen } from '@/features/gamification/screens/SupervisorLeaderboardScreen';
+import { SupervisorDashboardScreen } from '@/features/dashboard/screens/SupervisorDashboardScreen';
 import { RootLayout } from './RootLayout';
 import { RouteStub } from './RouteStub';
 import {
@@ -217,48 +225,23 @@ const analystRoute = createRoute({
   component: ConsoleShell,
 });
 
-const analystCasesRoute = createRoute({
+export const analystCasesRoute = createRoute({
   getParentRoute: () => analystRoute,
   path: '/',
   validateSearch: z.object({ status: z.enum(CASE_STATUSES).optional() }).catch({}),
-  component: () => (
-    <RouteStub
-      screen="Vakalarım"
-      owner="B — Operasyon Konsolu"
-      endpoints={['GET /cases/assigned']}
-    />
-  ),
+  component: AnalystCasesScreen,
 });
 
-const analystCaseDetailRoute = createRoute({
+export const analystCaseDetailRoute = createRoute({
   getParentRoute: () => analystRoute,
   path: '/cases/$caseId',
-  component: () => (
-    <RouteStub
-      screen="Vaka detayı ve karar"
-      owner="B — Operasyon Konsolu"
-      endpoints={[
-        'GET /cases/{id}',
-        'GET /cases/{id}/history',
-        'GET|POST /cases/{id}/notes',
-        'POST /cases/{id}/review',
-        'POST /cases/{id}/verification-requests',
-        'PATCH /cases/{id}/decision  (If-Match)',
-      ]}
-    />
-  ),
+  component: AnalystCaseDetailScreen,
 });
 
-const analystPointsRoute = createRoute({
+export const analystPointsRoute = createRoute({
   getParentRoute: () => analystRoute,
   path: '/points',
-  component: () => (
-    <RouteStub
-      screen="Puanlarım ve rozetler"
-      owner="B — Operasyon Konsolu"
-      endpoints={['⚠ MSW mock — Gamification servisi yazılmadı']}
-    />
-  ),
+  component: AnalystPointsScreen,
 });
 
 /* ======================================================================== */
@@ -273,16 +256,10 @@ const supervisorRoute = createRoute({
   component: ConsoleShell,
 });
 
-const supervisorDashboardRoute = createRoute({
+export const supervisorDashboardRoute = createRoute({
   getParentRoute: () => supervisorRoute,
   path: '/',
-  component: () => (
-    <RouteStub
-      screen="Operasyon panosu"
-      owner="B — Operasyon Konsolu"
-      endpoints={['⚠ MSW mock — aggregate ucu yok', '⚠ MSW mock — AI metrikleri']}
-    />
-  ),
+  component: SupervisorDashboardScreen,
 });
 
 /**
@@ -292,7 +269,7 @@ const supervisorDashboardRoute = createRoute({
  * tuşları doğru çalışır ve sayfa yenilenince filtre kaybolmaz. Cursor da
  * buradadır çünkü backend keyset pagination kullanıyor — sayfa numarası yok.
  */
-const supervisorCasesRoute = createRoute({
+export const supervisorCasesRoute = createRoute({
   getParentRoute: () => supervisorRoute,
   path: '/cases',
   validateSearch: z
@@ -302,61 +279,31 @@ const supervisorCasesRoute = createRoute({
       cursor: z.string().optional(),
     })
     .catch({}),
-  component: () => (
-    <RouteStub
-      screen="Tüm vakalar"
-      owner="B — Operasyon Konsolu"
-      endpoints={['GET /cases?status=&riskLevel=&cursor=&limit=']}
-    />
-  ),
+  component: SupervisorCasesScreen,
 });
 
-const supervisorCaseDetailRoute = createRoute({
+export const supervisorCaseDetailRoute = createRoute({
   getParentRoute: () => supervisorRoute,
   path: '/cases/$caseId',
-  component: () => (
-    <RouteStub
-      screen="Vaka detayı (süpervizör)"
-      owner="B — Operasyon Konsolu"
-      endpoints={[
-        'GET /cases/{id}',
-        'PUT /cases/{id}/assignment  (If-Match)',
-        'POST /cases/{id}/reassignments',
-        'PATCH /cases/{id}/fraud-type  (If-Match)',
-        'PATCH /cases/{id}/risk-level  (If-Match)',
-      ]}
-    />
-  ),
+  component: SupervisorCaseDetailScreen,
 });
 
-const supervisorQueueRoute = createRoute({
+export const supervisorQueueRoute = createRoute({
   getParentRoute: () => supervisorRoute,
   path: '/queue',
   validateSearch: z
     .object({ queueType: z.enum(['QUEUED', 'MANUAL_QUEUE']).default('QUEUED') })
     .catch({ queueType: 'QUEUED' }),
-  component: () => (
-    <RouteStub
-      screen="Atama kuyruğu"
-      owner="B — Operasyon Konsolu"
-      endpoints={['GET /cases/assignment-queue?queueType=']}
-    />
-  ),
+  component: SupervisorQueueScreen,
 });
 
-const supervisorLeaderboardRoute = createRoute({
+export const supervisorLeaderboardRoute = createRoute({
   getParentRoute: () => supervisorRoute,
   path: '/leaderboard',
   validateSearch: z
     .object({ period: z.enum(['daily', 'weekly']).default('daily') })
     .catch({ period: 'daily' }),
-  component: () => (
-    <RouteStub
-      screen="Liderlik tablosu"
-      owner="B — Operasyon Konsolu"
-      endpoints={['⚠ MSW mock — Gamification servisi yazılmadı']}
-    />
-  ),
+  component: SupervisorLeaderboardScreen,
 });
 
 /* ======================================================================== */

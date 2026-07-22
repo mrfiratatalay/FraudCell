@@ -1,5 +1,9 @@
 import type { RequestHandler } from 'msw';
 import { identityHandlers } from './identity';
+import { caseHandlers } from './cases';
+import { gamificationHandlers } from './gamification';
+import { dashboardHandlers } from './dashboard';
+import { aiHandlers } from './ai';
 
 /**
  * MSW handler kaydı.
@@ -27,8 +31,8 @@ export const handlers: RequestHandler[] = [
   // ...staffHandlers,
   // ...auditHandlers,
 
-  // B tarafı ekleyecek:
-  // ...caseHandlers,
-  // ...gamificationHandlers,
-  // ...dashboardHandlers,
+  ...caseHandlers,
+  ...gamificationHandlers,
+  ...dashboardHandlers,
+  ...aiHandlers,
 ];
