@@ -185,6 +185,15 @@ def seed() -> None:
 
 def smoke() -> None:
     wait_for_gateway()
+    # Right after `docker compose up` the demo-seed job may still be running. The
+    # supervisor is the last account it creates, so once it can log in every
+    # analyst exists; the pause lets their staff events reach the AI and
+    # Transaction projections before the first transaction is scored.
+    supervisor = staff_login(SUPERVISOR_EMAIL, STAFF_PASSWORD, retry_seconds=180)
+    if not supervisor:
+        sys.exit(1)
+    time.sleep(5)
+
     customer = customer_login()
     transaction_id = create_high_risk_transaction(customer) if customer else None
     if not transaction_id:
@@ -202,8 +211,7 @@ def smoke() -> None:
     if not check(f"a demo analyst exists for fraud type {fraud_type}", analyst_email is not None):
         sys.exit(1)
 
-    analyst = staff_login(analyst_email, STAFF_PASSWORD, retry_seconds=90)
-    supervisor = staff_login(SUPERVISOR_EMAIL, STAFF_PASSWORD, retry_seconds=30)
+    analyst = staff_login(analyst_email, STAFF_PASSWORD)
     case_id = transaction.get("caseId")
 
     assigned: list[dict] = []
