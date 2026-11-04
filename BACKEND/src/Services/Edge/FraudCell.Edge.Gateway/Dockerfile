@@ -12,7 +12,7 @@ ENV VITE_API_MODE=live \
     VITE_REALTIME_ENABLED=true
 RUN npm run build
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0.100 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0.403 AS build
 WORKDIR /src
 
 COPY BACKEND/global.json BACKEND/Directory.Build.props BACKEND/Directory.Packages.props BACKEND/.editorconfig ./
@@ -27,7 +27,7 @@ COPY BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/ src/Services/Edge/FraudCe
 RUN dotnet publish src/Services/Edge/FraudCell.Edge.Gateway/FraudCell.Edge.Gateway.csproj \
     -c Release -o /app/publish --no-restore
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.14 AS runtime
 WORKDIR /app
 
 RUN apt-get update \
