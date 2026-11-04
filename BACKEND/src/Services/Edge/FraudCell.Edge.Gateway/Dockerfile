@@ -1,11 +1,11 @@
 # This Dockerfile must be built with the repository root as its build context.
 
-FROM node:24.18.0-bookworm-slim AS frontend-build
+# Keep in sync with FRONTEND/app/.nvmrc (CI reads the same version).
+FROM node:24.22.2-bookworm-slim AS frontend-build
 WORKDIR /frontend
 
 COPY FRONTEND/app/package.json FRONTEND/app/package-lock.json ./
-RUN npm install --global npm@11.6.2 --no-audit --no-fund \
-    && npm ci --no-audit --no-fund
+RUN npm ci --no-audit --no-fund
 
 COPY FRONTEND/app/ ./
 ENV VITE_API_MODE=live \
