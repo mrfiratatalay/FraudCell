@@ -30,41 +30,60 @@ ayrı uygulama rolü kullanır. Yalnızca gateway host portu açar.
 
 ## Hızlı başlangıç
 
-Gereksinim: güncel Docker Desktop ve Docker Compose v2.
+Gereksinim yalnızca Docker (Docker Desktop ya da Docker Engine) ve Docker Compose v2.
+Başka bir SDK kurmak gerekmez; AI modeli de image build edilirken eğitilir.
 
-```bat
-scripts\start-fraudcell.bat
+macOS / Linux:
+
+```bash
+make up      # .env yoksa .env.example'dan oluşturur, image'ları build edip sistemi başlatır
+make demo    # zorunlu demo akışını uçtan uca doğrular
 ```
 
-Script, yoksa `BACKEND\.env.example` dosyasından `BACKEND\.env` oluşturur; tüm
-imajları build eder, migrasyon/seed işlemlerini yürütür ve gateway hazır olunca
-tarayıcıyı açar. Aynı işlem terminalden de çalıştırılabilir:
+Windows: `scripts\start-fraudcell.bat`
 
-```powershell
+Make olmadan, her işletim sisteminde:
+
+```bash
 cd BACKEND
+cp .env.example .env
 docker compose up -d --build
-docker compose ps
 ```
+
+İlk açılışta image'lar build edildiği için birkaç dakika sürer. Tüm servisler sağlıklı
+olunca tek seferlik `demo-seed` görevi demo personelini API üzerinden açar.
 
 - Uygulama: `http://127.0.0.1:8080`
 - Gateway health: `http://127.0.0.1:8080/health/ready`
-- Admin: `admin@fraudcell.local` / `ChangeMe123!`
-- Yeni müşteri: herhangi bir `5xxxxxxxxx` GSM, demo OTP: `1234`
 
-Bu kimlik bilgileri yalnızca `Development` demo ortamı içindir.
+### Demo kullanıcıları
 
-Sistemi durdurmak için `scripts\stop-fraudcell.bat`; volume'lar dahil sıfırlamak için
-`scripts\stop-fraudcell.bat --temizle` kullanılır.
+| Rol | Giriş | Şifre |
+|---|---|---|
+| Admin | `admin@fraudcell.local` | `ChangeMe123!` |
+| Süpervizör | `supervisor@fraudcell.local` | `Demo1234!` |
+| Analist, Çalıntı Kart | `analyst.kart@fraudcell.local` | `Demo1234!` |
+| Analist, Hesap Ele Geçirme | `analyst.hesap@fraudcell.local` | `Demo1234!` |
+| Analist, Para Aklama | `analyst.aklama@fraudcell.local` | `Demo1234!` |
+| Analist, Şüpheli Davranış | `analyst.davranis@fraudcell.local` | `Demo1234!` |
+| Müşteri | herhangi bir `5xxxxxxxxx` GSM numarası | OTP: `1234` |
+
+Bu hesaplar yalnızca yerel demo (`Development`) içindir; şifreler `BACKEND/.env` dosyasından
+değiştirilebilir. Durdurmak için `make down` (veriler kalır), sıfırlamak için `make reset`.
 
 ## Zorunlu demo akışı
 
-1. Yeni müşteri oluşturup gece, yurt dışı, 50.000 TRY transfer girin.
-2. İşlem detayında yüksek risk, `ÇALINTI_KART` ve `İNCELEME` kararını gösterin.
-3. Analist hesabıyla vakayı başlatıp blok kararı ve not girin.
-4. Puan hareketini ve süpervizör liderlik tablosunu gösterin.
-5. `cd BACKEND && docker compose stop ai-service` çalıştırın; yeni işlemin yine
-   kaydedilip `TIMED_OUT / MANUAL_QUEUE` vakasına dönüştüğünü gösterin.
-6. `docker compose up -d ai-service` ile AI servisini geri kaldırın.
+Case'in 11.3 bölümündeki akış [`scripts/demo.py`](scripts/demo.py) ile doğrulanır; aynı
+kontrol CI'da her PR'da temiz bir makinede `docker compose up` ile çalışır.
+
+1. `make up`: tüm sistem `docker compose up` ile açılır.
+2. `make demo`: müşteri gece, yurt dışından 50.000 TL transfer yapar. AI risk skorunu, türü
+   ve kararı üretir; vaka o türün uzmanı olan analiste atanır. Analist inceleyip blok kararı
+   verir, puan liderlik tablosuna yansır.
+3. `make demo-ai-down`: AI servisi durdurulur. Yeni işlem yine kaydedilir, `TIMED_OUT` olur
+   ve vaka süpervizörün manuel kuyruğuna düşer. Ardından AI yeniden başlatılır.
+
+Aynı adımlar arayüzden yukarıdaki müşteri, analist ve süpervizör hesaplarıyla gösterilebilir.
 
 ## Doğrulama
 
