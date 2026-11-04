@@ -14,7 +14,7 @@ namespace FraudCell.Transaction.Service.BackgroundJobs;
 /// KAPANDI yapar. <c>FOR UPDATE SKIP LOCKED</c> ile birden fazla instance'in
 /// ayni vakayi ikinci kez kapatmasi engellenir.
 /// </summary>
-public sealed class CaseClosureWorker(IServiceScopeFactory scopeFactory, IClock clock, ILogger<CaseClosureWorker> logger) : BackgroundService
+public sealed partial class CaseClosureWorker(IServiceScopeFactory scopeFactory, IClock clock, ILogger<CaseClosureWorker> logger) : BackgroundService
 {
     private static readonly TimeSpan PollInterval = TimeSpan.FromMinutes(5);
 
@@ -30,7 +30,7 @@ public sealed class CaseClosureWorker(IServiceScopeFactory scopeFactory, IClock 
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Case closure cycle failed; will retry next interval.");
+                LogClosureCycleFailed(logger, ex);
             }
         }
         while (await timer.WaitForNextTickAsync(stoppingToken));
@@ -68,9 +68,15 @@ public sealed class CaseClosureWorker(IServiceScopeFactory scopeFactory, IClock 
         if (dueCases.Count > 0)
         {
             await db.SaveChangesAsync(cancellationToken);
-            logger.LogInformation("Closed {Count} case(s) after 48h retention.", dueCases.Count);
+            LogCasesClosed(logger, dueCases.Count);
         }
 
         await dbTransaction.CommitAsync(cancellationToken);
     }
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Case closure cycle failed; will retry next interval.")]
+    private static partial void LogClosureCycleFailed(ILogger logger, Exception exception);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Closed {Count} case(s) after 48h retention.")]
+    private static partial void LogCasesClosed(ILogger logger, int count);
 }

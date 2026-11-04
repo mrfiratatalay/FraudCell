@@ -11,7 +11,7 @@ namespace FraudCell.Transaction.Service.BackgroundJobs;
 /// Dokuman §23.2: musteri dogrulama suresi dolduginda vaka otomatik olarak
 /// INCELENIYOR durumuna doner; nihai karar otomatik verilmez.
 /// </summary>
-public sealed class VerificationExpiryWorker(IServiceScopeFactory scopeFactory, IClock clock, ILogger<VerificationExpiryWorker> logger) : BackgroundService
+public sealed partial class VerificationExpiryWorker(IServiceScopeFactory scopeFactory, IClock clock, ILogger<VerificationExpiryWorker> logger) : BackgroundService
 {
     private static readonly TimeSpan PollInterval = TimeSpan.FromSeconds(30);
 
@@ -27,7 +27,7 @@ public sealed class VerificationExpiryWorker(IServiceScopeFactory scopeFactory, 
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Verification expiry cycle failed; will retry next interval.");
+                LogExpiryCycleFailed(logger, ex);
             }
         }
         while (await timer.WaitForNextTickAsync(stoppingToken));
@@ -61,7 +61,13 @@ public sealed class VerificationExpiryWorker(IServiceScopeFactory scopeFactory, 
         if (expired.Count > 0)
         {
             await db.SaveChangesAsync(cancellationToken);
-            logger.LogInformation("Expired {Count} pending customer verification(s).", expired.Count);
+            LogVerificationsExpired(logger, expired.Count);
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Verification expiry cycle failed; will retry next interval.")]
+    private static partial void LogExpiryCycleFailed(ILogger logger, Exception exception);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Expired {Count} pending customer verification(s).")]
+    private static partial void LogVerificationsExpired(ILogger logger, int count);
 }

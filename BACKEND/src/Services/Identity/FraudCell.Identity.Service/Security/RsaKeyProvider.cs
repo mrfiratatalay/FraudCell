@@ -33,7 +33,7 @@ public sealed class JwtSigningOptions
 /// uretilen anahtar repository disindaki bir volume'a yazilir ve .gitignore
 /// kapsamindadir. Production'da dosyalarin onceden var olmasi zorunludur.
 /// </summary>
-public sealed class RsaKeyProvider
+public sealed partial class RsaKeyProvider
 {
     private readonly Lazy<RSA> _rsa;
 
@@ -50,7 +50,7 @@ public sealed class RsaKeyProvider
         {
             var rsa = RSA.Create();
             rsa.ImportFromPem(File.ReadAllText(options.PrivateKeyPath));
-            logger.LogInformation("Loaded RSA signing key from {Path}.", options.PrivateKeyPath);
+            LogSigningKeyLoaded(logger, options.PrivateKeyPath);
             return rsa;
         }
 
@@ -61,9 +61,7 @@ public sealed class RsaKeyProvider
                 "Production/demo ortaminda anahtar onceden 'scripts/generate-dev-keys' ile uretilmis olmalidir.");
         }
 
-        logger.LogWarning(
-            "RSA private key not found; generating an EPHEMERAL development key pair. " +
-            "This must never happen outside local development.");
+        LogGeneratingEphemeralKey(logger);
 
         var generated = RSA.Create(2048);
 
@@ -98,13 +96,25 @@ public sealed class RsaKeyProvider
                 File.WriteAllText(publicKeyPath, rsa.ExportSubjectPublicKeyInfoPem());
             }
 
-            logger.LogInformation("Persisted generated development RSA key pair to {PrivateKeyPath}.", privateKeyPath);
+            LogKeyPairPersisted(logger, privateKeyPath);
         }
         catch (IOException ex)
         {
             // Anahtar diske yazilamasa bile process icinde imzalama calismaya devam eder;
             // sadece diger servisler public key'i bu instance'tan okuyamaz.
-            logger.LogWarning(ex, "Could not persist generated RSA key pair; continuing with in-memory key only.");
+            LogKeyPairPersistFailed(logger, ex);
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Loaded RSA signing key from {Path}.")]
+    private static partial void LogSigningKeyLoaded(ILogger logger, string? path);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "RSA private key not found; generating an EPHEMERAL development key pair. This must never happen outside local development.")]
+    private static partial void LogGeneratingEphemeralKey(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Persisted generated development RSA key pair to {PrivateKeyPath}.")]
+    private static partial void LogKeyPairPersisted(ILogger logger, string privateKeyPath);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Could not persist generated RSA key pair; continuing with in-memory key only.")]
+    private static partial void LogKeyPairPersistFailed(ILogger logger, Exception exception);
 }

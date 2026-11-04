@@ -14,7 +14,7 @@ namespace FraudCell.BuildingBlocks.Api;
 /// Beklenmeyen hatalarda istemciye stack trace veya exception mesaji SIZDIRILMAZ;
 /// detay yalnizca sunucu logunda kalir.
 /// </summary>
-public sealed class ExceptionHandlingMiddleware(
+public sealed partial class ExceptionHandlingMiddleware(
     RequestDelegate next,
     ILogger<ExceptionHandlingMiddleware> logger,
     JsonSerializerOptions jsonOptions)
@@ -28,16 +28,14 @@ public sealed class ExceptionHandlingMiddleware(
         catch (AppException ex)
         {
             // Beklenen domain/uygulama hatasi: Warning seviyesinde, stack trace'siz.
-            logger.LogWarning(
-                "Handled application error {ErrorCode} on {Method} {Path}: {ErrorMessage}",
-                ex.Code, context.Request.Method, context.Request.Path, ex.Message);
+            LogHandledApplicationError(logger, ex.Code, context.Request.Method, context.Request.Path, ex.Message);
 
             await WriteAsync(context, ex.StatusCode, new ApiError(ex.Code, ex.Message, ex.Details), correlation);
         }
         catch (DbUpdateConcurrencyException ex)
         {
             // Optimistic concurrency: iki analist ayni vakaya ayni anda karar verdi (CASE-013).
-            logger.LogWarning(ex, "Concurrency conflict on {Method} {Path}", context.Request.Method, context.Request.Path);
+            LogConcurrencyConflict(logger, ex, context.Request.Method, context.Request.Path);
 
             await WriteAsync(
                 context,
@@ -50,11 +48,11 @@ public sealed class ExceptionHandlingMiddleware(
         catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
         {
             // Istemci baglantiyi kapatti; bu bir hata degil, loglamaya deger bilgi degil.
-            logger.LogDebug("Request aborted by client: {Method} {Path}", context.Request.Method, context.Request.Path);
+            LogRequestAborted(logger, context.Request.Method, context.Request.Path);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unhandled exception on {Method} {Path}", context.Request.Method, context.Request.Path);
+            LogUnhandledException(logger, ex, context.Request.Method, context.Request.Path);
 
             await WriteAsync(
                 context,
@@ -73,7 +71,7 @@ public sealed class ExceptionHandlingMiddleware(
         if (context.Response.HasStarted)
         {
             // Cevap govdesi akmaya baslamis (ornegin SSE); zarf yazamayiz.
-            logger.LogWarning("Response already started; cannot write error envelope for {ErrorCode}", error.Code);
+            LogResponseAlreadyStarted(logger, error.Code);
             return;
         }
 
@@ -84,4 +82,19 @@ public sealed class ExceptionHandlingMiddleware(
         var payload = ApiResponse.Failure(error, correlation.CorrelationId);
         await context.Response.WriteAsync(JsonSerializer.Serialize(payload, jsonOptions), context.RequestAborted);
     }
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Handled application error {ErrorCode} on {Method} {Path}: {ErrorMessage}")]
+    private static partial void LogHandledApplicationError(ILogger logger, string errorCode, string method, PathString path, string errorMessage);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Concurrency conflict on {Method} {Path}")]
+    private static partial void LogConcurrencyConflict(ILogger logger, Exception exception, string method, PathString path);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Request aborted by client: {Method} {Path}")]
+    private static partial void LogRequestAborted(ILogger logger, string method, PathString path);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Unhandled exception on {Method} {Path}")]
+    private static partial void LogUnhandledException(ILogger logger, Exception exception, string method, PathString path);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Response already started; cannot write error envelope for {ErrorCode}")]
+    private static partial void LogResponseAlreadyStarted(ILogger logger, string errorCode);
 }

@@ -12,7 +12,7 @@ namespace FraudCell.BuildingBlocks.Messaging.RabbitMq;
 /// (dokuman §19/§21). Bu yuzden constructor'da baglanti kurulmaz ve baglanti
 /// hatasi uygulamayi dusurmez.
 /// </summary>
-public sealed class RabbitMqConnectionProvider : IAsyncDisposable
+public sealed partial class RabbitMqConnectionProvider : IAsyncDisposable
 {
     private readonly RabbitMqOptions _options;
     private readonly ILogger<RabbitMqConnectionProvider> _logger;
@@ -67,13 +67,13 @@ public sealed class RabbitMqConnectionProvider : IAsyncDisposable
 
             if (_connection is not null)
             {
-                _logger.LogWarning("RabbitMQ connection was closed; reconnecting.");
+                LogConnectionClosed(_logger);
                 await SafeDisposeAsync(_connection);
                 _connection = null;
             }
 
             _connection = await _factory.CreateConnectionAsync(cancellationToken);
-            _logger.LogInformation("Connected to RabbitMQ at {Host}:{Port}", _options.Host, _options.Port);
+            LogConnected(_logger, _options.Host, _options.Port);
             return _connection;
         }
         finally
@@ -111,11 +111,20 @@ public sealed class RabbitMqConnectionProvider : IAsyncDisposable
         }
         catch (Exception ex)
         {
-            _logger.LogDebug(ex, "Ignoring error while closing RabbitMQ connection.");
+            LogCloseFailed(_logger, ex);
         }
         finally
         {
             await connection.DisposeAsync();
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "RabbitMQ connection was closed; reconnecting.")]
+    private static partial void LogConnectionClosed(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Connected to RabbitMQ at {Host}:{Port}")]
+    private static partial void LogConnected(ILogger logger, string host, int port);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Ignoring error while closing RabbitMQ connection.")]
+    private static partial void LogCloseFailed(ILogger logger, Exception exception);
 }

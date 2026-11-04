@@ -20,7 +20,7 @@ namespace FraudCell.BuildingBlocks.Messaging.RabbitMq;
 /// olarak retry/DLQ kuyruguna yeniden yayinlanir; bu sayede TTL tabanli gecikme
 /// (dokuman §15: 5sn -> 30sn -> 2dk) native RabbitMQ mekanizmasiyla saglanir.
 /// </summary>
-public abstract class RabbitMqConsumerHostedService(
+public abstract partial class RabbitMqConsumerHostedService(
     RabbitMqConnectionProvider connectionProvider,
     IOptions<RabbitMqOptions> options,
     ILogger logger) : BackgroundService
@@ -57,7 +57,7 @@ public abstract class RabbitMqConsumerHostedService(
             {
                 // Broker kapali ya da baglanti koptu; kisa bir bekleme sonrasi tekrar dene.
                 // Bu esnada business islemler etkilenmez, event'ler broker'da/outbox'ta bekler.
-                logger.LogWarning(ex, "Consumer loop for queue {QueueName} failed; reconnecting.", QueueName);
+                LogConsumerLoopFailed(logger, ex, QueueName);
                 await Task.Delay(TimeSpan.FromSeconds(_options.ReconnectDelaySeconds), stoppingToken);
             }
         }
@@ -76,7 +76,7 @@ public abstract class RabbitMqConsumerHostedService(
 
         await channel.BasicConsumeAsync(QueueName, autoAck: false, consumer, stoppingToken);
 
-        logger.LogInformation("Consumer started for queue {QueueName}.", QueueName);
+        LogConsumerStarted(logger, QueueName);
 
         // Kanal acik oldugu surece bekle; kanal/baglanti koparsa disariya cikilir
         // ve ExecuteAsync yeniden baglanmayi dener.
@@ -98,7 +98,7 @@ public abstract class RabbitMqConsumerHostedService(
         }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "Failed to process message from {QueueName}; routing to retry/DLQ.", QueueName);
+            LogMessageFailed(logger, ex, QueueName);
             await RequeueForRetryAsync(channel, args, cancellationToken);
         }
     }
@@ -127,9 +127,7 @@ public abstract class RabbitMqConsumerHostedService(
                 body: args.Body,
                 cancellationToken: cancellationToken);
 
-            logger.LogInformation(
-                "Message for {QueueName} scheduled for retry #{RetryCount} via {RetryQueue}.",
-                QueueName, retryCount + 1, retryQueue);
+            LogRetryScheduled(logger, QueueName, retryCount + 1, retryQueue);
         }
         else
         {
@@ -141,8 +139,7 @@ public abstract class RabbitMqConsumerHostedService(
                 body: args.Body,
                 cancellationToken: cancellationToken);
 
-            logger.LogError(
-                "Message for {QueueName} exhausted all retries and was sent to the dead-letter queue.", QueueName);
+            LogDeadLettered(logger, QueueName);
         }
 
         // Orijinal teslimat ACK edilir: bir kopyasi retry/DLQ zincirine zaten yayinlandi.
@@ -164,4 +161,19 @@ public abstract class RabbitMqConsumerHostedService(
             _ => 0,
         };
     }
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Consumer loop for queue {QueueName} failed; reconnecting.")]
+    private static partial void LogConsumerLoopFailed(ILogger logger, Exception exception, string queueName);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Consumer started for queue {QueueName}.")]
+    private static partial void LogConsumerStarted(ILogger logger, string queueName);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Failed to process message from {QueueName}; routing to retry/DLQ.")]
+    private static partial void LogMessageFailed(ILogger logger, Exception exception, string queueName);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Message for {QueueName} scheduled for retry #{RetryCount} via {RetryQueue}.")]
+    private static partial void LogRetryScheduled(ILogger logger, string queueName, int retryCount, string retryQueue);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Message for {QueueName} exhausted all retries and was sent to the dead-letter queue.")]
+    private static partial void LogDeadLettered(ILogger logger, string queueName);
 }

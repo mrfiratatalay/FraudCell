@@ -20,7 +20,7 @@ namespace FraudCell.BuildingBlocks.Messaging.Outbox;
 ///
 /// Broker kapaliysa hicbir kayit kaybolmaz; kira suresi dolunca tekrar denenir.
 /// </summary>
-public sealed class OutboxPublisherService(
+public sealed partial class OutboxPublisherService(
     IServiceScopeFactory scopeFactory,
     RabbitMqEventPublisher publisher,
     IOptions<OutboxOptions> options,
@@ -32,7 +32,7 @@ public sealed class OutboxPublisherService(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        logger.LogInformation("Outbox publisher started (poll interval {IntervalMs} ms).", _options.PollIntervalMilliseconds);
+        LogPublisherStarted(logger, _options.PollIntervalMilliseconds);
 
         // Uygulama acilisinda migration/seed ile yarismamak icin kisa bir gecikme.
         await Task.Delay(TimeSpan.FromSeconds(_options.StartupDelaySeconds), stoppingToken);
@@ -57,13 +57,13 @@ public sealed class OutboxPublisherService(
             catch (Exception ex)
             {
                 // Worker dongusu asla olmemeli; olurse event'ler sonsuza kadar beklerdi.
-                logger.LogError(ex, "Outbox publish cycle failed; will retry.");
+                LogPublishCycleFailed(logger, ex);
             }
 
             await timer.WaitForNextTickAsync(stoppingToken);
         }
 
-        logger.LogInformation("Outbox publisher stopped.");
+        LogPublisherStopped(logger);
     }
 
     private async Task<int> PublishBatchAsync(CancellationToken cancellationToken)
@@ -100,9 +100,7 @@ public sealed class OutboxPublisherService(
                 message.LockedUntil = null;
                 message.LockOwner = null;
 
-                logger.LogWarning(
-                    "Failed to publish outbox message {EventId} ({EventType}), attempt {AttemptCount}. Retrying at {NextAttemptAt}.",
-                    message.Id, message.EventType, message.AttemptCount, message.NextAttemptAt);
+                LogPublishFailed(logger, message.Id, message.EventType, message.AttemptCount, message.NextAttemptAt);
 
                 // Broker toptan kapaliysa kalan mesajlari denemek anlamsiz;
                 // kiralari zaten ileri atilmis durumda, sonraki turda denenecek.
@@ -115,7 +113,7 @@ public sealed class OutboxPublisherService(
         var publishedCount = leased.Count(m => m.PublishedAt is not null);
         if (publishedCount > 0)
         {
-            logger.LogInformation("Published {PublishedCount} outbox message(s).", publishedCount);
+            LogPublished(logger, publishedCount);
         }
 
         return leased.Count;
@@ -194,6 +192,21 @@ public sealed class OutboxPublisherService(
 
     private static string QuoteIdentifier(string identifier)
         => "\"" + identifier.Replace("\"", "\"\"", StringComparison.Ordinal) + "\"";
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox publisher started (poll interval {IntervalMs} ms).")]
+    private static partial void LogPublisherStarted(ILogger logger, int intervalMs);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Outbox publish cycle failed; will retry.")]
+    private static partial void LogPublishCycleFailed(ILogger logger, Exception exception);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox publisher stopped.")]
+    private static partial void LogPublisherStopped(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Failed to publish outbox message {EventId} ({EventType}), attempt {AttemptCount}. Retrying at {NextAttemptAt}.")]
+    private static partial void LogPublishFailed(ILogger logger, string eventId, string eventType, int attemptCount, DateTimeOffset? nextAttemptAt);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Published {PublishedCount} outbox message(s).")]
+    private static partial void LogPublished(ILogger logger, int publishedCount);
 }
 
 public sealed class OutboxOptions

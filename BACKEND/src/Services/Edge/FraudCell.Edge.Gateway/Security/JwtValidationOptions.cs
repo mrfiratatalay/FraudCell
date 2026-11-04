@@ -13,7 +13,7 @@ public sealed class JwtValidationOptions
     public required string PublicKeyPath { get; set; }
 }
 
-public sealed class RsaPublicKeyProvider
+public sealed partial class RsaPublicKeyProvider
 {
     private readonly Lazy<RSA> _rsa;
 
@@ -30,11 +30,14 @@ public sealed class RsaPublicKeyProvider
 
             var rsa = RSA.Create();
             rsa.ImportFromPem(File.ReadAllText(path));
-            logger.LogInformation("Loaded RSA public key from {Path}.", path);
+            LogPublicKeyLoaded(logger, path);
             return rsa;
         });
     }
 
     public RSA Rsa => _rsa.Value;
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Loaded RSA public key from {Path}.")]
+    private static partial void LogPublicKeyLoaded(ILogger logger, string path);
 }
 

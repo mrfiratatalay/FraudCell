@@ -14,7 +14,7 @@ namespace FraudCell.BuildingBlocks.Messaging.RabbitMq;
 /// broker mesaji kabul etmis demektir. Ancak o zaman outbox satiri
 /// <c>published_at</c> ile isaretlenir.
 /// </summary>
-public sealed class RabbitMqEventPublisher(
+public sealed partial class RabbitMqEventPublisher(
     RabbitMqConnectionProvider connectionProvider,
     IOptions<RabbitMqOptions> options,
     ILogger<RabbitMqEventPublisher> logger) : IAsyncDisposable
@@ -59,9 +59,7 @@ public sealed class RabbitMqEventPublisher(
             body: body,
             cancellationToken: cancellationToken);
 
-        logger.LogDebug(
-            "Published {EventType} {EventId} with routing key {RoutingKey}",
-            message.EventType, message.Id, message.RoutingKey);
+        LogPublished(logger, message.EventType, message.Id, message.RoutingKey);
     }
 
     private static ReadOnlyMemory<byte> BuildEnvelopeBytes(OutboxMessage message)
@@ -142,7 +140,7 @@ public sealed class RabbitMqEventPublisher(
             }
             catch (Exception ex)
             {
-                logger.LogDebug(ex, "Ignoring error while closing publisher channel.");
+                LogChannelCloseFailed(logger, ex);
             }
             finally
             {
@@ -152,4 +150,10 @@ public sealed class RabbitMqEventPublisher(
 
         _gate.Dispose();
     }
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Published {EventType} {EventId} with routing key {RoutingKey}")]
+    private static partial void LogPublished(ILogger logger, string eventType, string eventId, string routingKey);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Ignoring error while closing publisher channel.")]
+    private static partial void LogChannelCloseFailed(ILogger logger, Exception exception);
 }
