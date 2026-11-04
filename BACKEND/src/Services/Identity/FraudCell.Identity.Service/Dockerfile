@@ -2,13 +2,13 @@
 # (bkz. docker-compose.yml), cunku proje Directory.Packages.props, Directory.Build.props,
 # global.json ve BuildingBlocks'a kok gorelidir (dokuman 03-TECH-STACK.md §39.1).
 
-# SDK/runtime image'lari global.json'daki `10.0.100` ile birebir sabitlenmistir
+# SDK/runtime image'lari global.json'daki `10.0.403` ile birebir sabitlenmistir
 # (dokuman 03-TECH-STACK.md §4.1: "latest"/floating tag yasak). Floating `10.0`
 # tag'i host'ta kurulu olandan daha yeni bir SDK cekip, o SDK'nin daha sikilastirilmis
 # "latest-recommended" analyzer setiyle build'i kirabiliyor.
 
 # ---- Build stage ----
-FROM mcr.microsoft.com/dotnet/sdk:10.0.100 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0.403 AS build
 WORKDIR /src
 
 COPY global.json Directory.Build.props Directory.Packages.props .editorconfig ./
@@ -24,7 +24,7 @@ RUN dotnet publish src/Services/Identity/FraudCell.Identity.Service/FraudCell.Id
     -c Release -o /app/publish --no-restore
 
 # ---- Runtime stage ----
-FROM mcr.microsoft.com/dotnet/aspnet:10.0.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.14 AS runtime
 WORKDIR /app
 
 # Health check icin curl (dokuman §36: container'lar health check icerir).

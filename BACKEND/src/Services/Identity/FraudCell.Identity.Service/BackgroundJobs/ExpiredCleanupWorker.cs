@@ -14,7 +14,7 @@ namespace FraudCell.Identity.Service.BackgroundJobs;
 /// (expiry, revoked_at) zaten sorgu seviyesinde uygulanir. Bu worker
 /// gecikse veya durdurulsa bile domain davranisi etkilenmez.
 /// </summary>
-public sealed class ExpiredCleanupWorker(
+public sealed partial class ExpiredCleanupWorker(
     IServiceScopeFactory scopeFactory,
     IClock clock,
     ILogger<ExpiredCleanupWorker> logger) : BackgroundService
@@ -34,7 +34,7 @@ public sealed class ExpiredCleanupWorker(
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Expired cleanup cycle failed; will retry next interval.");
+                LogCleanupCycleFailed(logger, ex);
             }
         }
         while (await timer.WaitForNextTickAsync(stoppingToken));
@@ -62,9 +62,13 @@ public sealed class ExpiredCleanupWorker(
 
         if (otpDeleted + refreshDeleted + inboxDeleted > 0)
         {
-            logger.LogInformation(
-                "Cleanup removed {OtpDeleted} OTP challenge(s), {RefreshDeleted} refresh session(s), {InboxDeleted} inbox record(s).",
-                otpDeleted, refreshDeleted, inboxDeleted);
+            LogCleanupCompleted(logger, otpDeleted, refreshDeleted, inboxDeleted);
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Expired cleanup cycle failed; will retry next interval.")]
+    private static partial void LogCleanupCycleFailed(ILogger logger, Exception exception);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Cleanup removed {OtpDeleted} OTP challenge(s), {RefreshDeleted} refresh session(s), {InboxDeleted} inbox record(s).")]
+    private static partial void LogCleanupCompleted(ILogger logger, int otpDeleted, int refreshDeleted, int inboxDeleted);
 }

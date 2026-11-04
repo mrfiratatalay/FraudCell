@@ -41,7 +41,7 @@ public sealed record OtpChallengeResult(string ChallengeId, DateTimeOffset Expir
 /// yok; kod "gonderilmis" gibi loglanir ve demo profilinde sabit deger kabul
 /// edilir.
 /// </summary>
-public sealed class OtpService(
+public sealed partial class OtpService(
     IdentityServiceDbContext db,
     IClock clock,
     IOptions<OtpOptions> options,
@@ -75,9 +75,7 @@ public sealed class OtpService(
 
         // SMS entegrasyonu case kapsami disinda; demo/dogrulama amacli loglanir.
         // Kodun kendisi yalnizca demo modda ve sabit oldugu icin log'a yazilmaz.
-        logger.LogInformation(
-            "OTP challenge issued for gsm ending {GsmSuffix} (purpose {Purpose}), expires at {ExpiresAt}.",
-            gsmNumber[^4..], purpose, challenge.ExpiresAt);
+        LogChallengeIssued(logger, gsmNumber[^4..], purpose, challenge.ExpiresAt);
 
         var demoHint = environment.IsDevelopment() && _options.UseFixedDemoCode
             ? $"Demo ortaminda OTP: {_options.FixedDemoCode}"
@@ -141,4 +139,7 @@ public sealed class OtpService(
     private static string Hash(string gsmNumber, OtpPurpose purpose, string code)
         => Convert.ToHexStringLower(SHA256.HashData(
             System.Text.Encoding.UTF8.GetBytes($"{gsmNumber}:{purpose}:{code}")));
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "OTP challenge issued for gsm ending {GsmSuffix} (purpose {Purpose}), expires at {ExpiresAt}.")]
+    private static partial void LogChallengeIssued(ILogger logger, string gsmSuffix, OtpPurpose purpose, DateTimeOffset expiresAt);
 }

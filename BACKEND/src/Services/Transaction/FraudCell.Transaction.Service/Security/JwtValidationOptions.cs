@@ -20,7 +20,7 @@ public sealed class JwtValidationOptions
 /// key'i yukler. Private key bu servise ASLA verilmez (dokuman §27: "Token
 /// dogrulayabilen servis token uretemez").
 /// </summary>
-public sealed class RsaPublicKeyProvider
+public sealed partial class RsaPublicKeyProvider
 {
     private readonly Lazy<RSA> _rsa;
 
@@ -37,10 +37,13 @@ public sealed class RsaPublicKeyProvider
 
             var rsa = RSA.Create();
             rsa.ImportFromPem(File.ReadAllText(path));
-            logger.LogInformation("Loaded RSA public key from {Path}.", path);
+            LogPublicKeyLoaded(logger, path);
             return rsa;
         });
     }
 
     public RSA Rsa => _rsa.Value;
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Loaded RSA public key from {Path}.")]
+    private static partial void LogPublicKeyLoaded(ILogger logger, string path);
 }
