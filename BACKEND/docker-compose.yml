@@ -251,15 +251,18 @@ services:
       Serilog__MinimumLevel__Override__Yarp: Warning
     volumes:
       - identity-keys:/keys/identity:ro
+    # Only Identity must be healthy: it creates the JWT signing key the gateway
+    # reads. The other services may still be starting or even down; the gateway
+    # comes up anyway and returns 502/503 for their routes until they are back.
     depends_on:
       identity-service:
         condition: service_healthy
       transaction-service:
-        condition: service_healthy
+        condition: service_started
       gamification-service:
-        condition: service_healthy
+        condition: service_started
       ai-service:
-        condition: service_healthy
+        condition: service_started
       rabbitmq:
         condition: service_healthy
     networks:
