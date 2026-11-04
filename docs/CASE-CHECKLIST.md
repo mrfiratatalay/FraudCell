@@ -35,10 +35,10 @@ yapılan uçtan uca çalıştırmayı gösterir (iki kurulum engeli geçici olar
 | 9. Event akışı | 2 | 1 | 0 | 0 |
 | 10. Güvenlik | 2 | 4 | 0 | 1 |
 | 11. Demo senaryosu | 3 | 5 | 0 | 2 |
-| 12. Değerlendirme ve bonus | 2 | 3 | 0 | 2 |
-| 13. Diskalifiye koşulları | 2 | 2 | 0 | 1 |
+| 12. Değerlendirme ve bonus | 3 | 3 | 0 | 1 |
+| 13. Diskalifiye koşulları | 3 | 1 | 0 | 1 |
 | 14. Teslimat | 2 | 5 | 2 | 0 |
-| **Toplam (129 satır)** | **68** | **42** | **5** | **14** |
+| **Toplam (129 satır)** | **70** | **41** | **5** | **13** |
 
 Bazı satırlar aynı kök nedene bağlıdır. Örneğin `docker compose up` sorunu 2.2-d, 11.3-1 ve 13.2-b'de
 ayrı ayrı görünür.
@@ -49,7 +49,7 @@ ayrı ayrı görünür.
 2. Analistin AI kararını değiştirmesi AI servisine ulaşmıyor. Bu yüzden doğruluk metrikleri her zaman boş (4.3-c, 5.4).
 3. "+15 doğrulanmış dolandırıcılık" puanı her blok kararına veriliyor. Demoda puan yanlış görünüyor (6.1-c).
 4. AI servisinin endpoint'leri token olmadan erişilebilir (10-b).
-5. CI 2026-07-23'ten beri kırmızı (B-5).
+5. Veritabanları tek PostgreSQL container'ında; jüri bunu "ortak veritabanı" sayabilir (2.2-a).
 
 ## Yol haritası
 
@@ -233,7 +233,7 @@ ayrı ayrı görünür.
 | B-2 | Message queue ile event iletimi (+5) | ✅ | RabbitMQ (2.2-b) | |
 | B-3 | Panelde kategori bazlı AI doğruluk kırılımı (+3) | 🐛 | 5.4-c | Part 5 |
 | B-4 | Gerçek zamanlı bildirim, WebSocket/SSE (+2) | ✅ | SSE, kısa ömürlü tek kullanımlık ticket ile ([RealtimeEndpoints.cs]) | Part 2 |
-| B-5 | CI/CD pipeline (+2) | 🐛 | [ci.yml] var ama 2026-07-23'ten beri kırmızı: yeni SDK'daki CA1873 analyzer hatası ve senkronu bozuk npm lock dosyası. | Part 0 |
+| B-5 | CI/CD pipeline (+2) | ✅ | [ci.yml]: .NET build + test, AI lint/typecheck/test, frontend test/typecheck/build, compose doğrulaması. Part 0'da düzeltildi: CA1873 hataları `LoggerMessage` ile giderildi, npm lock yenilendi, SDK `global.json`'dan ve Node `.nvmrc`'den okunuyor. | Part 1 (compose E2E job'u) |
 
 ## 13. Diskalifiye koşulları
 
@@ -243,7 +243,7 @@ ayrı ayrı görünür.
 | 13.2-b | `docker compose up` ile sistem ayağa kalkar | 🐛 | 2.2-d | Part 1 |
 | 13.2-c | AI servisi mock ya da sabit çıktılı değil | ✅ | Eğitilmiş model ve özellik çıkarımı; farklı girdiler farklı skor üretiyor. Bunu kanıtlayan test yok. | Part 5 |
 | 13.2-d | Servisler tek/ortak veritabanı paylaşmaz | ⚠️ | 2.2-a | Part 2 |
-| 13.2-e | Proje build edilebilir | ⚠️ | Docker build'leri geçiyor (SDK image'ı 10.0.100'e sabit); güncel SDK ile `dotnet build` kırılıyor. | Part 0 |
+| 13.2-e | Proje build edilebilir | ✅ | SDK 10.0.403 ile `dotnet build` 0 uyarıyla geçiyor; CI ve Dockerfile'lar aynı sürüme sabit. | |
 
 ## 14. Teslimat
 
@@ -272,7 +272,7 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 6. Refresh token yeniden kullanıldığında kullanıcının tüm oturumları değil, yalnızca o token ailesi iptal ediliyor. (Part 4)
 7. Müşterinin 1–5 yıldız vereceği ekran yok. (Part 6)
 8. Personel oluşturma tek bir transaction değil: kullanıcı ve profil ayrı `SaveChanges` çağrılarında; profil adımı hata verirse profilsiz kullanıcı kalıyor ([CreateStaffEndpoint.cs]). (Part 3)
-9. CI tag push'larında da çalışıyor. (Part 0)
+9. ~~CI tag push'larında da çalışıyor.~~ Part 0'da düzeltildi: CI yalnızca main ve PR'larda çalışıyor.
 
 <!-- Bağlantılar -->
 [case PDF]: ../BACKEND/references/CodeNight_FINAL_FraudCell_Case.pdf
