@@ -25,7 +25,7 @@ yapılan uçtan uca çalıştırmayı gösterir (iki kurulum engeli geçici olar
 
 | Bölüm | ✅ | ⚠️ | ❌ | 🐛 |
 |---|---:|---:|---:|---:|
-| 2. Mimari | 6 | 4 | 0 | 1 |
+| 2. Mimari | 7 | 4 | 0 | 0 |
 | 3. Identity | 14 | 4 | 0 | 2 |
 | 4. Transaction | 16 | 3 | 1 | 0 |
 | 5. AI | 7 | 2 | 2 | 3 |
@@ -34,22 +34,21 @@ yapılan uçtan uca çalıştırmayı gösterir (iki kurulum engeli geçici olar
 | 8. API tasarımı | 2 | 2 | 0 | 0 |
 | 9. Event akışı | 2 | 1 | 0 | 0 |
 | 10. Güvenlik | 2 | 4 | 0 | 1 |
-| 11. Demo senaryosu | 3 | 5 | 0 | 2 |
+| 11. Demo senaryosu | 5 | 4 | 0 | 1 |
 | 12. Değerlendirme ve bonus | 3 | 3 | 0 | 1 |
-| 13. Diskalifiye koşulları | 3 | 1 | 0 | 1 |
-| 14. Teslimat | 2 | 5 | 2 | 0 |
-| **Toplam (129 satır)** | **70** | **41** | **5** | **13** |
+| 13. Diskalifiye koşulları | 4 | 1 | 0 | 0 |
+| 14. Teslimat | 3 | 4 | 2 | 0 |
+| **Toplam (129 satır)** | **75** | **39** | **5** | **10** |
 
 Bazı satırlar aynı kök nedene bağlıdır. Örneğin `docker compose up` sorunu 2.2-d, 11.3-1 ve 13.2-b'de
 ayrı ayrı görünür.
 
-**En kritik beş açık:**
+**En kritik dört açık:**
 
-1. Temiz bir clone macOS/Linux'ta `docker compose up` ile açılmıyor. Bu, case'te diskalifiye sebebi (2.2-d).
-2. Analistin AI kararını değiştirmesi AI servisine ulaşmıyor. Bu yüzden doğruluk metrikleri her zaman boş (4.3-c, 5.4).
-3. "+15 doğrulanmış dolandırıcılık" puanı her blok kararına veriliyor. Demoda puan yanlış görünüyor (6.1-c).
-4. AI servisinin endpoint'leri token olmadan erişilebilir (10-b).
-5. Veritabanları tek PostgreSQL container'ında; jüri bunu "ortak veritabanı" sayabilir (2.2-a).
+1. Analistin AI kararını değiştirmesi AI servisine ulaşmıyor. Bu yüzden doğruluk metrikleri her zaman boş (4.3-c, 5.4).
+2. "+15 doğrulanmış dolandırıcılık" puanı her blok kararına veriliyor. Demoda puan yanlış görünüyor (6.1-c).
+3. AI servisinin endpoint'leri token olmadan erişilebilir (10-b).
+4. Veritabanları tek PostgreSQL container'ında; jüri bunu "ortak veritabanı" sayabilir (2.2-a).
 
 ## Yol haritası
 
@@ -77,8 +76,8 @@ ayrı ayrı görünür.
 | 2.1-f | Gamification: puan, rozet, seviye, liderlik; event ile tetiklenir | ✅ | §6 | |
 | 2.2-a | Database-per-service; bir servis başka servisin DB'sine erişemez | ⚠️ | 4 ayrı database ve 4 ayrı login rolü var; `CONNECT` yetkisi yalnızca sahibinde ([init-multiple-databases.sh]). Dördü tek PostgreSQL container'ında çalıştığı için "ortak veritabanı" olarak yorumlanabilir (13.2-d). | Part 2 |
 | 2.2-b | Servisler arası iletişim: message queue tercih edilir | ✅ | RabbitMQ topic exchange, transactional outbox, idempotent inbox, TTL tabanlı retry kuyrukları ve DLQ ([RabbitMqTopology.cs], [OutboxPublisherService.cs]). Servisler arasında senkron REST çağrısı yok. | |
-| 2.2-c | Bir servis çökünce diğerleri çalışır; AI kapalıyken işlem oluşturulur, BELIRSIZ olarak işaretlenip manuel atamaya düşer | ⚠️ | canlı: `ai-service` durdurulunca işlem 201 döndü, `TIMED_OUT` oldu, vaka `MANUAL_QUEUE`'ya düştü ([AssessmentWatchdogWorker.cs], [ManualFallbackCaseCreator.cs]). Diğer servislerin ve RabbitMQ'nun kapatılması denenmedi. Gateway compose'da tüm servislerin `healthy` olmasını beklediği için bir servis düşükken gateway hiç açılmıyor. | Part 1, 2 |
-| 2.2-d | `docker compose up` ile tüm sistem ayağa kalkar | 🐛 | Temiz clone macOS/Linux'ta açılmıyor: (1) [init-multiple-databases.sh] git'te çalıştırılabilir değil (mode `100644`), DB rolleri oluşmuyor; (2) AI model dosyaları gitignore'da ([BACKEND/.gitignore#L30-L31]) ve Dockerfile modeli eğitmiyor; AI unhealthy kalıyor, gateway başlamıyor. | Part 1 |
+| 2.2-c | Bir servis çökünce diğerleri çalışır; AI kapalıyken işlem oluşturulur, BELIRSIZ olarak işaretlenip manuel atamaya düşer | ⚠️ | canlı: `ai-service` durdurulunca işlem 201 döndü, `TIMED_OUT` oldu, vaka `MANUAL_QUEUE`'ya düştü ([AssessmentWatchdogWorker.cs], [ManualFallbackCaseCreator.cs]). AI kapalı senaryosu artık CI'da her PR'da test ediliyor (`scripts/demo.py ai-down`). Gateway yalnızca Identity'yi bekliyor. Diğer servislerin ve RabbitMQ'nun kapatılması henüz test edilmedi. | Part 2 |
+| 2.2-d | `docker compose up` ile tüm sistem ayağa kalkar | ✅ | Part 1'de düzeltildi: [init-multiple-databases.sh] çalıştırılabilir, AI modeli image build'inde eğitiliyor (model dosyaları hâlâ gitignore'da: [BACKEND/.gitignore#L30-L31]), gateway yalnızca Identity'yi bekliyor. CI'daki `demo-e2e` job'u her PR'da temiz makinede `docker compose up` yapıp demoyu çalıştırıyor. | |
 | 2.2-e | Her servisin README'si: sorumluluk, endpoint listesi, environment değişkenleri | ⚠️ | 5 README var ama 13–24 satır; endpoint ve env listeleri yok. | Part 7 |
 
 ## 3. Identity Service
@@ -214,12 +213,12 @@ ayrı ayrı görünür.
 |---|---|:---:|---|---|
 | 11.1 | Müşteri akışı: GSM + OTP → işlem → AI analizi → doğrulama → takip → 1–5 yıldız | ⚠️ | Son adımın ekranı yok (4.6-a). | Part 6 |
 | 11.2 | Analist akışı: panel → atanan vakalar risk sıralı → AI skoru ve tür → müşteri doğrulaması → karar ve not → puan ve rozet | ⚠️ | API üzerinden canlı çalışıyor. Atanan vakalar risk skoruna göre değil SLA bitişine göre sıralı ([ListCasesEndpoints.cs#L99]). | Part 6 |
-| 11.3-1 | `docker compose up` ile tüm sistem ayağa kalkar | 🐛 | 2.2-d | Part 1 |
+| 11.3-1 | `docker compose up` ile tüm sistem ayağa kalkar | ✅ | 2.2-d | |
 | 11.3-2 | Müşteri olarak gece, yurt dışından, yüksek tutarlı işlem | ✅ | canlı | |
 | 11.3-3 | AI risk skoru, türü ve kararı gösterilir | ✅ | canlı: 0.71 / YUKSEK / CALINTI_KART / İNCELEME | |
-| 11.3-4 | Vaka doğru uzmanlıktaki analiste atanır | ⚠️ | canlı çalışıyor; ama seed yalnızca admin hesabı oluşturuyor, analistlerin demodan önce elle açılması gerekiyor. | Part 1 |
+| 11.3-4 | Vaka doğru uzmanlıktaki analiste atanır | ✅ | `demo-seed` her uzmanlık için bir analist açıyor; `scripts/demo.py smoke` vakanın AI'ın bulduğu türün uzmanına atandığını assert ediyor. | |
 | 11.3-5 | Analist vakayı inceler ve blok kararı verir | ✅ | canlı | |
-| 11.3-6 | Puan liderlik tablosuna yansır | 🐛 | Yansıyor ama puan yanlış (6.1-c). | Part 3 |
+| 11.3-6 | Puan liderlik tablosuna yansır | 🐛 | Yansıyor ama puan yanlış (6.1-c): tek blok kararı 30 puan getiriyor, rozet sayısı 0 kalıyor (6.2). | Part 3 |
 | 11.3-7 | Bir servis `docker stop` ile kapatılır, geri kalanı çalışır | ⚠️ | AI'ın kapatılması canlı doğrulandı; diğer servisler için senaryo ve otomatik test yok. | Part 2 |
 | 11.3-8 | Jürinin güvenlik testlerine hazır olmak | ⚠️ | §10 | Part 4 |
 
@@ -240,7 +239,7 @@ ayrı ayrı görünür.
 | # | Koşul | Durum | Kanıt | Plan |
 |---|---|:---:|---|---|
 | 13.2-a | Monolith değil | ✅ | 5 ayrı deploy edilen servis | |
-| 13.2-b | `docker compose up` ile sistem ayağa kalkar | 🐛 | 2.2-d | Part 1 |
+| 13.2-b | `docker compose up` ile sistem ayağa kalkar | ✅ | 2.2-d | |
 | 13.2-c | AI servisi mock ya da sabit çıktılı değil | ✅ | Eğitilmiş model ve özellik çıkarımı; farklı girdiler farklı skor üretiyor. Bunu kanıtlayan test yok. | Part 5 |
 | 13.2-d | Servisler tek/ortak veritabanı paylaşmaz | ⚠️ | 2.2-a | Part 2 |
 | 13.2-e | Proje build edilebilir | ✅ | SDK 10.0.403 ile `dotnet build` 0 uyarıyla geçiyor; CI ve Dockerfile'lar aynı sürüme sabit. | |
@@ -253,7 +252,7 @@ ayrı ayrı görünür.
 | 14.1-b | Ana branch'te çalışır kod, anlamlı commit geçmişi | ⚠️ | 2.2-d, 12-b | Part 1 |
 | 14.1-c | **Kök dizinde** `docker-compose.yml` (servisler, veritabanları, gateway) | ❌ | Compose dosyası `BACKEND/` altında. | Part 2 |
 | 14.1-d | Servis başına `.env.example` | ❌ | Tek ve ortak bir dosya var ([BACKEND/.env.example]). | Part 7 |
-| 14.2-a | Ana README: genel bakış, mimari diyagram, kurulum (`docker compose up` + seed), demo kullanıcıları | ⚠️ | [README.MD] var. Kurulum Windows `.bat` script'ine dayanıyor, demo kullanıcısı yalnızca admin. | Part 1, 7 |
+| 14.2-a | Ana README: genel bakış, mimari diyagram, kurulum (`docker compose up` + seed), demo kullanıcıları | ✅ | [README.MD]: her işletim sistemi için kurulum, otomatik seed, 7 demo kullanıcısı. | Part 7 |
 | 14.2-b | Servis başına README | ⚠️ | 2.2-e | Part 7 |
 | 14.2-c | EVENTS.md | ⚠️ | 9-c | Part 7 |
 | 14.2-d | AI yaklaşım dokümanı (yöntem, gerekçe, çalışma şekli, eğitim verisi ve süreç) | ⚠️ | 4.265 satırlık bir tasarım dokümanı var ([10-AI-SERVICE-DESIGN.md]), ama bir okurun takip edebileceği uzunlukta değil; eğitim verisi repoda yok. | Part 5, 7 |
