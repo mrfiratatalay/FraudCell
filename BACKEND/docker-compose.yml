@@ -95,7 +95,6 @@ services:
       Seed__AdminPassword: ${SEED_ADMIN_PASSWORD:-ChangeMe123!}
       Logging__LogLevel__Microsoft.EntityFrameworkCore.Database.Command: Warning
       Serilog__MinimumLevel__Override__Microsoft.EntityFrameworkCore.Database.Command: Warning
-      Outbox__PollIntervalMilliseconds: 2000
     volumes:
       - identity-keys:/keys/identity
     depends_on:
@@ -124,7 +123,6 @@ services:
       Jwt__PublicKeyPath: /keys/identity/public.pem
       Logging__LogLevel__Microsoft.EntityFrameworkCore.Database.Command: Warning
       Serilog__MinimumLevel__Override__Microsoft.EntityFrameworkCore.Database.Command: Warning
-      Outbox__PollIntervalMilliseconds: 2000
     volumes:
       - identity-keys:/keys/identity:ro
     depends_on:
@@ -213,7 +211,6 @@ services:
       Jwt__PublicKeyPath: /keys/identity/public.pem
       Logging__LogLevel__Microsoft.EntityFrameworkCore.Database.Command: Warning
       Serilog__MinimumLevel__Override__Microsoft.EntityFrameworkCore.Database.Command: Warning
-      Outbox__PollIntervalMilliseconds: 2000
     volumes:
       - identity-keys:/keys/identity:ro
     depends_on:
