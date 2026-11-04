@@ -95,7 +95,6 @@ services:
       Seed__AdminPassword: ${SEED_ADMIN_PASSWORD:-ChangeMe123!}
       Logging__LogLevel__Microsoft.EntityFrameworkCore.Database.Command: Warning
       Serilog__MinimumLevel__Override__Microsoft.EntityFrameworkCore.Database.Command: Warning
-      Outbox__PollIntervalMilliseconds: 2000
     volumes:
       - identity-keys:/keys/identity
     depends_on:
@@ -124,7 +123,6 @@ services:
       Jwt__PublicKeyPath: /keys/identity/public.pem
       Logging__LogLevel__Microsoft.EntityFrameworkCore.Database.Command: Warning
       Serilog__MinimumLevel__Override__Microsoft.EntityFrameworkCore.Database.Command: Warning
-      Outbox__PollIntervalMilliseconds: 2000
     volumes:
       - identity-keys:/keys/identity:ro
     depends_on:
@@ -213,7 +211,6 @@ services:
       Jwt__PublicKeyPath: /keys/identity/public.pem
       Logging__LogLevel__Microsoft.EntityFrameworkCore.Database.Command: Warning
       Serilog__MinimumLevel__Override__Microsoft.EntityFrameworkCore.Database.Command: Warning
-      Outbox__PollIntervalMilliseconds: 2000
     volumes:
       - identity-keys:/keys/identity:ro
     depends_on:
@@ -251,15 +248,18 @@ services:
       Serilog__MinimumLevel__Override__Yarp: Warning
     volumes:
       - identity-keys:/keys/identity:ro
+    # Only Identity must be healthy: it creates the JWT signing key the gateway
+    # reads. The other services may still be starting or even down; the gateway
+    # comes up anyway and returns 502/503 for their routes until they are back.
     depends_on:
       identity-service:
         condition: service_healthy
       transaction-service:
-        condition: service_healthy
+        condition: service_started
       gamification-service:
-        condition: service_healthy
+        condition: service_started
       ai-service:
-        condition: service_healthy
+        condition: service_started
       rabbitmq:
         condition: service_healthy
     networks:
@@ -269,3 +269,34 @@ services:
     cpus: 0.40
     mem_limit: 256m
     mem_reservation: 96m
+
+  # One-shot job: creates the demo staff (one analyst per fraud specialty and a
+  # supervisor) through the public API once every service is up, so the
+  # identity.staff.profile.updated events reach queues that already exist.
+  # Idempotent; exits after it runs. Re-run: docker compose run --rm demo-seed
+  demo-seed:
+    image: python:3.13.14-slim-bookworm
+    command: ["python", "-I", "/demo/demo.py", "seed"]
+    environment:
+      FRAUDCELL_BASE_URL: http://edge-gateway:8080
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-admin@fraudcell.local}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-ChangeMe123!}
+      DEMO_STAFF_PASSWORD: ${DEMO_STAFF_PASSWORD:-Demo1234!}
+    volumes:
+      - ../scripts/demo.py:/demo/demo.py:ro
+    depends_on:
+      edge-gateway:
+        condition: service_healthy
+      transaction-service:
+        condition: service_healthy
+      gamification-service:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+    networks:
+      - fraudcell-app
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: "no"
