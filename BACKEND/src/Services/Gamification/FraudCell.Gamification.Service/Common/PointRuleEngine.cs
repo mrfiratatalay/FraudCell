@@ -160,6 +160,15 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
         summary.UpdatedAt = now;
         summary.Version++;
 
+        // The leaderboard ranks by period points (case §6.4), so the penalty counts there too.
+        var (daily, weekly) = await GetOrCreatePeriodStatsAsync(analystId, breachedAt, now, cancellationToken);
+        foreach (var stat in new IPeriodStat[] { daily, weekly })
+        {
+            stat.Points += penalty;
+            stat.UpdatedAt = now;
+            stat.Version++;
+        }
+
         var performance = await GetOrCreatePerformanceAsync(analystId, now, cancellationToken);
         performance.SlaBreachCount++;
         performance.UpdatedAt = now;
@@ -197,7 +206,15 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
         string analystId, DateTimeOffset decidedAt, int totalAwarded, bool isFast, bool isConfirmedFraud, bool isWrongBlock, double decisionSeconds,
         DateTimeOffset now, CancellationToken cancellationToken)
     {
-        var statDate = DateOnly.FromDateTime(decidedAt.UtcDateTime);
+        var (daily, weekly) = await GetOrCreatePeriodStatsAsync(analystId, decidedAt, now, cancellationToken);
+        ApplyStatIncrement(daily, totalAwarded, isFast, isConfirmedFraud, isWrongBlock, decisionSeconds, now);
+        ApplyStatIncrement(weekly, totalAwarded, isFast, isConfirmedFraud, isWrongBlock, decisionSeconds, now);
+    }
+
+    private async Task<(AnalystDailyStat Daily, AnalystWeeklyStat Weekly)> GetOrCreatePeriodStatsAsync(
+        string analystId, DateTimeOffset occurredAt, DateTimeOffset now, CancellationToken cancellationToken)
+    {
+        var statDate = DateOnly.FromDateTime(occurredAt.UtcDateTime);
         var weekStart = StartOfIsoWeek(statDate);
 
         var daily = await db.DailyStats.FindAsync([analystId, statDate], cancellationToken);
@@ -207,8 +224,6 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
             db.DailyStats.Add(daily);
         }
 
-        ApplyStatIncrement(daily, totalAwarded, isFast, isConfirmedFraud, isWrongBlock, decisionSeconds, now);
-
         var weekly = await db.WeeklyStats.FindAsync([analystId, weekStart], cancellationToken);
         if (weekly is null)
         {
@@ -216,7 +231,7 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
             db.WeeklyStats.Add(weekly);
         }
 
-        ApplyStatIncrement(weekly, totalAwarded, isFast, isConfirmedFraud, isWrongBlock, decisionSeconds, now);
+        return (daily, weekly);
     }
 
     private static void ApplyStatIncrement(IPeriodStat stat, int totalAwarded, bool isFast, bool isConfirmedFraud, bool isWrongBlock, double decisionSeconds, DateTimeOffset now)
