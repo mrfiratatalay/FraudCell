@@ -46,7 +46,6 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from app.config import settings  # noqa: E402
 from app.ml.schema import FEATURE_COLUMNS, RANDOM_SEED  # noqa: E402
-from app.ml.synthetic_data import generate_dataset  # noqa: E402
 
 ARTIFACT_DIR = Path(__file__).parent / settings.model.artifact_dir
 DATA_DIR = Path(__file__).parent / "data"
@@ -102,15 +101,36 @@ def _fit_risk_model(x_train: np.ndarray, y_train: np.ndarray, method: str) -> Ca
     return model
 
 
+def _score_scenarios(risk_model: CalibratedClassifierCV, fraud_type_model: RandomForestClassifier) -> dict:
+    """Scores the hand-written Turkish scenarios (app/ml/scenarios.py), which the model never saw."""
+    scenarios = pd.read_csv(DATA_DIR / "scenarios_tr.csv")
+    x = scenarios[FEATURE_COLUMNS].to_numpy(dtype=float)
+    flagged = risk_model.predict_proba(x)[:, 1] >= OPERATING_THRESHOLD
+    is_fraud = scenarios["is_fraud"].to_numpy(dtype=bool)
+
+    fraud = scenarios[is_fraud]
+    predicted_type = fraud_type_model.predict(fraud[FEATURE_COLUMNS].to_numpy(dtype=float))
+    by_type = {
+        str(t): round(float((predicted_type[(fraud["fraud_type"] == t).to_numpy()] == t).mean()), 4)
+        for t in FRAUD_ONLY_CLASSES
+    }
+    return {
+        "scenarioCount": int(len(scenarios)),
+        "fraudFlaggedRate": round(float(flagged[is_fraud].mean()), 4),
+        "legitimatePassedRate": round(float((~flagged[~is_fraud]).mean()), 4),
+        "fraudTypeAccuracy": round(float((predicted_type == fraud["fraud_type"].to_numpy()).mean()), 4),
+        "fraudTypeAccuracyByType": by_type,
+    }
+
+
 def main() -> None:
     ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    print("[1/6] Sentetik veri seti uretiliyor (n=10000, seed=%d)..." % RANDOM_SEED)
-    df = generate_dataset(n_samples=10_000, seed=RANDOM_SEED)
-
-    dataset_path = DATA_DIR / "synthetic_transactions.csv"
-    df.to_csv(dataset_path, index=False)
+    # The data is committed (generate_data.py writes it), so training reads the file.
+    dataset_path = DATA_DIR / "training_data.csv"
+    print(f"[1/6] Egitim verisi okunuyor: {dataset_path}")
+    df = pd.read_csv(dataset_path)
     data_checksum = sha256_of_file(dataset_path)
 
     fraud_rate = float(df["is_fraud"].mean())
@@ -176,6 +196,9 @@ def main() -> None:
     print(f"Fraud-tur Macro F1 (test): {macro_f1:.4f}")
     print(classification_report(ytt_test, ytt_pred, labels=FRAUD_ONLY_CLASSES, zero_division=0))
 
+    scenario_metrics = _score_scenarios(risk_model, fraud_type_model)
+    print("Turkce senaryolar (egitimde kullanilmadi):", scenario_metrics)
+
     print("[5/6] Model artifact'lari kaydediliyor...")
     risk_model_path = ARTIFACT_DIR / "risk_model.joblib"
     fraud_type_model_path = ARTIFACT_DIR / "fraud_type_model.joblib"
@@ -215,6 +238,7 @@ def main() -> None:
             "artifactSha256": sha256_of_file(fraud_type_model_path),
             "metrics": {"test": fraud_type_report, "macroF1": macro_f1},
         },
+        "scenarioAcceptance": scenario_metrics,
         "bundleVersion": settings.model.bundle_version,
         "featureColumns": FEATURE_COLUMNS,
     }

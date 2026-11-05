@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-22T23:45:02.433438+00:00",
+  "generatedAt": "2026-11-05T13:44:46.422307+00:00",
   "randomSeed": 20260722,
   "datasetVersion": "synthetic-tr-v2-overlap",
-  "datasetChecksum": "4df8bda601c71289594ccad2bc24592a2ab790fdae2fb63e9f3c6b73eb90db2a",
+  "datasetChecksum": "7d682972a68e01ea0b780736ad1f0fa48e5c9dea1613ae4c1c307be6bc606f4d",
   "datasetRecordCount": 10000,
   "fraudPrevalence": 0.1103,
   "classDistribution": {
@@ -25,7 +25,7 @@
     "calibrationMethod": "sigmoid",
     "trainFraudCount": 769,
     "artifactPath": "risk_model.joblib",
-    "artifactSha256": "1c407e133ae43f4f4a373ab00116a5c692923a1819de9dd4d2e95619a8b0e8af",
+    "artifactSha256": "9cddd8aa82ea3966547d654e65b593cfd07c9812a4b249a47b5e54d47abfaa21",
     "metrics": {
       "validation": {
         "threshold": 0.4,
@@ -88,7 +88,7 @@
     ],
     "note": "TEMIZ karari risk modeline birakilir; bu model yalnizca fraud turunu ayirir.",
     "artifactPath": "fraud_type_model.joblib",
-    "artifactSha256": "4cb156c0794bd9ab4da858bb856958549540b7c7a9512e4e3e8a477d2bf63523",
+    "artifactSha256": "b73128d2b79dd5b98fbbdd55d9bf37279bc927c726064ae12ca9783ceb7f393a",
     "metrics": {
       "test": {
         "CALINTI_KART": {
@@ -130,6 +130,18 @@
         }
       },
       "macroF1": 0.9532647547003213
+    }
+  },
+  "scenarioAcceptance": {
+    "scenarioCount": 120,
+    "fraudFlaggedRate": 0.4667,
+    "legitimatePassedRate": 1.0,
+    "fraudTypeAccuracy": 0.8667,
+    "fraudTypeAccuracyByType": {
+      "CALINTI_KART": 1.0,
+      "HESAP_ELE_GECIRME": 1.0,
+      "PARA_AKLAMA": 1.0,
+      "SUPHELI_DAVRANIS": 0.3333
     }
   },
   "bundleVersion": "fraudcell-ai-1.0.0",

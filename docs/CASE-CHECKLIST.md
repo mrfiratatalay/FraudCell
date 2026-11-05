@@ -26,9 +26,9 @@ yapılan uçtan uca çalıştırmayı gösterir (iki kurulum engeli geçici olar
 | Bölüm | ✅ | ⚠️ | ❌ | 🐛 |
 |---|---:|---:|---:|---:|
 | 2. Mimari | 7 | 4 | 0 | 0 |
-| 3. Identity | 18 | 2 | 0 | 0 |
-| 4. Transaction | 17 | 2 | 1 | 0 |
-| 5. AI | 8 | 1 | 2 | 3 |
+| 3. Identity | 19 | 1 | 0 | 0 |
+| 4. Transaction | 18 | 2 | 0 | 0 |
+| 5. AI | 14 | 0 | 0 | 0 |
 | 6. Gamification | 12 | 1 | 0 | 0 |
 | 7. Süpervizör paneli | 1 | 4 | 0 | 1 |
 | 8. API tasarımı | 2 | 2 | 0 | 0 |
@@ -37,15 +37,15 @@ yapılan uçtan uca çalıştırmayı gösterir (iki kurulum engeli geçici olar
 | 11. Demo senaryosu | 6 | 3 | 0 | 1 |
 | 12. Değerlendirme ve bonus | 3 | 3 | 0 | 1 |
 | 13. Diskalifiye koşulları | 4 | 1 | 0 | 0 |
-| 14. Teslimat | 3 | 4 | 2 | 0 |
-| **Toplam (129 satır)** | **90** | **28** | **5** | **6** |
+| 14. Teslimat | 4 | 3 | 2 | 0 |
+| **Toplam (129 satır)** | **99** | **25** | **2** | **3** |
 
 Bazı satırlar aynı kök nedene bağlıdır. Örneğin `docker compose up` sorunu 2.2-d, 11.3-1 ve 13.2-b'de
 ayrı ayrı görünür.
 
 **En kritik dört açık:**
 
-1. Analistin AI kararını değiştirmesi AI servisine ulaşmıyor. Bu yüzden doğruluk metrikleri her zaman boş (4.3-c, 5.4).
+1. ~~Analistin AI kararını değiştirmesi AI servisine ulaşmıyor (4.3-c, 5.4).~~ Part 5'te düzeltildi.
 2. ~~"+15 doğrulanmış dolandırıcılık" puanı her blok kararına veriliyor (6.1-c).~~ Part 3'te düzeltildi.
 3. ~~AI servisinin endpoint'leri token olmadan erişilebilir (10-b).~~ Part 4'te gateway'de kapatıldı.
 4. Veritabanları tek PostgreSQL container'ında; jüri bunu "ortak veritabanı" sayabilir (2.2-a).
@@ -101,7 +101,7 @@ ayrı ayrı görünür.
 | 3.3-f | Dashboard görüntüleme: süpervizör ve admin | ✅ | AI metrikleri gateway'de yalnızca süpervizör ve admin'e açık ([Edge/Program.cs]). Liderlik tablosu ve rozet listesi personele açık, müşteriye 403 (§6.4 analistler için de). Test: `scripts/security.py` (CI demo-e2e) rol matrisi. | |
 | 3.3-g | Personel hesabı oluşturma: admin | ✅ | [CreateStaffEndpoint.cs#L37] | |
 | 3.3-h | Audit log görüntüleme: admin | ✅ | [GetAuditLogsEndpoint.cs] | |
-| 3.3-i | Yetkisiz erişim 403 döner ve audit log'a yazılır | ⚠️ | .NET servisleri 403'ü kendi outbox'ları üzerinden audit'e yazıyor ([AuthorizationDeniedAuditMiddleware.cs]). Test: `scripts/security.py` (CI demo-e2e), müşterinin 403'ü çağıran ve path ile audit log'da. AI route'larında 403'ü gateway veriyor ve gateway audit yazmıyor. Sahiplik ihlallerinde bilinçli olarak 404 dönülüyor. | Part 5 |
+| 3.3-i | Yetkisiz erişim 403 döner ve audit log'a yazılır | ✅ | Her servis, AI dahil, kendi 403'ünü kendi outbox'ı üzerinden audit'e yazıyor ([AuthorizationDeniedAuditMiddleware.cs], AI: [security.py]). Gateway AI route'larında yalnızca geçerli token istiyor, bu yüzden her 403 tek kez yazılıyor. Test: `scripts/security.py` (Transaction ve AI 403'ü audit log'da tam bir kez). Sahiplik ihlallerinde bilinçli olarak 404. | |
 | 3.4-a | Audit: başarılı/başarısız giriş, kilitlenme, rol değişikliği, 403, kritik durum değişiklikleri | ✅ | [AuditWriter.cs]; diğer servisler `audit.entry.requested` yayınlıyor, Identity tüketiyor ([AuditEntryRequestedConsumer.cs]). 403 kaydı `scripts/security.py` (CI demo-e2e) ile test ediliyor; diğer eylemlerin otomatik testi yok. | |
 | 3.4-b | Kayıt alanları: kim, ne, ne zaman, nereden (IP), sonuç, detay | ✅ | [AuditLog.cs] | |
 
@@ -119,7 +119,7 @@ ayrı ayrı görünür.
 | 4.2-d | BLOKLANDI vakanın kapanışı | ✅ | Karar: BLOKLANDI da 48 saat sonra KAPANDI olur. Müşteri yalnızca KAPANDI vakayı puanlayabildiği (§4.6) ve bloklanan işlemi de puanladığı (§11.1) için. Gerekçe [RiskCase.cs] `Close` yorumunda; test [RiskCaseStateMachineTests.cs]. | |
 | 4.3-a | Türler: CALINTI_KART, HESAP_ELE_GECIRME, PARA_AKLAMA, SUPHELI_DAVRANIS, TEMIZ | ✅ | [Transaction/Domain/Enums.cs#L13-L20] | |
 | 4.3-b | Tür AI tarafından atanır; analist veya süpervizör değiştirebilir | ✅ | [FraudTypeOverrideEndpoint.cs#L27] | |
-| 4.3-c | Tür değişikliği AI Service'e bildirilir (doğruluk metriği için) | ❌ | Event yayınlanıyor ([FraudTypeOverrideEndpoint.cs#L81-L89]) ama AI servisinde bu event'in consumer'ı yok ([ai/app/main.py#L48-L52]). `prediction_feedback` tablosuna hiçbir yerden yazılmıyor. | Part 5 |
+| 4.3-c | Tür değişikliği AI Service'e bildirilir (doğruluk metriği için) | ✅ | AI `case.fraud_type.overridden`'ı tüketip vakanın `prediction_feedback` satırını yanlış sınıflandırma olarak işaretliyor ([feedback_consumers.py]). | |
 | 4.3-d | Risk seviyeleri DUSUK/ORTA/YUKSEK/KRITIK; skor > 0.9 → KRITIK ve otomatik geçici blok; süpervizör değiştirebilir | ✅ | [RiskThresholds.cs], [AiAssessmentCompletedConsumer.cs#L166-L184], [RiskLevelOverrideEndpoint.cs] (yalnızca süpervizör) | |
 | 4.4-a | SLA: KRITIK 15 dk, YUKSEK 1 sa, ORTA 4 sa, DUSUK 24 sa | ✅ | [RiskCase.cs#L63-L69] | |
 | 4.4-b | Aşımda: KRITIK işlem geçici bloklanır ve panelde en üstte kırmızı görünür; YUKSEK turuncu; ORTA ve DUSUK görsel uyarı | ⚠️ | Backend KRITIK aşımda geçici blok koyuyor ([SlaBreachWorker.cs#L67-L86]). UI'da SLA rozetleri var ([SlaCountdown.tsx]); "en üstte kırmızı" sıralaması ve renkler doğrulanmadı. | Part 6 |
@@ -134,20 +134,20 @@ ayrı ayrı görünür.
 
 | # | Gereksinim | Durum | Kanıt | Plan |
 |---|---|:---:|---|---|
-| 5.1-a | Girdi: tutar, tip, konum, cihaz, zaman, geçmiş işlem sıklığı. Çıktı: 0.0–1.0 skor ve karar (ONAY < 0.4, İNCELEME 0.4–0.9, BLOK > 0.9) | 🐛 | Özellikler [features.py] (son 10 dk ve 24 saatteki işlem sayısı dahil), eşikler [decision_policy.py]. "Gece" özelliği UTC saatinden hesaplanıyor; İstanbul saatiyle 01:00'deki işlem gece sayılmıyor, 08:00'deki sayılıyor. | Part 5 |
+| 5.1-a | Girdi: tutar, tip, konum, cihaz, zaman, geçmiş işlem sıklığı. Çıktı: 0.0–1.0 skor ve karar (ONAY < 0.4, İNCELEME 0.4–0.9, BLOK > 0.9) | ✅ | Özellikler [features.py], eşikler [decision_policy.py]. Saat ve "gece" artık İstanbul saatiyle (UTC+3) hesaplanıyor; test [test_features.py]. | |
 | 5.1-b | Skor < 0.40 otomatik ONAY, > 0.90 otomatik geçici BLOK, arası analiste | ✅ | [AiAssessmentCompletedConsumer.cs#L166-L184] | |
 | 5.1-c | Yaklaşım: kendi eğitilen klasik ML modeli | ✅ | scikit-learn, deterministik eğitim (seed 20260722) [train.py]; metrikler [metadata.json] | |
-| 5.1-d | Kendi veriyle eğitimde veri repoda ve eğitim süreci README'de | ❌ | Veri eğitim anında üretiliyor ([synthetic_data.py]); veri ve model dosyaları gitignore'da ([BACKEND/.gitignore#L30-L31]). README eğitimi anlatmıyor. | Part 1, 5 |
-| 5.1-e | Gerçekçi Türkçe şüpheli ve meşru işlem örnekleri, en az ~100 | ⚠️ | Sentetik üretici var, Türkçe senaryo açıklamalı örnek seti yok. | Part 5 |
+| 5.1-d | Kendi veriyle eğitimde veri repoda ve eğitim süreci README'de | ✅ | Eğitim verisi `data/training_data.csv` repoda; `generate_data.py` deterministik üretiyor, test commit'lenen dosyanın üreticiyle birebir aynı olduğunu kontrol ediyor. Image build'i bu dosyadan eğitiyor. Veri, özellikler, metrikler ve sınırlar: [MODEL_CARD.md]. | |
+| 5.1-e | Gerçekçi Türkçe şüpheli ve meşru işlem örnekleri, en az ~100 | ✅ | `data/scenarios_tr.csv`: 24 Türkçe şablondan 120 örnek, 5 sınıfın hepsi ([scenarios.py]). Eğitimde kullanılmıyor; model her eğitimde bunlarla ölçülüyor (meşru %100 geçiyor, fraud türü %87 doğru, fraud'un %47'si işaretleniyor; [MODEL_CARD.md]). | |
 | 5.2-a | Tür sınıflandırma (5 sınıf) | ✅ | Skor 0.40'ın altındaysa TEMIZ ([transaction_created_consumer.py#L66]) | |
 | 5.2-b | Tür analist ekranında görsel olarak gösterilir | ✅ | Vaka detayında risk göstergesi ve tür etiketi ([CaseDetailPage.tsx]) | |
 | 5.3-a | Skorlamaya dayalı otomatik atama: uzmanlık × 0.5 + boşluk × 0.3 + performans × 0.2 | ✅ | [assignment.py#L18-L22], [assignment.py#L79-L81] | |
 | 5.3-b | Kapasite analist başına 10 aktif vaka; kapasite yoksa vaka kuyruğa alınır | ✅ | AI öneriyor; Transaction kapasiteyi `FOR UPDATE` kilidiyle kesinleştiriyor ([AssignmentService.cs]). Kapasite yoksa `QUEUED` ([AiAssessmentCompletedConsumer.cs#L220-L224]). | Part 2 |
 | 5.3-c | Performans: analistin doğru karar oranı | ✅ | Ground truth müşterinin doğrulama cevabı (§4.5): "ben yaptım" denen işlemi bloklamak ve "ben yapmadım" denen işlemi onaylamak yanlış karar; cevap yoksa karar doğru sayılıyor ([PointRuleEngine.cs], [PointRuleEngineTests.cs]). | |
 | 5.3-d | Süpervizör her zaman manuel atama yapabilir | ✅ | [ManualAssignmentEndpoint.cs] | |
-| 5.4-a | Tür değiştirilirse "yanlış sınıflandırma" olarak kaydedilir | ❌ | 4.3-c: override AI'a ulaşmıyor. | Part 5 |
-| 5.4-b | Süpervizör panelinde AI doğruluk oranı (doğru / toplam × 100) | 🐛 | Endpoint ve kart var ([metrics_router.py], [SupervisorDashboardPage.tsx#L200-L210]) ama `prediction_feedback` hiç dolmadığı için her zaman boş. | Part 5 |
-| 5.4-c | Kategori bazlı doğruluk kırılımı | 🐛 | `/api/v1/ai/metrics/categories` var, aynı nedenle boş. | Part 5 |
+| 5.4-a | Tür değiştirilirse "yanlış sınıflandırma" olarak kaydedilir | ✅ | 4.3-c; test [test_feedback.py]. | |
+| 5.4-b | Süpervizör panelinde AI doğruluk oranı (doğru / toplam × 100) | ✅ | Ground truth: önce müşterinin doğrulama cevabı, yoksa analistin kararı ([feedback.py]). Oranlar yalnızca notlanabilen satırları sayıyor. `demo.py smoke` bloktan sonra kararın AI metriklerine ulaştığını kontrol ediyor. | |
+| 5.4-c | Kategori bazlı doğruluk kırılımı | ✅ | `/api/v1/ai/metrics/categories` her tür için precision ve recall dönüyor; süpervizör panelindeki "Model doğruluğu" kartında görünüyor. Test [test_feedback.py], `demo.py smoke`. | |
 
 ## 6. Gamification Service
 
@@ -200,7 +200,7 @@ ayrı ayrı görünür.
 | # | Senaryo | Durum | Kanıt | Plan |
 |---|---|:---:|---|---|
 | 10-a | SQL injection | ✅ | EF Core sorguları parametreli; ham SQL'ler `FromSql` / `ExecuteSqlAsync` ile parametreleniyor. Test: `scripts/security.py` (CI demo-e2e), login, OTP ve liste filtrelerine `' OR 1=1 --`: 400/401 ya da boş sonuç, hiç 5xx yok. | |
-| 10-b | Müşteri token'ıyla süpervizör endpoint'i | ✅ | .NET endpoint'leri rolü kontrol ediyor; liderlik tablosu müşteriye kapandı; AI route'ları gateway'de token ve personel rolü istiyor ([Edge/Program.cs]). Test: `scripts/security.py` (CI demo-e2e), 9 endpoint × 4 rol + token'sız. AI servisi token'ı kendisi doğrulamıyor. | Part 5 |
+| 10-b | Müşteri token'ıyla süpervizör endpoint'i | ✅ | .NET servisleri ve AI servisi rolü ve token'ı kendileri doğruluyor (AI: [security.py], JWKS, RS256, issuer/audience); gateway de token istiyor. Test: `scripts/security.py`, 9 endpoint × 4 rol + token'sız; AI için [test_security.py]. | |
 | 10-c | IDOR (kayıt ID'si değiştirerek başkasının verisi) | ✅ | Başka müşterinin işlemi, vakası, doğrulaması 404; atanmamış analist işlemi, vakayı göremiyor ve karar veremiyor (404); başkasının oyun profili ve performansı 403. Test: `scripts/security.py` (CI demo-e2e). | |
 | 10-d | Süresi dolmuş ya da değiştirilmiş JWT | ✅ | RS256, issuer, audience ve süre doğrulaması. Test: [JwtValidationTests.cs] (süresi dolmuş, yanlış issuer/audience, başka anahtar, alg=none, HS256, değiştirilmiş rol) ve `scripts/security.py` (CI demo-e2e) (gateway'de değiştirilmiş rol, alg=none, kesilmiş imza 401). | |
 | 10-e | İptal edilmiş refresh token'ın yeniden kullanımı | ✅ | 3.2-c | |
@@ -255,7 +255,7 @@ ayrı ayrı görünür.
 | 14.2-a | Ana README: genel bakış, mimari diyagram, kurulum (`docker compose up` + seed), demo kullanıcıları | ✅ | [README.MD]: her işletim sistemi için kurulum, otomatik seed, 7 demo kullanıcısı. | Part 7 |
 | 14.2-b | Servis başına README | ⚠️ | 2.2-e | Part 7 |
 | 14.2-c | EVENTS.md | ⚠️ | 9-c | Part 7 |
-| 14.2-d | AI yaklaşım dokümanı (yöntem, gerekçe, çalışma şekli, eğitim verisi ve süreç) | ⚠️ | 4.265 satırlık bir tasarım dokümanı var ([10-AI-SERVICE-DESIGN.md]), ama bir okurun takip edebileceği uzunlukta değil; eğitim verisi repoda yok. | Part 5, 7 |
+| 14.2-d | AI yaklaşım dokümanı (yöntem, gerekçe, çalışma şekli, eğitim verisi ve süreç) | ✅ | [MODEL_CARD.md]: veri, özellikler, eşikler, offline ve canlı metrikler, sınırlar. Eğitim verisi repoda. | |
 | 14.2-e | Swagger/OpenAPI (en az Transaction ve AI) | ✅ | 8-d | |
 
 ## Planda olmayan, bu denetimde bulunan sorunlar
@@ -263,10 +263,10 @@ ayrı ayrı görünür.
 Hackathon sonrası ilk planda yer almayan, kod okunurken çıkan bulgular. Her biri ilgili part'ta önce
 başarısız bir testle gösterilip sonra düzeltilecek.
 
-1. ~~Gateway token'sız isteği geçirdiği için `/api/v1/ai/**` herkese açık.~~ Part 4'te düzeltildi: gateway token ve personel rolü istiyor, kod yorumu düzeltildi. AI servisinin token'ı kendisi doğrulaması Part 5'e kaldı. (Part 5)
-2. `prediction_feedback` tablosuna hiçbir kod yazmıyor; AI doğruluk metrikleri ve kategori kırılımı her zaman boş. (Part 5)
+1. ~~`/api/v1/ai/**` herkese açık; AI servisi token'ı kendisi doğrulamıyor.~~ Part 4'te gateway'de, Part 5'te AI servisinin kendisinde kapatıldı.
+2. ~~`prediction_feedback` tablosuna hiçbir kod yazmıyor.~~ Part 5'te düzeltildi.
 3. ~~Rozet koşulları henüz kaydedilmemiş satırları sayıyor.~~ Part 3'te düzeltildi.
-4. "Gece" özelliği UTC saatine göre hesaplanıyor. (Part 5)
+4. ~~"Gece" özelliği UTC saatine göre hesaplanıyor.~~ Part 5'te düzeltildi: İstanbul saati.
 5. ~~Analist, kendisine atanmamış işlemin detayını okuyabiliyor.~~ Part 4'te düzeltildi.
 6. ~~Refresh token yeniden kullanıldığında yalnızca o token ailesi iptal ediliyor.~~ Part 4'te düzeltildi: kullanıcının tüm oturumları iptal ediliyor.
 7. Müşterinin 1–5 yıldız vereceği ekran yok. (Part 6)
@@ -281,7 +281,6 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 [BACKEND/.env.example]: ../BACKEND/.env.example
 [BACKEND/EVENTS.md]: ../BACKEND/EVENTS.md
 [BACKEND/contracts/openapi/]: ../BACKEND/contracts/openapi
-[10-AI-SERVICE-DESIGN.md]: ../BACKEND/docs/10-AI-SERVICE-DESIGN.md
 [README.MD]: ../README.MD
 [ci.yml]: ../.github/workflows/ci.yml
 
@@ -321,7 +320,6 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 [ManualAssignmentEndpoint.cs]: ../BACKEND/src/Services/Transaction/FraudCell.Transaction.Service/Features/Cases/Assignment/ManualAssignmentEndpoint.cs
 [ReassignmentEndpoint.cs]: ../BACKEND/src/Services/Transaction/FraudCell.Transaction.Service/Features/Cases/Reassignment/ReassignmentEndpoint.cs
 [FraudTypeOverrideEndpoint.cs#L27]: ../BACKEND/src/Services/Transaction/FraudCell.Transaction.Service/Features/Cases/FraudTypeOverride/FraudTypeOverrideEndpoint.cs#L27
-[FraudTypeOverrideEndpoint.cs#L81-L89]: ../BACKEND/src/Services/Transaction/FraudCell.Transaction.Service/Features/Cases/FraudTypeOverride/FraudTypeOverrideEndpoint.cs#L81-L89
 [RiskLevelOverrideEndpoint.cs]: ../BACKEND/src/Services/Transaction/FraudCell.Transaction.Service/Features/Cases/RiskLevelOverride/RiskLevelOverrideEndpoint.cs
 [VerificationRequestsEndpoint.cs]: ../BACKEND/src/Services/Transaction/FraudCell.Transaction.Service/Features/Cases/VerificationRequests/VerificationRequestsEndpoint.cs
 [VerificationResponsesEndpoint.cs]: ../BACKEND/src/Services/Transaction/FraudCell.Transaction.Service/Features/Cases/VerificationResponses/VerificationResponsesEndpoint.cs
@@ -359,22 +357,26 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 [decision_policy.py]: ../BACKEND/src/Ai/fraudcell-ai/app/ml/decision_policy.py
 [train.py]: ../BACKEND/src/Ai/fraudcell-ai/train.py
 [metadata.json]: ../BACKEND/src/Ai/fraudcell-ai/models/metadata.json
-[synthetic_data.py]: ../BACKEND/src/Ai/fraudcell-ai/app/ml/synthetic_data.py
 [transaction_created_consumer.py#L66]: ../BACKEND/src/Ai/fraudcell-ai/app/messaging/transaction_created_consumer.py#L66
 [assignment.py#L18-L22]: ../BACKEND/src/Ai/fraudcell-ai/app/ml/assignment.py#L18-L22
 [assignment.py#L79-L81]: ../BACKEND/src/Ai/fraudcell-ai/app/ml/assignment.py#L79-L81
-[ai/app/main.py#L48-L52]: ../BACKEND/src/Ai/fraudcell-ai/app/main.py#L48-L52
-[metrics_router.py]: ../BACKEND/src/Ai/fraudcell-ai/app/api/metrics_router.py
 
 [SlaCountdown.tsx]: ../FRONTEND/app/src/shared/ui/SlaCountdown.tsx
 [CaseDetailPage.tsx]: ../FRONTEND/app/src/routes/analyst/CaseDetailPage.tsx
 [useRealtime.ts]: ../FRONTEND/app/src/features/realtime/useRealtime.ts
 [useRealtime.ts#L99]: ../FRONTEND/app/src/features/realtime/useRealtime.ts#L99
 [SupervisorDashboardPage.tsx#L192]: ../FRONTEND/app/src/routes/supervisor/SupervisorDashboardPage.tsx#L192
-[SupervisorDashboardPage.tsx#L200-L210]: ../FRONTEND/app/src/routes/supervisor/SupervisorDashboardPage.tsx#L200-L210
 [AnalystPointsPage.tsx]: ../FRONTEND/app/src/routes/analyst/AnalystPointsPage.tsx
 [AssignmentQueuePage.tsx]: ../FRONTEND/app/src/routes/supervisor/AssignmentQueuePage.tsx
 [RefreshTokenServiceTests.cs]: ../BACKEND/tests/FraudCell.Identity.Service.Tests/RefreshTokenServiceTests.cs
 [Edge/Program.cs]: ../BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/Program.cs
 [AuthorizationDeniedAuditMiddleware.cs]: ../BACKEND/src/BuildingBlocks/FraudCell.BuildingBlocks/Security/AuthorizationDeniedAuditMiddleware.cs
 [JwtValidationTests.cs]: ../BACKEND/tests/FraudCell.BuildingBlocks.Tests/JwtValidationTests.cs
+[MODEL_CARD.md]: ../BACKEND/src/Ai/fraudcell-ai/MODEL_CARD.md
+[security.py]: ../BACKEND/src/Ai/fraudcell-ai/app/security.py
+[feedback_consumers.py]: ../BACKEND/src/Ai/fraudcell-ai/app/messaging/feedback_consumers.py
+[feedback.py]: ../BACKEND/src/Ai/fraudcell-ai/app/ml/feedback.py
+[scenarios.py]: ../BACKEND/src/Ai/fraudcell-ai/app/ml/scenarios.py
+[test_features.py]: ../BACKEND/src/Ai/fraudcell-ai/tests/test_features.py
+[test_feedback.py]: ../BACKEND/src/Ai/fraudcell-ai/tests/test_feedback.py
+[test_security.py]: ../BACKEND/src/Ai/fraudcell-ai/tests/test_security.py

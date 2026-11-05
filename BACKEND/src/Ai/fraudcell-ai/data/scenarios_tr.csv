@@ -1,0 +1,121 @@
+scenario_id,description,amount,hour_of_day,is_night,is_foreign_country,is_new_device,is_new_recipient,amount_deviation_ratio,transactions_last_10_minutes,transactions_last_24_hours,device_age_days,recipient_age_days,transaction_type_odeme,transaction_type_transfer,transaction_type_fatura,transaction_type_cekim,fraud_type,is_fraud
+S01-1,"Gece yarisi yurt disindan, yeni cihazla art arda yuksek tutarli kart odemeleri",18000.0,1.0,1.0,1.0,1.0,1.0,7.0,5.0,9.0,0.0,0.0,1.0,0.0,0.0,0.0,CALINTI_KART,1
+S01-2,"Gece yarisi yurt disindan, yeni cihazla art arda yuksek tutarli kart odemeleri",14400.0,2.0,1.0,1.0,1.0,1.0,5.6,5.0,9.0,0.0,0.0,1.0,0.0,0.0,0.0,CALINTI_KART,1
+S01-3,"Gece yarisi yurt disindan, yeni cihazla art arda yuksek tutarli kart odemeleri",22500.0,3.0,1.0,1.0,1.0,1.0,8.75,5.0,9.0,0.0,0.0,1.0,0.0,0.0,0.0,CALINTI_KART,1
+S01-4,"Gece yarisi yurt disindan, yeni cihazla art arda yuksek tutarli kart odemeleri",16200.0,0.0,1.0,1.0,1.0,1.0,6.3,5.0,9.0,0.0,0.0,1.0,0.0,0.0,0.0,CALINTI_KART,1
+S01-5,"Gece yarisi yurt disindan, yeni cihazla art arda yuksek tutarli kart odemeleri",19800.0,23.0,1.0,1.0,1.0,1.0,7.7,5.0,9.0,0.0,0.0,1.0,0.0,0.0,0.0,CALINTI_KART,1
+S02-1,Calinan kartla yeni cihazdan kisa surede cok sayida kucuk cekim,2500.0,2.0,1.0,0.0,1.0,1.0,4.0,6.0,10.0,1.0,0.0,0.0,0.0,0.0,1.0,CALINTI_KART,1
+S02-2,Calinan kartla yeni cihazdan kisa surede cok sayida kucuk cekim,2000.0,3.0,1.0,0.0,1.0,1.0,3.2,6.0,10.0,1.0,0.0,0.0,0.0,0.0,1.0,CALINTI_KART,1
+S02-3,Calinan kartla yeni cihazdan kisa surede cok sayida kucuk cekim,3125.0,4.0,1.0,0.0,1.0,1.0,5.0,6.0,10.0,1.0,0.0,0.0,0.0,0.0,1.0,CALINTI_KART,1
+S02-4,Calinan kartla yeni cihazdan kisa surede cok sayida kucuk cekim,2250.0,1.0,1.0,0.0,1.0,1.0,3.6,6.0,10.0,1.0,0.0,0.0,0.0,0.0,1.0,CALINTI_KART,1
+S02-5,Calinan kartla yeni cihazdan kisa surede cok sayida kucuk cekim,2750.0,0.0,1.0,0.0,1.0,1.0,4.4,6.0,10.0,1.0,0.0,0.0,0.0,0.0,1.0,CALINTI_KART,1
+S03-1,Kart bilgileri ele gecirilmis: yurt disi e-ticaret sitesinden gece toplu alisveris,9500.0,23.0,1.0,1.0,1.0,1.0,5.5,4.0,7.0,0.0,1.0,1.0,0.0,0.0,0.0,CALINTI_KART,1
+S03-2,Kart bilgileri ele gecirilmis: yurt disi e-ticaret sitesinden gece toplu alisveris,7600.0,0.0,1.0,1.0,1.0,1.0,4.4,4.0,7.0,0.0,1.0,1.0,0.0,0.0,0.0,CALINTI_KART,1
+S03-3,Kart bilgileri ele gecirilmis: yurt disi e-ticaret sitesinden gece toplu alisveris,11875.0,1.0,1.0,1.0,1.0,1.0,6.875,4.0,7.0,0.0,1.0,1.0,0.0,0.0,0.0,CALINTI_KART,1
+S03-4,Kart bilgileri ele gecirilmis: yurt disi e-ticaret sitesinden gece toplu alisveris,8550.0,2.0,1.0,1.0,1.0,1.0,4.95,4.0,7.0,0.0,1.0,1.0,0.0,0.0,0.0,CALINTI_KART,1
+S03-5,Kart bilgileri ele gecirilmis: yurt disi e-ticaret sitesinden gece toplu alisveris,10450.0,3.0,1.0,1.0,1.0,1.0,6.05,4.0,7.0,0.0,1.0,1.0,0.0,0.0,0.0,CALINTI_KART,1
+S04-1,Kayip kartla ayni gece farkli sehirlerdeki ATM'lerden nakit cekimi,6000.0,1.0,1.0,0.0,1.0,1.0,6.0,4.0,8.0,2.0,0.0,0.0,0.0,0.0,1.0,CALINTI_KART,1
+S04-2,Kayip kartla ayni gece farkli sehirlerdeki ATM'lerden nakit cekimi,4800.0,2.0,1.0,0.0,1.0,1.0,4.8,4.0,8.0,2.0,0.0,0.0,0.0,0.0,1.0,CALINTI_KART,1
+S04-3,Kayip kartla ayni gece farkli sehirlerdeki ATM'lerden nakit cekimi,7500.0,3.0,1.0,0.0,1.0,1.0,7.5,4.0,8.0,2.0,0.0,0.0,0.0,0.0,1.0,CALINTI_KART,1
+S04-4,Kayip kartla ayni gece farkli sehirlerdeki ATM'lerden nakit cekimi,5400.0,0.0,1.0,0.0,1.0,1.0,5.4,4.0,8.0,2.0,0.0,0.0,0.0,0.0,1.0,CALINTI_KART,1
+S04-5,Kayip kartla ayni gece farkli sehirlerdeki ATM'lerden nakit cekimi,6600.0,23.0,1.0,0.0,1.0,1.0,6.6,4.0,8.0,2.0,0.0,0.0,0.0,0.0,1.0,CALINTI_KART,1
+S05-1,Sifresi calinan hesaptan yeni cihazla giris sonrasi tanimadik aliciya yuksek transfer,35000.0,2.0,1.0,0.0,1.0,1.0,4.0,2.0,5.0,6.0,4.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S05-2,Sifresi calinan hesaptan yeni cihazla giris sonrasi tanimadik aliciya yuksek transfer,28000.0,3.0,1.0,0.0,1.0,1.0,3.2,2.0,5.0,6.0,4.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S05-3,Sifresi calinan hesaptan yeni cihazla giris sonrasi tanimadik aliciya yuksek transfer,43750.0,1.0,1.0,0.0,1.0,1.0,5.0,2.0,5.0,6.0,4.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S05-4,Sifresi calinan hesaptan yeni cihazla giris sonrasi tanimadik aliciya yuksek transfer,31500.0,4.0,1.0,0.0,1.0,1.0,3.6,2.0,5.0,6.0,4.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S05-5,Sifresi calinan hesaptan yeni cihazla giris sonrasi tanimadik aliciya yuksek transfer,38500.0,0.0,1.0,0.0,1.0,1.0,4.4,2.0,5.0,6.0,4.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S06-1,SIM kart degisiminden hemen sonra yeni cihazdan hesabi bosaltma girisimi,48000.0,22.0,0.0,0.0,1.0,1.0,5.0,3.0,6.0,8.0,3.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S06-2,SIM kart degisiminden hemen sonra yeni cihazdan hesabi bosaltma girisimi,38400.0,23.0,1.0,0.0,1.0,1.0,4.0,3.0,6.0,8.0,3.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S06-3,SIM kart degisiminden hemen sonra yeni cihazdan hesabi bosaltma girisimi,60000.0,0.0,1.0,0.0,1.0,1.0,6.25,3.0,6.0,8.0,3.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S06-4,SIM kart degisiminden hemen sonra yeni cihazdan hesabi bosaltma girisimi,43200.0,1.0,1.0,0.0,1.0,1.0,4.5,3.0,6.0,8.0,3.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S06-5,SIM kart degisiminden hemen sonra yeni cihazdan hesabi bosaltma girisimi,52800.0,2.0,1.0,0.0,1.0,1.0,5.5,3.0,6.0,8.0,3.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S07-1,Oltalama (phishing) sonrasi yurt disi baglantili yeni cihazdan art arda transferler,15000.0,9.0,0.0,1.0,1.0,1.0,3.5,3.0,6.0,10.0,6.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S07-2,Oltalama (phishing) sonrasi yurt disi baglantili yeni cihazdan art arda transferler,12000.0,11.0,0.0,1.0,1.0,1.0,2.8,3.0,6.0,10.0,6.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S07-3,Oltalama (phishing) sonrasi yurt disi baglantili yeni cihazdan art arda transferler,18750.0,14.0,0.0,1.0,1.0,1.0,4.375,3.0,6.0,10.0,6.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S07-4,Oltalama (phishing) sonrasi yurt disi baglantili yeni cihazdan art arda transferler,13500.0,16.0,0.0,1.0,1.0,1.0,3.15,3.0,6.0,10.0,6.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S07-5,Oltalama (phishing) sonrasi yurt disi baglantili yeni cihazdan art arda transferler,16500.0,20.0,0.0,1.0,1.0,1.0,3.85,3.0,6.0,10.0,6.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S08-1,Ele gecirilen hesapta yeni cihazdan her zamankinden farkli bir IBAN'a para gonderimi,12000.0,10.0,0.0,0.0,1.0,1.0,3.2,2.0,5.0,7.0,2.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S08-2,Ele gecirilen hesapta yeni cihazdan her zamankinden farkli bir IBAN'a para gonderimi,9600.0,13.0,0.0,0.0,1.0,1.0,2.56,2.0,5.0,7.0,2.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S08-3,Ele gecirilen hesapta yeni cihazdan her zamankinden farkli bir IBAN'a para gonderimi,15000.0,15.0,0.0,0.0,1.0,1.0,4.0,2.0,5.0,7.0,2.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S08-4,Ele gecirilen hesapta yeni cihazdan her zamankinden farkli bir IBAN'a para gonderimi,10800.0,18.0,0.0,0.0,1.0,1.0,2.88,2.0,5.0,7.0,2.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S08-5,Ele gecirilen hesapta yeni cihazdan her zamankinden farkli bir IBAN'a para gonderimi,13200.0,21.0,0.0,0.0,1.0,1.0,3.52,2.0,5.0,7.0,2.0,0.0,1.0,0.0,0.0,HESAP_ELE_GECIRME,1
+S09-1,"Yurt disindaki yeni alicilara gun icinde parcali, yuvarlak tutarli transferler",45000.0,10.0,0.0,1.0,0.0,1.0,7.0,1.0,9.0,200.0,0.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S09-2,"Yurt disindaki yeni alicilara gun icinde parcali, yuvarlak tutarli transferler",36000.0,12.0,0.0,1.0,0.0,1.0,5.6,1.0,9.0,200.0,0.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S09-3,"Yurt disindaki yeni alicilara gun icinde parcali, yuvarlak tutarli transferler",56250.0,14.0,0.0,1.0,0.0,1.0,8.75,1.0,9.0,200.0,0.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S09-4,"Yurt disindaki yeni alicilara gun icinde parcali, yuvarlak tutarli transferler",40500.0,16.0,0.0,1.0,0.0,1.0,6.3,1.0,9.0,200.0,0.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S09-5,"Yurt disindaki yeni alicilara gun icinde parcali, yuvarlak tutarli transferler",49500.0,18.0,0.0,1.0,0.0,1.0,7.7,1.0,9.0,200.0,0.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S10-1,Yeni acilmis alici hesaplarina surekli yuksek tutarli transfer (paravan hesap),80000.0,11.0,0.0,1.0,0.0,1.0,9.0,1.0,7.0,300.0,1.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S10-2,Yeni acilmis alici hesaplarina surekli yuksek tutarli transfer (paravan hesap),64000.0,13.0,0.0,1.0,0.0,1.0,7.2,1.0,7.0,300.0,1.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S10-3,Yeni acilmis alici hesaplarina surekli yuksek tutarli transfer (paravan hesap),100000.0,15.0,0.0,1.0,0.0,1.0,11.25,1.0,7.0,300.0,1.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S10-4,Yeni acilmis alici hesaplarina surekli yuksek tutarli transfer (paravan hesap),72000.0,17.0,0.0,1.0,0.0,1.0,8.1,1.0,7.0,300.0,1.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S10-5,Yeni acilmis alici hesaplarina surekli yuksek tutarli transfer (paravan hesap),88000.0,19.0,0.0,1.0,0.0,1.0,9.9,1.0,7.0,300.0,1.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S11-1,Hesaba gelen paranin ayni gun icinde yurt disina aktarilmasi,60000.0,8.0,0.0,1.0,0.0,1.0,8.0,2.0,8.0,150.0,2.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S11-2,Hesaba gelen paranin ayni gun icinde yurt disina aktarilmasi,48000.0,10.0,0.0,1.0,0.0,1.0,6.4,2.0,8.0,150.0,2.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S11-3,Hesaba gelen paranin ayni gun icinde yurt disina aktarilmasi,75000.0,12.0,0.0,1.0,0.0,1.0,10.0,2.0,8.0,150.0,2.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S11-4,Hesaba gelen paranin ayni gun icinde yurt disina aktarilmasi,54000.0,14.0,0.0,1.0,0.0,1.0,7.2,2.0,8.0,150.0,2.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S11-5,Hesaba gelen paranin ayni gun icinde yurt disina aktarilmasi,66000.0,22.0,0.0,1.0,0.0,1.0,8.8,2.0,8.0,150.0,2.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S12-1,Kumar sitesiyle baglantili yurt disi hesaplara gece duzenli transfer,30000.0,23.0,1.0,1.0,0.0,1.0,6.5,1.0,6.0,90.0,3.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S12-2,Kumar sitesiyle baglantili yurt disi hesaplara gece duzenli transfer,24000.0,0.0,1.0,1.0,0.0,1.0,5.2,1.0,6.0,90.0,3.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S12-3,Kumar sitesiyle baglantili yurt disi hesaplara gece duzenli transfer,37500.0,1.0,1.0,1.0,0.0,1.0,8.125,1.0,6.0,90.0,3.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S12-4,Kumar sitesiyle baglantili yurt disi hesaplara gece duzenli transfer,27000.0,22.0,0.0,1.0,0.0,1.0,5.85,1.0,6.0,90.0,3.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S12-5,Kumar sitesiyle baglantili yurt disi hesaplara gece duzenli transfer,33000.0,2.0,1.0,1.0,0.0,1.0,7.15,1.0,6.0,90.0,3.0,0.0,1.0,0.0,0.0,PARA_AKLAMA,1
+S13-1,Gece saatinde kisa surede cok sayida dusuk tutarli deneme odemesi,300.0,0.0,1.0,0.0,1.0,1.0,2.4,5.0,9.0,1.0,0.0,1.0,0.0,0.0,0.0,SUPHELI_DAVRANIS,1
+S13-2,Gece saatinde kisa surede cok sayida dusuk tutarli deneme odemesi,240.0,1.0,1.0,0.0,1.0,1.0,1.92,5.0,9.0,1.0,0.0,1.0,0.0,0.0,0.0,SUPHELI_DAVRANIS,1
+S13-3,Gece saatinde kisa surede cok sayida dusuk tutarli deneme odemesi,375.0,2.0,1.0,0.0,1.0,1.0,3.0,5.0,9.0,1.0,0.0,1.0,0.0,0.0,0.0,SUPHELI_DAVRANIS,1
+S13-4,Gece saatinde kisa surede cok sayida dusuk tutarli deneme odemesi,270.0,3.0,1.0,0.0,1.0,1.0,2.16,5.0,9.0,1.0,0.0,1.0,0.0,0.0,0.0,SUPHELI_DAVRANIS,1
+S13-5,Gece saatinde kisa surede cok sayida dusuk tutarli deneme odemesi,330.0,23.0,1.0,0.0,1.0,1.0,2.64,5.0,9.0,1.0,0.0,1.0,0.0,0.0,0.0,SUPHELI_DAVRANIS,1
+S14-1,Uzun suredir hareketsiz hesapta aniden yeni cihazdan gece cekimi,7000.0,3.0,1.0,0.0,1.0,0.0,3.5,1.0,2.0,0.0,30.0,0.0,0.0,0.0,1.0,SUPHELI_DAVRANIS,1
+S14-2,Uzun suredir hareketsiz hesapta aniden yeni cihazdan gece cekimi,5600.0,4.0,1.0,0.0,1.0,0.0,2.8,1.0,2.0,0.0,30.0,0.0,0.0,0.0,1.0,SUPHELI_DAVRANIS,1
+S14-3,Uzun suredir hareketsiz hesapta aniden yeni cihazdan gece cekimi,8750.0,23.0,1.0,0.0,1.0,0.0,4.375,1.0,2.0,0.0,30.0,0.0,0.0,0.0,1.0,SUPHELI_DAVRANIS,1
+S14-4,Uzun suredir hareketsiz hesapta aniden yeni cihazdan gece cekimi,6300.0,0.0,1.0,0.0,1.0,0.0,3.15,1.0,2.0,0.0,30.0,0.0,0.0,0.0,1.0,SUPHELI_DAVRANIS,1
+S14-5,Uzun suredir hareketsiz hesapta aniden yeni cihazdan gece cekimi,7700.0,1.0,1.0,0.0,1.0,0.0,3.85,1.0,2.0,0.0,30.0,0.0,0.0,0.0,1.0,SUPHELI_DAVRANIS,1
+S15-1,"Alisilmisin uc kati tutarda, yeni cihazdan yeni aliciya aksam odemesi",9000.0,19.0,0.0,0.0,1.0,1.0,3.0,3.0,5.0,2.0,0.0,1.0,0.0,0.0,0.0,SUPHELI_DAVRANIS,1
+S15-2,"Alisilmisin uc kati tutarda, yeni cihazdan yeni aliciya aksam odemesi",7200.0,20.0,0.0,0.0,1.0,1.0,2.4,3.0,5.0,2.0,0.0,1.0,0.0,0.0,0.0,SUPHELI_DAVRANIS,1
+S15-3,"Alisilmisin uc kati tutarda, yeni cihazdan yeni aliciya aksam odemesi",11250.0,21.0,0.0,0.0,1.0,1.0,3.75,3.0,5.0,2.0,0.0,1.0,0.0,0.0,0.0,SUPHELI_DAVRANIS,1
+S15-4,"Alisilmisin uc kati tutarda, yeni cihazdan yeni aliciya aksam odemesi",8100.0,22.0,0.0,0.0,1.0,1.0,2.7,3.0,5.0,2.0,0.0,1.0,0.0,0.0,0.0,SUPHELI_DAVRANIS,1
+S15-5,"Alisilmisin uc kati tutarda, yeni cihazdan yeni aliciya aksam odemesi",9900.0,18.0,0.0,0.0,1.0,1.0,3.3,3.0,5.0,2.0,0.0,1.0,0.0,0.0,0.0,SUPHELI_DAVRANIS,1
+S16-1,Her ay tekrarlayan duzenli elektrik faturasi odemesi,850.0,9.0,0.0,0.0,0.0,0.0,1.0,0.0,1.0,400.0,365.0,0.0,0.0,1.0,0.0,TEMIZ,0
+S16-2,Her ay tekrarlayan duzenli elektrik faturasi odemesi,680.0,10.0,0.0,0.0,0.0,0.0,0.8,0.0,1.0,400.0,365.0,0.0,0.0,1.0,0.0,TEMIZ,0
+S16-3,Her ay tekrarlayan duzenli elektrik faturasi odemesi,1062.5,11.0,0.0,0.0,0.0,0.0,1.25,0.0,1.0,400.0,365.0,0.0,0.0,1.0,0.0,TEMIZ,0
+S16-4,Her ay tekrarlayan duzenli elektrik faturasi odemesi,765.0,12.0,0.0,0.0,0.0,0.0,0.9,0.0,1.0,400.0,365.0,0.0,0.0,1.0,0.0,TEMIZ,0
+S16-5,Her ay tekrarlayan duzenli elektrik faturasi odemesi,935.0,13.0,0.0,0.0,0.0,0.0,1.1,0.0,1.0,400.0,365.0,0.0,0.0,1.0,0.0,TEMIZ,0
+S17-1,Kayitli cihazdan mahalle marketinde alisveris,650.0,10.0,0.0,0.0,0.0,0.0,0.9,0.0,2.0,600.0,200.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S17-2,Kayitli cihazdan mahalle marketinde alisveris,520.0,12.0,0.0,0.0,0.0,0.0,0.72,0.0,2.0,600.0,200.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S17-3,Kayitli cihazdan mahalle marketinde alisveris,812.5,17.0,0.0,0.0,0.0,0.0,1.125,0.0,2.0,600.0,200.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S17-4,Kayitli cihazdan mahalle marketinde alisveris,585.0,18.0,0.0,0.0,0.0,0.0,0.81,0.0,2.0,600.0,200.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S17-5,Kayitli cihazdan mahalle marketinde alisveris,715.0,19.0,0.0,0.0,0.0,0.0,0.99,0.0,2.0,600.0,200.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S18-1,Maas gununde ev sahibine her ayki kira transferi,15000.0,9.0,0.0,0.0,0.0,0.0,1.2,0.0,1.0,500.0,330.0,0.0,1.0,0.0,0.0,TEMIZ,0
+S18-2,Maas gununde ev sahibine her ayki kira transferi,12000.0,10.0,0.0,0.0,0.0,0.0,0.96,0.0,1.0,500.0,330.0,0.0,1.0,0.0,0.0,TEMIZ,0
+S18-3,Maas gununde ev sahibine her ayki kira transferi,18750.0,11.0,0.0,0.0,0.0,0.0,1.5,0.0,1.0,500.0,330.0,0.0,1.0,0.0,0.0,TEMIZ,0
+S18-4,Maas gununde ev sahibine her ayki kira transferi,13500.0,12.0,0.0,0.0,0.0,0.0,1.08,0.0,1.0,500.0,330.0,0.0,1.0,0.0,0.0,TEMIZ,0
+S18-5,Maas gununde ev sahibine her ayki kira transferi,16500.0,13.0,0.0,0.0,0.0,0.0,1.32,0.0,1.0,500.0,330.0,0.0,1.0,0.0,0.0,TEMIZ,0
+S19-1,Aileye her hafta yapilan duzenli para gonderimi,2000.0,18.0,0.0,0.0,0.0,0.0,1.0,0.0,1.0,700.0,400.0,0.0,1.0,0.0,0.0,TEMIZ,0
+S19-2,Aileye her hafta yapilan duzenli para gonderimi,1600.0,19.0,0.0,0.0,0.0,0.0,0.8,0.0,1.0,700.0,400.0,0.0,1.0,0.0,0.0,TEMIZ,0
+S19-3,Aileye her hafta yapilan duzenli para gonderimi,2500.0,20.0,0.0,0.0,0.0,0.0,1.25,0.0,1.0,700.0,400.0,0.0,1.0,0.0,0.0,TEMIZ,0
+S19-4,Aileye her hafta yapilan duzenli para gonderimi,1800.0,21.0,0.0,0.0,0.0,0.0,0.9,0.0,1.0,700.0,400.0,0.0,1.0,0.0,0.0,TEMIZ,0
+S19-5,Aileye her hafta yapilan duzenli para gonderimi,2200.0,17.0,0.0,0.0,0.0,0.0,1.1,0.0,1.0,700.0,400.0,0.0,1.0,0.0,0.0,TEMIZ,0
+S20-1,Tatildeyken yurt disinda kayitli cihazdan otel odemesi,6000.0,14.0,0.0,1.0,0.0,1.0,1.6,0.0,2.0,365.0,0.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S20-2,Tatildeyken yurt disinda kayitli cihazdan otel odemesi,4800.0,15.0,0.0,1.0,0.0,1.0,1.28,0.0,2.0,365.0,0.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S20-3,Tatildeyken yurt disinda kayitli cihazdan otel odemesi,7500.0,16.0,0.0,1.0,0.0,1.0,2.0,0.0,2.0,365.0,0.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S20-4,Tatildeyken yurt disinda kayitli cihazdan otel odemesi,5400.0,17.0,0.0,1.0,0.0,1.0,1.44,0.0,2.0,365.0,0.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S20-5,Tatildeyken yurt disinda kayitli cihazdan otel odemesi,6600.0,18.0,0.0,1.0,0.0,1.0,1.76,0.0,2.0,365.0,0.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S21-1,Isyerine yakin ATM'den hafta ici nakit cekimi,1500.0,12.0,0.0,0.0,0.0,0.0,1.1,0.0,1.0,450.0,300.0,0.0,0.0,0.0,1.0,TEMIZ,0
+S21-2,Isyerine yakin ATM'den hafta ici nakit cekimi,1200.0,13.0,0.0,0.0,0.0,0.0,0.88,0.0,1.0,450.0,300.0,0.0,0.0,0.0,1.0,TEMIZ,0
+S21-3,Isyerine yakin ATM'den hafta ici nakit cekimi,1875.0,8.0,0.0,0.0,0.0,0.0,1.375,0.0,1.0,450.0,300.0,0.0,0.0,0.0,1.0,TEMIZ,0
+S21-4,Isyerine yakin ATM'den hafta ici nakit cekimi,1350.0,9.0,0.0,0.0,0.0,0.0,0.99,0.0,1.0,450.0,300.0,0.0,0.0,0.0,1.0,TEMIZ,0
+S21-5,Isyerine yakin ATM'den hafta ici nakit cekimi,1650.0,17.0,0.0,0.0,0.0,0.0,1.21,0.0,1.0,450.0,300.0,0.0,0.0,0.0,1.0,TEMIZ,0
+S22-1,Telefon faturasinin otomatik odenmesi,400.0,6.0,0.0,0.0,0.0,0.0,1.0,0.0,1.0,800.0,700.0,0.0,0.0,1.0,0.0,TEMIZ,0
+S22-2,Telefon faturasinin otomatik odenmesi,320.0,7.0,0.0,0.0,0.0,0.0,0.8,0.0,1.0,800.0,700.0,0.0,0.0,1.0,0.0,TEMIZ,0
+S22-3,Telefon faturasinin otomatik odenmesi,500.0,8.0,0.0,0.0,0.0,0.0,1.25,0.0,1.0,800.0,700.0,0.0,0.0,1.0,0.0,TEMIZ,0
+S22-4,Telefon faturasinin otomatik odenmesi,360.0,9.0,0.0,0.0,0.0,0.0,0.9,0.0,1.0,800.0,700.0,0.0,0.0,1.0,0.0,TEMIZ,0
+S22-5,Telefon faturasinin otomatik odenmesi,440.0,10.0,0.0,0.0,0.0,0.0,1.1,0.0,1.0,800.0,700.0,0.0,0.0,1.0,0.0,TEMIZ,0
+S23-1,Yeni telefona gecen musterinin ilk gun alistigi tutarda market odemesi,700.0,11.0,0.0,0.0,1.0,0.0,1.0,0.0,2.0,0.0,250.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S23-2,Yeni telefona gecen musterinin ilk gun alistigi tutarda market odemesi,560.0,12.0,0.0,0.0,1.0,0.0,0.8,0.0,2.0,0.0,250.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S23-3,Yeni telefona gecen musterinin ilk gun alistigi tutarda market odemesi,875.0,13.0,0.0,0.0,1.0,0.0,1.25,0.0,2.0,0.0,250.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S23-4,Yeni telefona gecen musterinin ilk gun alistigi tutarda market odemesi,630.0,14.0,0.0,0.0,1.0,0.0,0.9,0.0,2.0,0.0,250.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S23-5,Yeni telefona gecen musterinin ilk gun alistigi tutarda market odemesi,770.0,15.0,0.0,0.0,1.0,0.0,1.1,0.0,2.0,0.0,250.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S24-1,Gece vardiyasinda calisan musterinin her zamanki eczane odemesi,300.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,1.0,500.0,200.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S24-2,Gece vardiyasinda calisan musterinin her zamanki eczane odemesi,240.0,1.0,1.0,0.0,0.0,0.0,0.8,0.0,1.0,500.0,200.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S24-3,Gece vardiyasinda calisan musterinin her zamanki eczane odemesi,375.0,2.0,1.0,0.0,0.0,0.0,1.25,0.0,1.0,500.0,200.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S24-4,Gece vardiyasinda calisan musterinin her zamanki eczane odemesi,270.0,23.0,1.0,0.0,0.0,0.0,0.9,0.0,1.0,500.0,200.0,1.0,0.0,0.0,0.0,TEMIZ,0
+S24-5,Gece vardiyasinda calisan musterinin her zamanki eczane odemesi,330.0,3.0,1.0,0.0,0.0,0.0,1.1,0.0,1.0,500.0,200.0,1.0,0.0,0.0,0.0,TEMIZ,0

@@ -177,20 +177,21 @@ def xss(admin: str) -> None:
 
 
 def audit_of_403(customer: str, admin: str) -> None:
-    """Case §3.3: an unauthorized call returns 403 and lands in the audit log."""
+    """Case §3.3: an unauthorized call returns 403 and lands in the audit log, once."""
     customer_id = user_id(customer)
-    path = "/api/v1/cases/assignment-queue"
-    status = status_of("GET", path, customer)
-    check(f"customer calls a supervisor endpoint -> 403 (got {status})", status == 403)
+    # A .NET service and the AI service each audit their own 403s through their outbox.
+    for path in ("/api/v1/cases/assignment-queue", "/api/v1/ai/metrics/overview"):
+        status = status_of("GET", path, customer)
+        check(f"customer calls {path} -> 403 (got {status})", status == 403)
 
-    found = False
-    for _ in range(20):
-        _, payload, _ = call("GET", f"/api/v1/audit-logs?actorId={customer_id}&action=AUTHORIZATION_DENIED", admin)
-        found = any(entry.get("resourceId") == path for entry in items_of(payload))
-        if found:
-            break
-        time.sleep(1)
-    check("the 403 is in the audit log with the caller and the path", found)
+        entries: list[dict] = []
+        for _ in range(20):
+            _, payload, _ = call("GET", f"/api/v1/audit-logs?actorId={customer_id}&action=AUTHORIZATION_DENIED", admin)
+            entries = [entry for entry in items_of(payload) if entry.get("resourceId") == path]
+            if entries:
+                break
+            time.sleep(1)
+        check(f"the 403 on {path} is in the audit log exactly once (got {len(entries)})", len(entries) == 1, entries)
 
 
 def refresh_cookie(headers: dict) -> str | None:

@@ -63,12 +63,24 @@ class GeminiSettings(BaseSettings):
         return self.enabled and bool(self.api_key)
 
 
+class JwtSettings(BaseSettings):
+    """Identity Service's access tokens (case §3.2): RS256, keys from its JWKS."""
+
+    model_config = SettingsConfigDict(env_prefix="AI_JWT_")
+
+    metadata_address: str = "http://identity-service:8080/.well-known/openid-configuration"
+    issuer: str = "fraudcell-identity"
+    audience: str = "fraudcell-api"
+    clock_skew_seconds: int = 30
+
+
 class Settings(BaseSettings):
     service_name: str = "ai-service"
     database: DatabaseSettings = DatabaseSettings()
     rabbitmq: RabbitMqSettings = RabbitMqSettings()
     model: ModelSettings = ModelSettings()
     gemini: GeminiSettings = GeminiSettings()
+    jwt: JwtSettings = JwtSettings()
     internal_api_token: str = "CHANGE_ME"
 
 

@@ -28,7 +28,6 @@ keys/
 
 ## AI artefactlari (uretilebilir)
 src/Ai/fraudcell-ai/models/*.joblib
-src/Ai/fraudcell-ai/data/*.csv
 
 ## Log
 logs/

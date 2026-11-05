@@ -11,11 +11,12 @@ import asyncio
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 
 from app.api import health, internal_router, metrics_router, models_router, predictions_router
 from app.bootstrap import bootstrap_models
 from app.config import settings
+from app.messaging.feedback_consumers import CaseDecisionFeedbackConsumer, FraudTypeOverriddenConsumer
 from app.messaging.outbox_worker import run as run_outbox_worker
 from app.messaging.projection_consumers import (
     AnalystPerformanceUpdatedConsumer,
@@ -25,6 +26,7 @@ from app.messaging.projection_consumers import (
 )
 from app.messaging.transaction_created_consumer import TransactionCreatedConsumer
 from app.migrate import migrate
+from app.security import STAFF, SUPERVISOR_OR_ADMIN, require_roles
 
 logging.basicConfig(level=logging.INFO, format='{"timestamp":"%(asctime)s","level":"%(levelname)s","service":"ai-service","message":"%(message)s"}')
 logger = logging.getLogger(__name__)
@@ -50,6 +52,8 @@ async def lifespan(app: FastAPI):
         AnalystPerformanceUpdatedConsumer(settings.rabbitmq.url),
         CaseAssignedConsumer(settings.rabbitmq.url),
         CaseClosedConsumer(settings.rabbitmq.url),
+        FraudTypeOverriddenConsumer(settings.rabbitmq.url),
+        CaseDecisionFeedbackConsumer(settings.rabbitmq.url),
     ]
 
     for consumer in consumers:
@@ -68,7 +72,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="FraudCell AI Service", version="1.0.0", lifespan=lifespan)
 
 app.include_router(health.router)
-app.include_router(models_router.router)
-app.include_router(metrics_router.router)
-app.include_router(predictions_router.router)
+# Case §3.3: AI details for staff, accuracy metrics (the dashboard) for supervisors and admins.
+app.include_router(models_router.router, dependencies=[Depends(require_roles(*STAFF))])
+app.include_router(metrics_router.router, dependencies=[Depends(require_roles(*SUPERVISOR_OR_ADMIN))])
+app.include_router(predictions_router.router, dependencies=[Depends(require_roles(*STAFF))])
 app.include_router(internal_router.router)

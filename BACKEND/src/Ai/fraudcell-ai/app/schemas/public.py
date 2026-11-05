@@ -72,6 +72,8 @@ class CategoryAccuracyItemResponse(BaseModel):
     fraudType: str
     sampleCount: int
     accuracy: float | None
+    precision: float | None
+    recall: float | None
 
 
 class CategoryAccuracyResponse(BaseModel):
