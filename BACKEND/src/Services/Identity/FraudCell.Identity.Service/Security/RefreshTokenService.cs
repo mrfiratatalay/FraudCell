@@ -28,7 +28,7 @@ public sealed record RefreshRotationResult(
 ///
 /// Her rotation eskisini revoke edip ayni family'de yeni bir satir olusturur.
 /// Revoke edilmis bir token TEKRAR kullanilirsa (calinti token senaryosu),
-/// ailenin TUM satirlari revoke edilir ve caller kullaniciyi tamamen logout
+/// kullanicinin TUM oturumlari revoke edilir ve caller kullaniciyi tamamen logout
 /// etmelidir (security stamp yenileme cagiran katmanin sorumlulugundadir).
 /// </summary>
 public sealed class RefreshTokenService(IdentityServiceDbContext db, IClock clock, IOptions<JwtSigningOptions> options)
@@ -80,13 +80,13 @@ public sealed class RefreshTokenService(IdentityServiceDbContext db, IClock cloc
 
         if (current.RevokedAt is not null)
         {
-            // Bu token daha once rotate edilmis/iptal edilmisti; simdi tekrar
-            // sunulmasi calinti token senaryosudur. Tum family iptal edilir.
-            var familyMembers = await db.RefreshSessions
-                .Where(s => s.FamilyId == current.FamilyId && s.RevokedAt == null)
+            // A retired token presented again means it was stolen (case §3.2):
+            // every session of the user ends, on every device.
+            var userSessions = await db.RefreshSessions
+                .Where(s => s.UserId == current.UserId && s.RevokedAt == null)
                 .ToListAsync(cancellationToken);
 
-            foreach (var member in familyMembers)
+            foreach (var member in userSessions)
             {
                 member.RevokedAt = now;
                 member.RevocationReason = RevocationReasons.ReuseDetected;
