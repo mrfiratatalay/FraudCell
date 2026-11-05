@@ -69,8 +69,6 @@ var jsonOptions = app.Services.GetRequiredService<JsonSerializerOptions>();
 app.UseMiddleware<CorrelationMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseSecurityHeaders();
-app.UseDefaultFiles();
-app.UseStaticFiles();
 app.UseCors("FrontendDev");
 app.UseAuthentication();
 app.UseInvalidBearerTokenGuard(jsonOptions);
@@ -82,7 +80,6 @@ app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => fa
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = _ => false });
 
 app.MapReverseProxy();
-app.MapFallbackToFile("index.html");
 
 app.Run();
 

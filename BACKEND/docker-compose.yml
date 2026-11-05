@@ -291,13 +291,25 @@ services:
     mem_limit: 192m
     mem_reservation: 64m
 
-  # Tek giris noktasi. Frontend SPA'i da wwwroot'tan servis eder, bu yuzden
-  # ayri bir frontend/nginx container'i yoktur.
+  # Serves the built React SPA with nginx as a non-root user. Reached only
+  # through the gateway, which adds the security headers.
+  web:
+    <<: *application-security
+    build:
+      context: ../FRONTEND/app
+    networks:
+      - fraudcell-app
+    cpus: 0.25
+    mem_limit: 64m
+    mem_reservation: 16m
+
+  # Single entry point: routes /api/* to the services and every other path to
+  # web. Holds no data and consumes no events.
   edge-gateway:
     <<: *application-security
     build:
-      context: ..
-      dockerfile: BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/Dockerfile
+      context: .
+      dockerfile: src/Services/Edge/FraudCell.Edge.Gateway/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
       Jwt__MetadataAddress: http://identity-service:8080/.well-known/openid-configuration
@@ -309,6 +321,7 @@ services:
       ReverseProxy__Clusters__gamification__Destinations__gamification-service__Address: http://gamification-service:8080/
       ReverseProxy__Clusters__ai__Destinations__ai-service__Address: http://ai-service:8000/
       ReverseProxy__Clusters__notification__Destinations__notification-service__Address: http://notification-service:8080/
+      ReverseProxy__Clusters__web__Destinations__web__Address: http://web:8080/
       Logging__LogLevel__Yarp: Warning
       Serilog__MinimumLevel__Override__Yarp: Warning
     # The gateway waits for no downstream service: it downloads Identity's JWKS
@@ -324,6 +337,8 @@ services:
       ai-service:
         condition: service_started
       notification-service:
+        condition: service_started
+      web:
         condition: service_started
       rabbitmq:
         condition: service_healthy

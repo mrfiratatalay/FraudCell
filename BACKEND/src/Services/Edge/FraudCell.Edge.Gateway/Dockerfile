@@ -1,32 +1,29 @@
-# This Dockerfile must be built with the repository root as its build context.
+# Bu Dockerfile repository kökü `BACKEND/` build context'i ile calistirilmalidir
+# (bkz. docker-compose.yml), cunku proje Directory.Packages.props, Directory.Build.props,
+# global.json ve BuildingBlocks'a kok gorelidir (dokuman 03-TECH-STACK.md §39.1).
 
-# Keep in sync with FRONTEND/app/.nvmrc (CI reads the same version).
-FROM node:24.22.2-bookworm-slim AS frontend-build
-WORKDIR /frontend
+# SDK/runtime image'lari global.json'daki `10.0.403` ile birebir sabitlenmistir
+# (dokuman 03-TECH-STACK.md §4.1: "latest"/floating tag yasak). Floating `10.0`
+# tag'i host'ta kurulu olandan daha yeni bir SDK cekip, o SDK'nin daha sikilastirilmis
+# "latest-recommended" analyzer setiyle build'i kirabiliyor.
 
-COPY FRONTEND/app/package.json FRONTEND/app/package-lock.json ./
-RUN npm ci --no-audit --no-fund
-
-COPY FRONTEND/app/ ./
-ENV VITE_API_MODE=live \
-    VITE_REALTIME_ENABLED=true
-RUN npm run build
-
+# ---- Build stage ----
 FROM mcr.microsoft.com/dotnet/sdk:10.0.403 AS build
 WORKDIR /src
 
-COPY BACKEND/global.json BACKEND/Directory.Build.props BACKEND/Directory.Packages.props BACKEND/.editorconfig ./
-COPY BACKEND/src/BuildingBlocks/FraudCell.BuildingBlocks/FraudCell.BuildingBlocks.csproj src/BuildingBlocks/FraudCell.BuildingBlocks/
-COPY BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/FraudCell.Edge.Gateway.csproj src/Services/Edge/FraudCell.Edge.Gateway/
+COPY global.json Directory.Build.props Directory.Packages.props .editorconfig ./
+COPY src/BuildingBlocks/FraudCell.BuildingBlocks/FraudCell.BuildingBlocks.csproj src/BuildingBlocks/FraudCell.BuildingBlocks/
+COPY src/Services/Edge/FraudCell.Edge.Gateway/FraudCell.Edge.Gateway.csproj src/Services/Edge/FraudCell.Edge.Gateway/
 
 RUN dotnet restore src/Services/Edge/FraudCell.Edge.Gateway/FraudCell.Edge.Gateway.csproj
 
-COPY BACKEND/src/BuildingBlocks/FraudCell.BuildingBlocks/ src/BuildingBlocks/FraudCell.BuildingBlocks/
-COPY BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/ src/Services/Edge/FraudCell.Edge.Gateway/
+COPY src/BuildingBlocks/FraudCell.BuildingBlocks/ src/BuildingBlocks/FraudCell.BuildingBlocks/
+COPY src/Services/Edge/FraudCell.Edge.Gateway/ src/Services/Edge/FraudCell.Edge.Gateway/
 
 RUN dotnet publish src/Services/Edge/FraudCell.Edge.Gateway/FraudCell.Edge.Gateway.csproj \
     -c Release -o /app/publish --no-restore
 
+# ---- Runtime stage ----
 FROM mcr.microsoft.com/dotnet/aspnet:10.0.14 AS runtime
 WORKDIR /app
 
@@ -36,11 +33,9 @@ RUN apt-get update \
 
 RUN groupadd --system fraudcell \
     && useradd --system --gid fraudcell --home-dir /app --shell /usr/sbin/nologin fraudcell \
-    && mkdir -p /keys/identity \
-    && chown -R fraudcell:fraudcell /app /keys/identity
+    && chown -R fraudcell:fraudcell /app
 
 COPY --from=build /app/publish .
-COPY --from=frontend-build /frontend/dist ./wwwroot
 
 ENV ASPNETCORE_HTTP_PORTS=8080
 EXPOSE 8080
@@ -51,4 +46,3 @@ HEALTHCHECK --interval=15s --timeout=5s --start-period=25s --retries=5 \
     CMD curl -f http://localhost:8080/health/ready || exit 1
 
 ENTRYPOINT ["dotnet", "FraudCell.Edge.Gateway.dll"]
-
