@@ -48,17 +48,18 @@ async def record_case_feedback(
     customer_response: str | None = None,
 ) -> PredictionFeedback:
     """Creates or updates the case's feedback row and grades the AI's prediction."""
-    now = dt.datetime.now(dt.timezone.utc)
-    feedback = (await session.execute(
-        select(PredictionFeedback).where(PredictionFeedback.case_id == case_id)
-    )).scalar_one_or_none()
-    if feedback is None:
-        feedback = PredictionFeedback(id=str(ULID()), case_id=case_id, transaction_id=transaction_id, created_at=now)
-        session.add(feedback)
-
+    # Both queries run before a new row is added: an added but incomplete row would
+    # be autoflushed by the second query and break its NOT NULL columns.
     prediction = (await session.execute(
         select(Prediction).where(Prediction.transaction_id == transaction_id).order_by(Prediction.predicted_at.desc()).limit(1)
     )).scalar_one_or_none()
+    feedback = (await session.execute(
+        select(PredictionFeedback).where(PredictionFeedback.case_id == case_id)
+    )).scalar_one_or_none()
+    is_new = feedback is None
+    if feedback is None:
+        feedback = PredictionFeedback(id=str(ULID()), case_id=case_id, transaction_id=transaction_id,
+                                      created_at=dt.datetime.now(dt.timezone.utc))
     feedback.prediction_id = prediction.id if prediction else None
     feedback.ai_fraud_type = prediction.fraud_type if prediction else None
     feedback.ai_decision = prediction.decision if prediction else None
@@ -74,6 +75,8 @@ async def record_case_feedback(
     feedback.feedback_source = source
     feedback.source_event_id = envelope.event_id
     feedback.occurred_at = envelope.occurred_at
+    if is_new:
+        session.add(feedback)
     return feedback
 
 
