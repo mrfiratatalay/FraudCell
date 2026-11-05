@@ -816,7 +816,12 @@ export interface AiMetricsOverviewResponse {
 export interface AiCategoryAccuracyItemResponse {
   fraudType: FraudType | 'UNKNOWN';
   sampleCount: number;
+  /** Same as precision; kept for older clients. */
   accuracy: number | null;
+  /** Of the cases the AI put in this type, the share that really were this type. */
+  precision: number | null;
+  /** Of the cases really of this type, the share the AI found. */
+  recall: number | null;
 }
 
 export interface AiCategoryAccuracyResponse {

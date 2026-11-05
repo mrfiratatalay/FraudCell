@@ -100,9 +100,9 @@ export function SupervisorDashboardPage() {
       .filter((row) => row.fraudType !== 'UNKNOWN')
       .map((row, index) => ({
         label: FRAUD_TYPE_LABEL[row.fraudType as keyof typeof FRAUD_TYPE_LABEL] ?? row.fraudType,
-        value: Math.round((row.accuracy ?? 0) * 100),
+        value: Math.round((row.precision ?? 0) * 100),
         color: seriesColor(index),
-        meta: `${formatNumber(row.sampleCount)} örnek`,
+        meta: `${formatNumber(row.sampleCount)} örnek · yakalama %${Math.round((row.recall ?? 0) * 100)}`,
       })) ?? [];
 
   return (
@@ -199,7 +199,7 @@ export function SupervisorDashboardPage() {
 
         <ChartFrame
           title="Model doğruluğu"
-          hint="Fraud tipine göre ground-truth doğruluğu"
+          hint="Fraud tipine göre isabet (precision); yanında yakalama oranı (recall)"
           height={220}
         >
           {categories.isPending ? (
