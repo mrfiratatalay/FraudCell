@@ -56,7 +56,7 @@ const NAV_GROUPS: NavGroup[] = [
     heading: 'Analiz',
     items: [
       { to: '/analyst', label: 'Vakalarım', icon: FolderKanban, roles: ['ANALYST'], root: true },
-      { to: '/analyst/points', label: 'Puanlarım', icon: Trophy, roles: ['ANALYST'] },
+      { to: '/analyst/points', label: 'Profilim', icon: Trophy, roles: ['ANALYST'] },
     ],
   },
   {

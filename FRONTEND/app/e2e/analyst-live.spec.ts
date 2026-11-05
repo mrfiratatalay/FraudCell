@@ -181,8 +181,8 @@ test('operations flow reaches analyst points and supervisor leaderboard', async 
   await expect(page.getByText('Bloklandı', { exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('analyst-case-decided.png'), fullPage: true });
 
-  await clickConsoleLink(page, 'Puanlarım');
-  await expect(page.getByRole('heading', { name: 'Puanlarım' })).toBeVisible();
+  await clickConsoleLink(page, 'Profilim');
+  await expect(page.getByRole('heading', { name: 'Profilim' })).toBeVisible();
   await expect(page.getByTestId('points-ledger').getByText(/^\+\d+$/).first()).toBeVisible({
     timeout: 20_000,
   });

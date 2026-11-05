@@ -35,7 +35,7 @@ const LEVEL_FLOOR: Record<AnalystLevel, number> = {
   BRONZ: 0,
   GUMUS: 500,
   ALTIN: 1500,
-  PLATIN: 4000,
+  PLATIN: 3000,
 };
 
 function levelProgress(level: AnalystLevel, points: number): { pct: number; next: string } {
@@ -122,7 +122,7 @@ export function AnalystPointsPage() {
   return (
     <div>
       <PageHeader
-        title="Puanlarım"
+        title="Profilim"
         description="Karar performansı, seviye ve kazanılan rozetler."
       />
 
@@ -163,16 +163,25 @@ export function AnalystPointsPage() {
       ) : null}
 
       {/* Performans özeti */}
-      <section className="mt-6 grid gap-3 sm:grid-cols-3" aria-label="Performans özeti">
+      <section className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Performans özeti">
         {performance.isPending ? (
           <>
+            <Skeleton className="h-28 rounded-card" />
             <Skeleton className="h-28 rounded-card" />
             <Skeleton className="h-28 rounded-card" />
             <Skeleton className="h-28 rounded-card" />
           </>
         ) : performance.data ? (
           <>
-            <StatTile label="Toplam karar" value={performance.data.totalDecisions} />
+            <StatTile label="Çözülen vaka" value={performance.data.totalDecisions} />
+            <StatTile
+              label="Vaka başına ortalama puan"
+              value={
+                profile.data && profile.data.totalDecisions > 0
+                  ? formatNumber(Math.round(profile.data.totalPoints / profile.data.totalDecisions))
+                  : '—'
+              }
+            />
             <StatTile
               label="Doğruluk"
               value={formatPercent(performance.data.accuracyRate)}
