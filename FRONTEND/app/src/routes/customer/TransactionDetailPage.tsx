@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { ArrowLeft, Bot, Clock3, MapPin, Send } from 'lucide-react';
+import { CaseFeedbackCard } from '@/features/cases/CaseFeedbackCard';
 import { getTransaction } from '@/features/transactions/api';
 import {
   ASSESSMENT_STATUS_LABEL,
@@ -171,6 +172,14 @@ export function TransactionDetailPage({ transactionId }: { transactionId: string
             </div>
           ) : null}
         </section>
+      ) : null}
+
+      {item.caseId && item.caseStatus === 'KAPANDI' ? (
+        <CaseFeedbackCard
+          transactionId={item.transactionId}
+          caseId={item.caseId}
+          rating={item.feedbackRating}
+        />
       ) : null}
       </div>
     </div>

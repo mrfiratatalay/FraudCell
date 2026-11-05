@@ -17,6 +17,8 @@ import type {
   StartReviewResponse,
   SubmitDecisionBody,
   SubmitDecisionResponse,
+  FeedbackResponse,
+  SubmitFeedbackBody,
 } from '@/shared/api/contract';
 import { endpoints } from '@/shared/api/endpoints';
 
@@ -85,4 +87,13 @@ export function overrideCaseFraudType(
   body: FraudTypeOverrideBody,
 ): Promise<ApiResult<FraudTypeOverrideResponse>> {
   return api.patch(endpoints.cases.fraudType(caseId), { body, ifMatch: version });
+}
+
+/** Müşteri, KAPANDI vakaya bir kez 1–5 yıldız verir (case §4.6). */
+export async function submitCaseFeedback(
+  caseId: string,
+  body: SubmitFeedbackBody,
+): Promise<FeedbackResponse> {
+  const result = await api.post<FeedbackResponse>(endpoints.cases.feedback(caseId), { body });
+  return result.data;
 }
