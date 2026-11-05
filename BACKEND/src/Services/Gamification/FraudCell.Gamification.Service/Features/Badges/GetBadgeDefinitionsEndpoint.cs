@@ -1,5 +1,6 @@
 using FraudCell.BuildingBlocks.Api;
 using FraudCell.BuildingBlocks.Correlation;
+using FraudCell.Gamification.Service.Common;
 using FraudCell.Gamification.Service.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +17,7 @@ public static class GetBadgeDefinitionsEndpoint
            .WithName("GetBadgeDefinitions")
            .WithTags("Gamification")
            .ProducesApi<IReadOnlyList<BadgeDefinitionResponse>>()
-           .RequireAuthorization();
+           .RequireAuthorization(policy => policy.RequireRole(RoleNames.Staff));
     }
 
     private static async Task<IResult> HandleAsync(GamificationServiceDbContext db, HttpContext httpContext, CorrelationContext correlation, CancellationToken cancellationToken)
