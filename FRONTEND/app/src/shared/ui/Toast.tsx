@@ -27,18 +27,18 @@ const ToastContext = createContext<ToastApi | null>(null);
 
 const TONES: Record<ToastTone, { wrap: string; icon: ReactNode }> = {
   success: {
-    wrap: 'border-success-500/30 bg-white',
+    wrap: 'border-success-500/30 bg-surface',
     icon: <CheckCircle2 className="size-5 text-success-500" />,
   },
   error: {
-    wrap: 'border-danger-500/30 bg-white',
+    wrap: 'border-danger-500/30 bg-surface',
     icon: <AlertCircle className="size-5 text-danger-500" />,
   },
   warning: {
-    wrap: 'border-warning-500/30 bg-white',
+    wrap: 'border-warning-500/30 bg-surface',
     icon: <TriangleAlert className="size-5 text-warning-500" />,
   },
-  info: { wrap: 'border-brand-500/30 bg-white', icon: <Info className="size-5 text-brand-600" /> },
+  info: { wrap: 'border-brand-500/30 bg-surface', icon: <Info className="size-5 text-brand-600" /> },
 };
 
 const AUTO_DISMISS_MS = 4500;
@@ -87,7 +87,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               key={toast.id}
               className={cn(
                 'pointer-events-auto flex w-full max-w-sm animate-slide-up items-start gap-3',
-                'rounded-card border px-4 py-3 shadow-raised',
+                'rounded-lg border px-4 py-3 shadow-overlay',
                 TONES[toast.tone].wrap,
               )}
             >

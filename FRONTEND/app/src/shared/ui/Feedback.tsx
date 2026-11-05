@@ -44,38 +44,9 @@ export function SkeletonList({ rows = 3, className }: { rows?: number; className
             <Skeleton className="h-4 w-2/5" />
             <Skeleton className="h-3 w-3/5" />
           </div>
-          <Skeleton className="h-6 w-16 rounded-pill" />
+          <Skeleton className="h-6 w-16 rounded-md" />
         </div>
       ))}
-    </div>
-  );
-}
-
-/** İstatistik kartı ızgarası yüklenirken. */
-export function SkeletonCards({ count = 4 }: { count?: number }) {
-  return (
-    <div
-      className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
-      role="status"
-      aria-label="Yükleniyor"
-    >
-      {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="surface-panel space-y-3 p-4">
-          <Skeleton className="h-3 w-20" />
-          <Skeleton className="h-8 w-16" />
-          <Skeleton className="h-3 w-24" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/** Grafik paneli yüklenirken — başlık + gövde bloğu. */
-export function SkeletonChart({ height = 240 }: { height?: number }) {
-  return (
-    <div className="surface-panel p-5" role="status" aria-label="Yükleniyor">
-      <Skeleton className="mb-4 h-4 w-32" />
-      <Skeleton className="w-full rounded-card" style={{ height }} />
     </div>
   );
 }

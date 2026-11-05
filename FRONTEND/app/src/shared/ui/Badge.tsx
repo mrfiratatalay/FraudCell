@@ -66,13 +66,3 @@ export function ToneBadge({
     </span>
   );
 }
-
-/** Yanıp sönen noktalı canlı durum göstergesi — SLA kritik, bağlantı vs. */
-export function PulseDot({ className }: { className?: string }) {
-  return (
-    <span className={cn('relative flex size-2', className)} aria-hidden>
-      <span className="absolute inline-flex size-full animate-ping-soft rounded-full bg-current" />
-      <span className="relative inline-flex size-2 rounded-full bg-current" />
-    </span>
-  );
-}
