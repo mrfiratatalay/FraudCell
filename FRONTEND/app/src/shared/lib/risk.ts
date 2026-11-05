@@ -7,7 +7,7 @@
  */
 
 import type { DisplayRiskLevel } from '@/shared/api/contract';
-import type { AssessmentStatus, RiskLevel, SlaStatus } from '@/shared/api/enums';
+import type { AssessmentStatus, RiskLevel, SlaPriority, SlaStatus } from '@/shared/api/enums';
 
 /** Değerlendirme tamamlanmadığında backend'in yazdığı değer. */
 export const UNKNOWN_RISK = 'BELIRSIZ';
@@ -141,3 +141,20 @@ export const SLA_TONE: Record<SlaStatus, Tone> = {
   URGENT: TONES.YUKSEK,
   BREACHED: TONES.KRITIK,
 };
+
+/**
+ * Case §4.4: aşılmış SLA'nın rengi vakanın önceliğine bağlıdır — KRITIK kırmızı,
+ * YUKSEK turuncu, ORTA ve DUSUK görsel uyarı (sarı). Aşılmamışsa kalan süreye göre
+ * NORMAL yeşil, WARNING sarı (yaklaşıyor), URGENT turuncu.
+ */
+export const SLA_BREACHED_TONE: Record<SlaPriority, Tone> = {
+  KRITIK: TONES.KRITIK,
+  YUKSEK: TONES.YUKSEK,
+  ORTA: TONES.ORTA,
+  DUSUK: TONES.ORTA,
+};
+
+export function slaTone(sla: { status: SlaStatus; priority: SlaPriority; breachedAt: string | null }): Tone {
+  const breached = sla.status === 'BREACHED' || sla.breachedAt !== null;
+  return breached ? SLA_BREACHED_TONE[sla.priority] : SLA_TONE[sla.status];
+}

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Timer, TriangleAlert } from 'lucide-react';
 import { cn } from '@/shared/lib/cn';
 import { formatCountdown } from '@/shared/lib/format';
-import { SLA_TONE } from '@/shared/lib/risk';
+import { SLA_TONE, slaTone } from '@/shared/lib/risk';
 import type { CaseSlaResponse } from '@/shared/api/contract';
 
 export interface SlaCountdownProps {
@@ -35,7 +35,8 @@ export function SlaCountdown({ sla, compact = false, className }: SlaCountdownPr
 
   const remaining = deadline - now;
   const breached = sla.status === 'BREACHED' || sla.breachedAt !== null;
-  const tone = SLA_TONE[sla.status];
+  // Aşıldıysa renk önceliğe göre (KRITIK kırmızı, YUKSEK turuncu, diğerleri sarı).
+  const tone = slaTone(sla);
 
   if (stopped) {
     return (
@@ -43,9 +44,11 @@ export function SlaCountdown({ sla, compact = false, className }: SlaCountdownPr
         className={cn(
           'inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1',
           'text-xs font-semibold whitespace-nowrap',
-          breached ? SLA_TONE.BREACHED.chip : SLA_TONE.NORMAL.chip,
+          breached ? tone.chip : SLA_TONE.NORMAL.chip,
           className,
         )}
+        data-sla={breached ? 'breached' : 'met'}
+        data-sla-priority={sla.priority}
       >
         {breached ? 'SLA aşıldı' : 'SLA içinde'}
       </span>
@@ -60,6 +63,8 @@ export function SlaCountdown({ sla, compact = false, className }: SlaCountdownPr
         tone.chip,
         className,
       )}
+      data-sla={breached ? 'breached' : sla.status.toLowerCase()}
+      data-sla-priority={sla.priority}
       // Acil eşiğe girince ekran okuyucu kesintiye uğrayarak duyurur.
       role={sla.status === 'URGENT' || breached ? 'alert' : undefined}
     >
