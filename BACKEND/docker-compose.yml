@@ -3,9 +3,11 @@ name: fraudcell
 # Full production-like demo topology. Tum sistemi tek komutla ayaga kaldirmak
 # icin: scripts/start-fraudcell.bat (durdurma: scripts/stop-fraudcell.bat).
 #
-# Veri sahipligi: her servisin KENDI database'i ve KENDI login rolu vardir.
-# Yerel/demo ortaminda bunlar tek bir PostgreSQL instance'i uzerinde barinir;
-# izolasyon PostgreSQL rol/CONNECT yetkileriyle zorlanir (docker/postgres/init-*.sh).
+# Data ownership (database-per-service): every service has its OWN PostgreSQL
+# instance on its OWN internal network. Only the owner service joins that
+# network, so no other container can even open a connection to the database.
+# Inside each instance the service logs in with a non-superuser role that owns
+# only its database (docker/postgres/init-multiple-databases.sh).
 x-application-security: &application-security
   cap_drop:
     - ALL
@@ -15,45 +17,93 @@ x-application-security: &application-security
   stop_grace_period: 30s
   restart: on-failure:5
 
+x-postgres: &postgres
+  image: postgres:18.4
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+    interval: 10s
+    timeout: 5s
+    retries: 10
+    start_period: 20s
+  cpus: 0.50
+  mem_limit: 256m
+  mem_reservation: 96m
+  pids_limit: 256
+  stop_grace_period: 20s
+  restart: on-failure:5
+
+x-postgres-environment: &postgres-environment
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?POSTGRES_ADMIN_PASSWORD must be set in BACKEND/.env}
+
+x-postgres-init: &postgres-init ./docker/postgres/init-multiple-databases.sh:/docker-entrypoint-initdb.d/10-fraudcell-databases.sh:ro
+
 networks:
   fraudcell-app:
     name: fraudcell-app
-  fraudcell-data:
+  # One internal network per database; only the owner service joins it.
+  identity-db:
+    internal: true
+  transaction-db:
+    internal: true
+  gamification-db:
+    internal: true
+  ai-db:
     internal: true
 
 volumes:
-  postgres-data:
+  identity-db-data:
+  transaction-db-data:
+  gamification-db-data:
+  ai-db-data:
   rabbitmq-data:
   identity-keys:
 
 services:
-  postgres:
-    image: postgres:18.4
+  postgres-identity:
+    <<: *postgres
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?POSTGRES_ADMIN_PASSWORD must be set in BACKEND/.env}
+      <<: *postgres-environment
       IDENTITY_DB_PASSWORD: ${IDENTITY_DB_PASSWORD:?IDENTITY_DB_PASSWORD must be set in BACKEND/.env}
+    volumes:
+      - identity-db-data:/var/lib/postgresql
+      - *postgres-init
+    networks:
+      - identity-db
+
+  postgres-transaction:
+    <<: *postgres
+    environment:
+      <<: *postgres-environment
       TRANSACTION_DB_PASSWORD: ${TRANSACTION_DB_PASSWORD:?TRANSACTION_DB_PASSWORD must be set in BACKEND/.env}
+    volumes:
+      - transaction-db-data:/var/lib/postgresql
+      - *postgres-init
+    networks:
+      - transaction-db
+
+  postgres-gamification:
+    <<: *postgres
+    environment:
+      <<: *postgres-environment
       GAMIFICATION_DB_PASSWORD: ${GAMIFICATION_DB_PASSWORD:?GAMIFICATION_DB_PASSWORD must be set in BACKEND/.env}
+    volumes:
+      - gamification-db-data:/var/lib/postgresql
+      - *postgres-init
+    networks:
+      - gamification-db
+
+  postgres-ai:
+    <<: *postgres
+    environment:
+      <<: *postgres-environment
       AI_DB_PASSWORD: ${AI_DB_PASSWORD:?AI_DB_PASSWORD must be set in BACKEND/.env}
     volumes:
-      - postgres-data:/var/lib/postgresql
-      - ./docker/postgres/init-multiple-databases.sh:/docker-entrypoint-initdb.d/10-fraudcell-databases.sh:ro
+      - ai-db-data:/var/lib/postgresql
+      - *postgres-init
     networks:
-      - fraudcell-data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
-      interval: 20s
-      timeout: 5s
-      retries: 10
-      start_period: 20s
-    cpus: 1.00
-    mem_limit: 512m
-    mem_reservation: 192m
-    pids_limit: 256
-    stop_grace_period: 20s
-    restart: on-failure:5
+      - ai-db
 
   rabbitmq:
     image: rabbitmq:4.3
@@ -85,7 +135,7 @@ services:
       dockerfile: src/Services/Identity/FraudCell.Identity.Service/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
-      ConnectionStrings__IdentityDb: Host=postgres;Port=5432;Database=fraudcell_identity;Username=identity_app;Password=${IDENTITY_DB_PASSWORD};Minimum Pool Size=0;Maximum Pool Size=15
+      ConnectionStrings__IdentityDb: Host=postgres-identity;Port=5432;Database=fraudcell_identity;Username=identity_app;Password=${IDENTITY_DB_PASSWORD};Minimum Pool Size=0;Maximum Pool Size=15
       RabbitMq__Host: rabbitmq
       RabbitMq__UserName: ${RABBITMQ_USER:-fraudcell}
       RabbitMq__Password: ${RABBITMQ_PASSWORD}
@@ -98,13 +148,13 @@ services:
     volumes:
       - identity-keys:/keys/identity
     depends_on:
-      postgres:
+      postgres-identity:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
       - fraudcell-app
-      - fraudcell-data
+      - identity-db
     cpus: 0.40
     mem_limit: 384m
     mem_reservation: 128m
@@ -116,7 +166,7 @@ services:
       dockerfile: src/Services/Transaction/FraudCell.Transaction.Service/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
-      ConnectionStrings__TransactionDb: Host=postgres;Port=5432;Database=fraudcell_transaction;Username=transaction_app;Password=${TRANSACTION_DB_PASSWORD};Minimum Pool Size=0;Maximum Pool Size=15
+      ConnectionStrings__TransactionDb: Host=postgres-transaction;Port=5432;Database=fraudcell_transaction;Username=transaction_app;Password=${TRANSACTION_DB_PASSWORD};Minimum Pool Size=0;Maximum Pool Size=15
       RabbitMq__Host: rabbitmq
       RabbitMq__UserName: ${RABBITMQ_USER:-fraudcell}
       RabbitMq__Password: ${RABBITMQ_PASSWORD}
@@ -126,7 +176,7 @@ services:
     volumes:
       - identity-keys:/keys/identity:ro
     depends_on:
-      postgres:
+      postgres-transaction:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -134,7 +184,7 @@ services:
         condition: service_healthy
     networks:
       - fraudcell-app
-      - fraudcell-data
+      - transaction-db
     cpus: 0.60
     mem_limit: 512m
     mem_reservation: 160m
@@ -151,7 +201,7 @@ services:
       dockerfile: src/Ai/fraudcell-ai/Dockerfile
     command: ["python", "-m", "app.migrate"]
     environment: &ai-environment
-      AI_DB_HOST: postgres
+      AI_DB_HOST: postgres-ai
       AI_DB_PORT: 5432
       AI_DB_NAME: fraudcell_ai
       AI_DB_USER: ai_app
@@ -165,10 +215,10 @@ services:
       # sessizce deterministik ozete duser.
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
     depends_on:
-      postgres:
+      postgres-ai:
         condition: service_healthy
     networks:
-      - fraudcell-data
+      - ai-db
     cpus: 0.50
     mem_limit: 512m
     pids_limit: 128
@@ -186,13 +236,13 @@ services:
       dockerfile: src/Ai/fraudcell-ai/Dockerfile
     environment: *ai-environment
     depends_on:
-      postgres:
+      postgres-ai:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
       - fraudcell-app
-      - fraudcell-data
+      - ai-db
     cpus: 1.25
     mem_limit: 1024m
     mem_reservation: 384m
@@ -204,7 +254,7 @@ services:
       dockerfile: src/Services/Gamification/FraudCell.Gamification.Service/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
-      ConnectionStrings__GamificationDb: Host=postgres;Port=5432;Database=fraudcell_gamification;Username=gamification_app;Password=${GAMIFICATION_DB_PASSWORD};Minimum Pool Size=0;Maximum Pool Size=15
+      ConnectionStrings__GamificationDb: Host=postgres-gamification;Port=5432;Database=fraudcell_gamification;Username=gamification_app;Password=${GAMIFICATION_DB_PASSWORD};Minimum Pool Size=0;Maximum Pool Size=15
       RabbitMq__Host: rabbitmq
       RabbitMq__UserName: ${RABBITMQ_USER:-fraudcell}
       RabbitMq__Password: ${RABBITMQ_PASSWORD}
@@ -214,7 +264,7 @@ services:
     volumes:
       - identity-keys:/keys/identity:ro
     depends_on:
-      postgres:
+      postgres-gamification:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -222,7 +272,7 @@ services:
         condition: service_healthy
     networks:
       - fraudcell-app
-      - fraudcell-data
+      - gamification-db
     cpus: 0.40
     mem_limit: 384m
     mem_reservation: 128m
