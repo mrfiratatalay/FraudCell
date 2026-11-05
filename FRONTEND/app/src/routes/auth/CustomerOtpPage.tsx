@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate } from '@tanstack/react-router';
-import { Phone, ShieldCheck } from 'lucide-react';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { Phone } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { requestOtp, verifyOtp } from '@/features/authentication/api';
@@ -126,26 +126,21 @@ export function CustomerOtpPage({
   }
 
   return (
-    <AuthScaffold backTo="/auth">
+    <AuthScaffold tab="customer">
       <AuthFlow
         titleId="customer-auth-title"
-        icon={
-          challenge ? (
-            <ShieldCheck className="size-6 sm:size-7" aria-hidden />
-          ) : (
-            <Phone className="size-6 sm:size-7" aria-hidden />
-          )
-        }
-        title={mode === 'register' ? 'Müşteri kaydı' : 'Müşteri girişi'}
+        title={challenge ? 'Doğrulama kodu' : mode === 'register' ? 'Müşteri kaydı' : 'Müşteri girişi'}
         description={
           challenge
-            ? `${challenge.maskedGsmNumber} numarasına gönderilen kodu gir.`
-            : 'Cep telefonu numaranla devam et.'
+            ? `${challenge.maskedGsmNumber} numarasına gönderilen 4 haneli kodu gir.`
+            : mode === 'register'
+              ? 'Telefon numaranla hesabını birkaç saniyede oluştur.'
+              : 'Cep telefonu numarana tek kullanımlık kod gönderelim.'
         }
       >
 
         {!challenge ? (
-          <form onSubmit={submitPhone} className="surface-card space-y-4 p-4 sm:p-6" noValidate>
+          <form onSubmit={submitPhone} className="space-y-5" noValidate>
             {requestError ? <Banner tone="danger">{requestError}</Banner> : null}
             <Field
               label="Cep telefonu"
@@ -175,24 +170,42 @@ export function CustomerOtpPage({
               </>
             ) : null}
 
-            <Button type="submit" fullWidth loading={isSubmitting}>
+            <Button type="submit" size="lg" fullWidth loading={isSubmitting} className="!mt-7">
               Kod gönder
             </Button>
+            <p className="text-center text-[13px] text-ink-500">
+              {mode === 'register' ? (
+                <>
+                  Zaten müşteri misin?{' '}
+                  <Link to="/auth" className="font-medium text-brand-700 hover:underline">
+                    Giriş yap
+                  </Link>
+                </>
+              ) : (
+                <>
+                  Hesabın yok mu?{' '}
+                  <Link to="/auth/otp" search={{ mode: 'register' }} className="font-medium text-brand-700 hover:underline">
+                    Yeni müşteri kaydı
+                  </Link>
+                </>
+              )}
+            </p>
           </form>
         ) : (
-          <form onSubmit={submitCode} className="surface-card space-y-5 p-4 sm:p-6">
+          <form onSubmit={submitCode} className="space-y-5">
             {requestError ? <Banner tone="danger">{requestError}</Banner> : null}
             {challenge.demoHint ? <Banner tone="info">{challenge.demoHint}</Banner> : null}
 
-            <div className="flex justify-center">
+            <div className="flex justify-start">
               <OtpInput value={code} onChange={setCode} length={4} disabled={isVerifying} autoFocus />
             </div>
-            <p className="text-center text-sm text-ink-500 tabular">
+            <p className="text-[13px] text-ink-500 tabular">
               {secondsLeft > 0 ? `Kod ${secondsLeft} saniye geçerli.` : 'Kodun süresi doldu.'}
             </p>
 
             <Button
               type="submit"
+              size="lg"
               fullWidth
               loading={isVerifying}
               disabled={code.length !== 4 || secondsLeft === 0}
@@ -207,7 +220,7 @@ export function CustomerOtpPage({
                 setCode('');
                 setRequestError(null);
               }}
-              className="block w-full text-center text-sm font-semibold text-brand-700 hover:text-brand-800"
+              className="block w-full text-center text-[13px] font-medium text-ink-500 hover:text-ink-900"
             >
               Telefon numarasını değiştir
             </button>

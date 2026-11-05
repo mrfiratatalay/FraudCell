@@ -49,7 +49,7 @@ const TONES: Record<DisplayRiskLevel, Tone> = {
     bar: 'bg-success-500',
     rail: 'bg-success-500',
     stroke: 'stroke-success-500',
-    chartFill: '#43a047',
+    chartFill: 'var(--color-success-500)',
   },
   ORTA: {
     chip: 'bg-warning-100 text-warning-700',
@@ -57,7 +57,7 @@ const TONES: Record<DisplayRiskLevel, Tone> = {
     bar: 'bg-warning-500',
     rail: 'bg-warning-500',
     stroke: 'stroke-warning-500',
-    chartFill: '#f5a623',
+    chartFill: 'var(--color-warning-500)',
   },
   YUKSEK: {
     chip: 'bg-danger-100 text-danger-700',
@@ -65,7 +65,7 @@ const TONES: Record<DisplayRiskLevel, Tone> = {
     bar: 'bg-danger-500',
     rail: 'bg-danger-500',
     stroke: 'stroke-danger-500',
-    chartFill: '#e53935',
+    chartFill: 'var(--color-danger-500)',
   },
   KRITIK: {
     chip: 'bg-critical-100 text-critical-700',
@@ -73,7 +73,7 @@ const TONES: Record<DisplayRiskLevel, Tone> = {
     bar: 'bg-critical-500',
     rail: 'bg-critical-500',
     stroke: 'stroke-critical-500',
-    chartFill: '#b71c1c',
+    chartFill: 'var(--color-critical-500)',
   },
   BELIRSIZ: {
     chip: 'bg-ink-100 text-ink-500',
@@ -81,7 +81,7 @@ const TONES: Record<DisplayRiskLevel, Tone> = {
     bar: 'bg-ink-400',
     rail: 'bg-ink-400',
     stroke: 'stroke-ink-400',
-    chartFill: '#8e98a4',
+    chartFill: 'var(--color-ink-400)',
   },
 };
 
@@ -93,12 +93,12 @@ const TONES: Record<DisplayRiskLevel, Tone> = {
  * `riskTone().chartFill` kullanır, kategori grafikleri bunu.
  */
 export const CHART_SERIES = [
-  '#0a4a94',
-  '#2fc4e0',
-  '#6c5ce7',
-  '#00a3a3',
-  '#f5a623',
-  '#8cc4f3',
+  'var(--color-chart-1)',
+  'var(--color-chart-2)',
+  'var(--color-chart-3)',
+  'var(--color-chart-4)',
+  'var(--color-chart-5)',
+  'var(--color-chart-6)',
 ] as const;
 
 export function seriesColor(index: number): string {

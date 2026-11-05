@@ -1,21 +1,25 @@
 import { cn } from '@/shared/lib/cn';
 
-/** Turkcell sinyalini güvenlik kalkanıyla birleştiren ürün işareti. */
+/** Product mark: a shield with a pulse line — monitoring that never sleeps. */
 export function LogoMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 48 48" className={cn('size-10', className)} role="img" aria-label="Turkcell FraudCell">
+    <svg viewBox="0 0 32 32" className={cn('size-8', className)} role="img" aria-label="FraudCell">
+      <rect width="32" height="32" rx="8" className="fill-night-900" />
       <path
-        d="M24 2.8 41.5 9v13.8c0 10.8-7.1 19-17.5 22-10.4-3-17.5-11.2-17.5-22V9L24 2.8Z"
-        fill="currentColor"
-      />
-      <path
-        d="M15.8 25.4c3.6-5.7 12.8-8.8 19.1-4.6M17.8 30.2c3-3.9 8.8-5.7 13.3-3.5"
+        d="M16 5.5l8.5 3.4v6.6c0 5.2-3.6 9.5-8.5 11-4.9-1.5-8.5-5.8-8.5-11V8.9z"
         fill="none"
-        stroke="white"
-        strokeWidth="3.4"
-        strokeLinecap="round"
+        stroke="#7c87f7"
+        strokeWidth="2.2"
+        strokeLinejoin="round"
       />
-      <circle cx="23.4" cy="33.3" r="3.4" className="fill-tc-500" />
+      <path
+        d="M11.5 16.2h2.6l1.6-3.6 2.4 7 1.5-3.4h1.9"
+        fill="none"
+        stroke="#fff"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -29,24 +33,14 @@ export function LogoWordmark({
 }) {
   return (
     <span className={cn('inline-flex items-center gap-2.5', className)}>
-      <LogoMark className={cn('size-9', tone === 'white' ? 'text-white' : 'text-brand-900')} />
-      <span className="flex flex-col leading-none">
-        <span
-          className={cn(
-            'text-[9px] font-bold tracking-[0.24em] uppercase',
-            tone === 'white' ? 'text-white/65' : 'text-brand-600',
-          )}
-        >
-          Turkcell
-        </span>
-        <span
-          className={cn(
-            'mt-1 text-lg font-bold tracking-[-0.035em]',
-            tone === 'white' ? 'text-white' : 'text-brand-950',
-          )}
-        >
-          Fraud<span className={cn('font-medium', tone === 'white' ? 'text-aqua-300' : 'text-aqua-700')}>Cell</span>
-        </span>
+      <LogoMark className={cn('size-8', tone === 'white' && 'ring-1 ring-white/12 rounded-lg')} />
+      <span
+        className={cn(
+          'text-[17px] font-semibold tracking-[-0.03em]',
+          tone === 'white' ? 'text-white' : 'text-ink-900',
+        )}
+      >
+        Fraud<span className={tone === 'white' ? 'text-brand-300' : 'text-brand-600'}>Cell</span>
       </span>
     </span>
   );

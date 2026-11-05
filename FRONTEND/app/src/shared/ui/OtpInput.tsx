@@ -87,7 +87,7 @@ export function OtpInput({
   }
 
   return (
-    <div role="group" aria-label={label} className="flex justify-center gap-2.5">
+    <div role="group" aria-label={label} className="flex gap-2.5">
       {Array.from({ length }, (_, index) => (
         <input
           key={index}
@@ -107,12 +107,12 @@ export function OtpInput({
           onPaste={handlePaste}
           onFocus={(e) => e.target.select()}
           className={cn(
-            'size-12 rounded-tile border bg-white text-center',
-            'text-xl font-semibold text-ink-900 tabular',
-            'transition-colors duration-150',
-            'focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 focus:outline-none',
+            'h-14 w-12 rounded-control border bg-surface text-center shadow-card sm:w-14',
+            'font-mono text-2xl font-medium text-ink-900 tabular',
+            'transition-[border-color,box-shadow] duration-150',
+            'focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 focus:outline-none',
             'disabled:bg-ink-100 disabled:text-ink-400',
-            error ? 'border-danger-500' : 'border-ink-200',
+            error ? 'border-danger-500' : 'border-line',
           )}
         />
       ))}

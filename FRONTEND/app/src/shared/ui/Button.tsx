@@ -5,21 +5,22 @@ import { cn } from '@/shared/lib/cn';
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'onBrand';
 type Size = 'sm' | 'md' | 'lg';
 
-/** Turkcell eylem hiyerarşisi: sarı birincil, mavi ikincil, tam pill form. */
+/** Action hierarchy: one indigo primary per view, quiet bordered secondary, text-only ghost. */
 const VARIANTS: Record<Variant, string> = {
   primary:
-    'gradient-action text-brand-950 shadow-[0_10px_26px_-12px_rgba(255,201,0,.75)] hover:brightness-105 active:brightness-95',
+    'gradient-action text-white shadow-[inset_0_1px_0_rgba(255,255,255,.18),0_1px_2px_rgba(16,20,28,.2)] hover:brightness-110 active:brightness-95',
   secondary:
-    'bg-white text-brand-800 border border-brand-200 shadow-card hover:border-brand-400 hover:bg-brand-50 active:bg-brand-100',
-  ghost: 'bg-transparent text-brand-700 hover:bg-brand-50 active:bg-brand-100',
-  danger: 'bg-danger-500 text-white hover:bg-danger-700 active:brightness-95',
-  onBrand: 'gradient-action text-brand-950 shadow-raised hover:brightness-105 active:brightness-95',
+    'bg-surface text-ink-900 border border-line shadow-card hover:bg-subtle hover:border-ink-300 active:bg-ink-100',
+  ghost: 'bg-transparent text-ink-700 hover:bg-ink-100 hover:text-ink-900 active:bg-ink-200',
+  danger:
+    'bg-critical-600 text-white shadow-[inset_0_1px_0_rgba(255,255,255,.14)] hover:bg-critical-700 active:brightness-95 [[data-theme=dark]_&]:bg-critical-500',
+  onBrand: 'bg-white text-night-900 shadow-raised hover:bg-white/90 active:bg-white/80',
 };
 
 const SIZES: Record<Size, string> = {
-  sm: 'h-9 px-4 text-sm gap-1.5',
-  md: 'h-12 px-6 text-[15px] gap-2',
-  lg: 'h-14 px-8 text-base gap-2',
+  sm: 'h-8 px-3 text-[13px] gap-1.5',
+  md: 'h-10 px-4 text-sm gap-2',
+  lg: 'h-12 px-6 text-[15px] gap-2',
 };
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -55,9 +56,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       // Yükleniyorken ekran okuyucuya durumu bildir.
       aria-busy={loading || undefined}
       className={cn(
-        'inline-flex items-center justify-center rounded-pill font-semibold',
-        'transition-[filter,background-color,box-shadow,transform] duration-150 hover:-translate-y-0.5 active:translate-y-0',
-        // Devre dışı hâli tasarımda düz gri dolgu + gri metin.
+        'inline-flex shrink-0 items-center justify-center rounded-control font-medium whitespace-nowrap select-none',
+        'transition-[filter,background-color,border-color,color,transform] duration-150 active:scale-[0.98]',
+        // Disabled: flat grey fill, grey text.
         'disabled:pointer-events-none disabled:bg-none disabled:bg-ink-100',
         'disabled:text-ink-400 disabled:shadow-none disabled:border-transparent',
         VARIANTS[variant],

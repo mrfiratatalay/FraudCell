@@ -1,169 +1,252 @@
 @import 'tailwindcss';
 
-/*
-  Inter değişken font — self-host.
-  CDN yerine paketten gelir: demo sırasında ağ yoksa da tipografi bozulmaz ve
-  harici istek beklenmez. `wght.css` yalnızca ağırlık eksenini yükler; tarayıcı
-  unicode-range sayesinde sadece kullanılan alt kümeyi indirir (latin + latin-ext,
-  Türkçe karakterler latin-ext'te).
-*/
+/* Self-hosted variable fonts: the demo must look right with no network. */
 @import '@fontsource-variable/inter/wght.css';
+@import '@fontsource-variable/jetbrains-mono/wght.css';
 
 /* ==========================================================================
-   FraudCell Design System
-   Mobil öncelikli müşteri yüzü ve yoğun veri gösteren konsol yüzü.
+   FraudCell design system — "Gece Nöbeti"
 
-   İki yüz, tek aile:
-     • Müşteri  — mobil uygulama dili (gradient, pill, tile, açık zemin)
-     • Konsol   — operasyon kokpiti (koyu lacivert kenar çubuğu, yoğun veri)
-   Renk/uzay/hareket token'ları ORTAKTIR; ayrışma yüzey ve yoğunlukta olur.
+   A security-operations look: calm neutral surfaces, one indigo accent for
+   actions and focus, and a separate, ordered colour language for risk and SLA
+   (Düşük → Orta → Yüksek → Kritik get darker as well as warmer, so they read
+   apart without relying on hue alone).
+
+   Every colour below is a CSS variable. Light values live in @theme; the dark
+   theme overrides the same variables under [data-theme='dark'] (set before
+   first paint by public/theme-init.js), so a `text-ink-900` class is right in
+   both themes without a `dark:` variant.
    ========================================================================== */
 
 @theme {
-  /* --- Marka: mavi–camgöbeği rampası ------------------------------ */
-  --color-brand-950: #001331;
-  --color-brand-900: #001f4d;
-  --color-brand-800: #003b7a;
-  --color-brand-700: #0056a6;
-  --color-brand-600: #0075c9;
-  --color-brand-500: #1598df;
-  --color-brand-400: #45b9ee;
-  --color-brand-300: #83d2f6;
-  --color-brand-200: #b9e7fb;
-  --color-brand-100: #daf3ff;
-  --color-brand-50: #eefaff;
+  /* --- Accent: indigo ------------------------------------------------------ */
+  --color-brand-950: #0e1033;
+  --color-brand-900: #1a1e5c;
+  --color-brand-800: #252b8c;
+  --color-brand-700: #3139b8;
+  --color-brand-600: #4049de;
+  --color-brand-500: #5562f2;
+  --color-brand-400: #7c87f7;
+  --color-brand-300: #a5adfb;
+  --color-brand-200: #cbd0fd;
+  --color-brand-100: #e4e7fe;
+  --color-brand-50: #f2f3ff;
 
-  /* --- Aksan: camgöbeği (gradient bitişi, aktif sekme, link) -------------- */
-  --color-aqua-700: #007f9e;
-  --color-aqua-600: #009fbd;
-  --color-aqua-500: #00c2de;
-  --color-aqua-400: #28d5e8;
-  --color-aqua-300: #73e5f0;
-  --color-aqua-100: #d3f7fb;
-  --color-aqua-50: #ebfbfd;
+  /* --- Live signal: cyan (realtime dots, focus on dark surfaces) ----------- */
+  --color-aqua-700: #0e7490;
+  --color-aqua-600: #0891b2;
+  --color-aqua-500: #06b6d4;
+  --color-aqua-400: #22d3ee;
+  --color-aqua-300: #67e8f9;
+  --color-aqua-100: #cffafe;
+  --color-aqua-50: #ecfeff;
 
-  /* --- Turkcell sarısı (logo noktası, Turkcell İşlemleri tile) ------------ */
-  --color-tc-600: #e6ad00;
-  --color-tc-500: #ffc900;
-  --color-tc-400: #ffd94a;
-  --color-tc-100: #fff4bd;
-  --color-tc-50: #fffae8;
+  /* --- Risk & status ------------------------------------------------------- */
+  --color-success-700: #0b7a50;
+  --color-success-600: #0e9562;
+  --color-success-500: #14a86f;
+  --color-success-100: #e2f6ec;
 
-  /* --- Semantik ----------------------------------------------------------- */
-  --color-success-700: #2e7d32;
-  --color-success-600: #3d9140;
-  --color-success-500: #43a047; /* "Yeni" rozeti, onay ikonu */
-  --color-success-100: #e6f4e7;
+  --color-warning-700: #8f5400;
+  --color-warning-600: #b86e00;
+  --color-warning-500: #e8a10c;
+  --color-warning-100: #fdf2d8;
 
-  --color-warning-700: #b26a00;
-  --color-warning-500: #f5a623;
-  --color-warning-100: #fdf1dc;
+  /* Yüksek risk, form errors */
+  --color-danger-700: #b93a0a;
+  --color-danger-600: #d24a10;
+  --color-danger-500: #f06424;
+  --color-danger-100: #fde9df;
 
-  --color-danger-700: #c62828;
-  --color-danger-500: #e53935; /* "Çıkış Yap" */
-  --color-danger-100: #fdeaea;
+  /* Kritik risk, breached SLA */
+  --color-critical-700: #a3123a;
+  --color-critical-600: #be1845;
+  --color-critical-500: #d81f4f;
+  --color-critical-100: #fbe4ea;
 
-  --color-critical-700: #8e1414;
-  --color-critical-500: #b71c1c;
-  --color-critical-100: #fbe3e3;
+  /* --- Neutrals (cool grey) ----------------------------------------------- */
+  --color-ink-900: #0e1116;
+  --color-ink-800: #1d232c;
+  --color-ink-700: #343c48;
+  --color-ink-600: #4c5563;
+  --color-ink-500: #5d6675;
+  --color-ink-400: #868e9c;
+  --color-ink-300: #c3c8d1;
+  --color-ink-200: #e2e5ea;
+  --color-ink-100: #eff1f4;
+  --color-canvas: #f4f5f7;
+  --color-surface: #ffffff;
+  --color-subtle: #f9fafb;
+  --color-line: #e5e7eb;
 
-  /* --- Nötr / yüzey -------------------------------------------------------- */
-  --color-ink-900: #071a33;
-  --color-ink-800: #122a45;
-  --color-ink-700: #2f4661;
-  --color-ink-600: #4c6076;
-  --color-ink-500: #697b8f;
-  --color-ink-400: #94a3b3;
-  --color-ink-300: #c4ced8;
-  --color-ink-200: #dce4eb;
-  --color-ink-100: #edf2f6;
-  --color-canvas: #f3f8fc;
-  --color-surface: #ffffff; /* kart */
+  /* Always-dark surfaces (login hero, tooltips) — the same in both themes. */
+  --color-night-950: #07080c;
+  --color-night-900: #0b0d12;
+  --color-night-800: #12151c;
+  --color-night-700: #1b1f29;
+  --color-night-600: #2a2f3b;
+  --color-night-300: #9aa2b2;
 
-  /* --- Konsol yüzeyleri (koyu kenar çubuğu) --------------------------------
-     Yalnızca operasyon konsolunun kenar çubuğu ve üst barı bu ölçeği kullanır.
-     İçerik alanı açık kalır: grafikler ve risk renkleri açık zeminde okunur. */
-  --color-console-bg: #001739;
-  --color-console-surface: #062653;
-  --color-console-hover: #0a376f;
-  --color-console-border: #153866;
-  --color-console-text: #f2f8ff;
-  --color-console-muted: #99b7d7;
+  /* Console chrome (sidebar). Follows the theme. */
+  --color-console-bg: #f4f5f7;
+  --color-console-surface: #ffffff;
+  --color-console-hover: #e9ebef;
+  --color-console-border: #e2e5ea;
+  --color-console-text: #0e1116;
+  --color-console-muted: #5d6675;
 
-  /* --- Grafik serisi -------------------------------------------------------
-     Kategorik seriler için. Risk paleti (yeşil→kırmızı) ile KASITLI olarak
-     çakışmaz: bir grafikte hem "kategori rengi" hem "risk rengi" görünürse
-     izleyici ikisini karıştırır. Risk grafikleri risk.ts'teki chartFill'i
-     kullanır, kategori grafikleri bu ölçeği. */
-  --color-chart-1: #0a4a94;
-  --color-chart-2: #2fc4e0;
-  --color-chart-3: #6c5ce7;
-  --color-chart-4: #00a3a3;
-  --color-chart-5: #f5a623;
-  --color-chart-6: #8cc4f3;
-  --color-chart-grid: #e9edf3; /* eksen çizgileri */
+  /* Categorical chart series — deliberately not the risk hues. */
+  --color-chart-1: #5562f2;
+  --color-chart-2: #06b6d4;
+  --color-chart-3: #a855f7;
+  --color-chart-4: #64748b;
+  --color-chart-5: #0ea5a4;
+  --color-chart-6: #a5adfb;
+  --color-chart-grid: #e8eaee;
 
-  /* --- Tipografi -----------------------------------------------------------
-     Ölçek adlandırılmıştır: ekranlar `text-h1` yazar, `text-2xl font-bold`
-     değil. Böylece başlık hiyerarşisi tek yerden değişir. */
+  /* --- Type ---------------------------------------------------------------- */
   --font-sans:
-    'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
+    'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-numeric: 'Inter Variable', 'Inter', 'Segoe UI', Roboto, sans-serif;
 
-  --text-display: 2.25rem; /* 36px — auth kahraman başlığı */
-  --text-display--line-height: 1.15;
-  --text-display--letter-spacing: -0.022em;
-  --text-display--font-weight: 700;
+  --text-display: 2.75rem;
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: -0.032em;
+  --text-display--font-weight: 650;
 
-  --text-h1: 1.625rem; /* 26px — sayfa başlığı */
+  --text-h1: 1.5rem;
   --text-h1--line-height: 1.25;
-  --text-h1--letter-spacing: -0.018em;
-  --text-h1--font-weight: 700;
+  --text-h1--letter-spacing: -0.022em;
+  --text-h1--font-weight: 650;
 
-  --text-h2: 1.25rem; /* 20px — bölüm başlığı */
-  --text-h2--line-height: 1.3;
-  --text-h2--letter-spacing: -0.012em;
-  --text-h2--font-weight: 700;
+  --text-h2: 1.125rem;
+  --text-h2--line-height: 1.35;
+  --text-h2--letter-spacing: -0.014em;
+  --text-h2--font-weight: 620;
 
-  --text-h3: 1rem; /* 16px — kart başlığı */
+  --text-h3: 0.9375rem;
   --text-h3--line-height: 1.4;
-  --text-h3--letter-spacing: -0.006em;
+  --text-h3--letter-spacing: -0.008em;
   --text-h3--font-weight: 600;
 
-  --text-body: 0.9375rem; /* 15px — gövde */
-  --text-body--line-height: 1.6;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.55;
 
-  --text-caption: 0.8125rem; /* 13px — ikincil/yardımcı */
+  --text-caption: 0.8125rem;
   --text-caption--line-height: 1.45;
 
-  --text-micro: 0.6875rem; /* 11px — rozet, alt nav etiketi */
+  --text-micro: 0.6875rem;
   --text-micro--line-height: 1.3;
-  --text-micro--letter-spacing: 0.01em;
+  --text-micro--letter-spacing: 0.02em;
 
-  /* --- Yarıçap (ekranlardan ölçüldü) --------------------------------------- */
-  --radius-tile: 1rem;
-  --radius-card: 1.25rem;
-  --radius-sheet: 1.75rem;
-  --radius-pill: 9999px; /* butonlar & çipler tam pill */
+  /* --- Shape --------------------------------------------------------------- */
+  --radius-tile: 0.625rem;
+  --radius-card: 0.875rem;
+  --radius-sheet: 1.25rem;
+  --radius-control: 0.5rem;
+  --radius-pill: 9999px;
 
-  /* --- Gölge ---------------------------------------------------------------- */
-  --shadow-card: 0 10px 30px -18px rgba(0, 31, 77, 0.28), 0 2px 8px rgba(0, 31, 77, 0.05);
-  --shadow-raised: 0 22px 48px -22px rgba(0, 49, 111, 0.35), 0 8px 20px rgba(0, 31, 77, 0.08);
-  --shadow-nav: 0 14px 40px rgba(0, 31, 77, 0.16);
-  --shadow-fab: 0 10px 28px rgba(255, 201, 0, 0.38);
-  /* Modal, drawer, dropdown — sayfadan kopan katman. */
-  --shadow-overlay: 0 24px 48px -12px rgba(5, 42, 88, 0.28);
-  /* Kenarlık yerine kullanılan 1px iç çizgi; kartı büyütmez. */
-  --shadow-hairline: inset 0 0 0 1px rgba(0, 67, 132, 0.09);
+  /* --- Elevation ----------------------------------------------------------- */
+  --shadow-card: 0 1px 2px rgba(16, 20, 28, 0.05);
+  --shadow-raised: 0 1px 2px rgba(16, 20, 28, 0.06), 0 8px 24px -12px rgba(16, 20, 28, 0.16);
+  --shadow-nav: 0 -1px 0 var(--color-line), 0 -8px 24px -16px rgba(16, 20, 28, 0.2);
+  --shadow-fab: 0 6px 18px -6px rgba(64, 73, 222, 0.55);
+  --shadow-overlay: 0 24px 64px -16px rgba(8, 10, 16, 0.32), 0 2px 6px rgba(8, 10, 16, 0.08);
+  --shadow-hairline: inset 0 0 0 1px var(--color-line);
+  --shadow-glow: 0 0 0 1px rgba(85, 98, 242, 0.24), 0 8px 28px -8px rgba(85, 98, 242, 0.45);
 
-  /* --- Animasyon ------------------------------------------------------------ */
+  /* --- Motion -------------------------------------------------------------- */
   --animate-shimmer: shimmer 1.6s linear infinite;
   --animate-pulse-ring: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-slide-up: slide-up 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-up: slide-up 0.32s cubic-bezier(0.16, 1, 0.3, 1);
   --animate-fade-in: fade-in 0.2s ease-out;
   --animate-scale-in: scale-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   --animate-sweep: sweep 1.1s cubic-bezier(0.25, 1, 0.4, 1) forwards;
+  --animate-rise: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-ping-soft: ping-soft 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* ==========================================================================
+   Dark theme — same names, re-pointed values.
+   Tints (-50/-100/-200) become dark washes; text shades (-700…-950) become
+   light, so `bg-brand-50 text-brand-700` stays a readable pair.
+   ========================================================================== */
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-brand-950: #f2f3ff;
+  --color-brand-900: #e4e7fe;
+  --color-brand-800: #cbd0fd;
+  --color-brand-700: #a5adfb;
+  --color-brand-600: #5562f2;
+  --color-brand-500: #6c78ff;
+  --color-brand-400: #8f98fa;
+  --color-brand-300: #3f479e;
+  --color-brand-200: #2b3172;
+  --color-brand-100: #1d2150;
+  --color-brand-50: #151836;
+
+  --color-aqua-700: #67e8f9;
+  --color-aqua-600: #22d3ee;
+  --color-aqua-500: #22d3ee;
+  --color-aqua-100: #0d3540;
+  --color-aqua-50: #0a2229;
+
+  --color-success-700: #4fdc9f;
+  --color-success-600: #34c98a;
+  --color-success-500: #22b07a;
+  --color-success-100: #0f2a20;
+
+  --color-warning-700: #f6c459;
+  --color-warning-600: #eeb032;
+  --color-warning-500: #e8a10c;
+  --color-warning-100: #2b2210;
+
+  --color-danger-700: #ff9a66;
+  --color-danger-600: #ff7d42;
+  --color-danger-500: #f46a2a;
+  --color-danger-100: #33190e;
+
+  --color-critical-700: #ff8aa8;
+  --color-critical-600: #ff5f86;
+  --color-critical-500: #ee3562;
+  --color-critical-100: #361019;
+
+  --color-ink-900: #eceef3;
+  --color-ink-800: #d6dae2;
+  --color-ink-700: #b5bcc9;
+  --color-ink-600: #9aa2b2;
+  --color-ink-500: #8a93a5;
+  --color-ink-400: #687183;
+  --color-ink-300: #3d4454;
+  --color-ink-200: #272c38;
+  --color-ink-100: #1a1e27;
+  --color-canvas: #0b0d12;
+  --color-surface: #12151c;
+  --color-subtle: #161a22;
+  --color-line: #232834;
+
+  --color-console-bg: #0b0d12;
+  --color-console-surface: #12151c;
+  --color-console-hover: #1a1e27;
+  --color-console-border: #1f2430;
+  --color-console-text: #eceef3;
+  --color-console-muted: #8a93a5;
+
+  --color-chart-1: #7c87f7;
+  --color-chart-2: #22d3ee;
+  --color-chart-3: #c084fc;
+  --color-chart-4: #94a3b8;
+  --color-chart-5: #2dd4bf;
+  --color-chart-6: #3f479e;
+  --color-chart-grid: #232834;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -12px rgba(0, 0, 0, 0.6);
+  --shadow-overlay: 0 24px 64px -16px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--color-line);
 }
 
 @keyframes shimmer {
@@ -187,9 +270,32 @@
   }
 }
 
+@keyframes ping-soft {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  80%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
 @keyframes slide-up {
   from {
-    transform: translateY(16px);
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(8px);
     opacity: 0;
   }
   to {
@@ -209,7 +315,7 @@
 
 @keyframes scale-in {
   from {
-    transform: scale(0.96);
+    transform: scale(0.97);
     opacity: 0;
   }
   to {
@@ -218,7 +324,7 @@
   }
 }
 
-/* Halka/çubuk göstergelerinin dolum animasyonu (RiskGauge, seviye halkası). */
+/* Ring/bar gauge fill (RiskGauge, level ring). */
 @keyframes sweep {
   from {
     stroke-dashoffset: var(--sweep-from, 0);
@@ -229,64 +335,59 @@
 }
 
 /* ==========================================================================
-   Taban katmanı
+   Base
    ========================================================================== */
 
 @layer base {
   * {
     -webkit-tap-highlight-color: transparent;
+    border-color: var(--color-line);
   }
 
   html {
     -webkit-text-size-adjust: 100%;
+    color-scheme: light;
   }
 
   body {
     background-color: var(--color-canvas);
-    background-image:
-      radial-gradient(circle at 6% -10%, rgba(0, 194, 222, 0.1), transparent 30rem),
-      radial-gradient(circle at 100% 12%, rgba(255, 201, 0, 0.065), transparent 26rem),
-      linear-gradient(180deg, #f8fbfe 0%, var(--color-canvas) 22rem);
-    background-attachment: fixed;
     color: var(--color-ink-900);
     font-family: var(--font-sans);
-    /* cv02–cv04: tek katlı a/g/l — Inter'i geometrik bir grotesk'e
-       yaklaştırır. ss03: Türkçe'de sık geçen 'ğ/ş' formlarını yumuşatır. */
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'ss03';
+    /* cv11: single-storey a; ss01: open digits; tnum keeps columns aligned. */
+    font-feature-settings: 'cv11', 'ss01', 'ss03';
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
-  /* Klavye kullanıcısı için görünür odak halkası; fare tıklamasında gizli. */
+  /* Visible focus for keyboard users only. */
   :focus-visible {
-    outline: 3px solid color-mix(in srgb, var(--color-brand-500) 78%, white);
-    outline-offset: 3px;
-    border-radius: 4px;
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+    border-radius: 6px;
   }
 
-  /* Koyu kenar çubuğunda mavi halka kaybolur; beyaza çeviriyoruz. */
-  .on-console :focus-visible {
-    outline-color: var(--color-tc-500);
+  .on-console :focus-visible,
+  .on-night :focus-visible {
+    outline-color: var(--color-aqua-400);
   }
 
-  /* Sayı kolonlarının hizalı görünmesi için (tutar, puan, skor). */
   .tabular {
     font-variant-numeric: tabular-nums;
   }
 
-  /* Konsolda yoğun tablolar yatay kayar; ince ve sessiz bir kaydırma çubuğu. */
   .scroll-slim {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-ink-200) transparent;
+    scrollbar-color: var(--color-ink-300) transparent;
   }
   .scroll-slim::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
   .scroll-slim::-webkit-scrollbar-thumb {
-    background-color: var(--color-ink-200);
+    background-color: var(--color-ink-300);
     border-radius: 9999px;
   }
   .scroll-slim::-webkit-scrollbar-track {
@@ -295,116 +396,102 @@
 }
 
 ::selection {
-  background: var(--color-tc-500);
-  color: var(--color-brand-950);
+  background: color-mix(in srgb, var(--color-brand-500) 28%, transparent);
 }
 
 /* ==========================================================================
-   Yardımcı sınıflar — tasarımda tekrar eden yüzeyler
+   Surfaces
    ========================================================================== */
 
+/* Accent wash used on the few places that carry the brand (customer hero card). */
 @utility gradient-brand {
-  background-image: linear-gradient(105deg, var(--color-brand-800) 0%, var(--color-brand-600) 52%, var(--color-aqua-500) 100%);
+  background-image: linear-gradient(135deg, #2a31a8 0%, #4049de 55%, #6a5cf0 100%);
 }
 
+/* Primary call-to-action fill. */
 @utility gradient-action {
-  background-image: linear-gradient(105deg, var(--color-tc-500) 0%, #ffe06a 100%);
+  background-image: linear-gradient(180deg, #5d69f4 0%, #4049de 100%);
 }
 
 @utility gradient-header {
-  /* Ana sayfa üst bloğu: sol üst koyu mavi → sağ alt camgöbeği */
-  background-image: linear-gradient(
-    135deg,
-    var(--color-brand-950) 0%,
-    var(--color-brand-800) 52%,
-    var(--color-aqua-600) 100%
-  );
+  background-color: var(--color-night-900);
+  background-image:
+    radial-gradient(120% 140% at 100% 0%, rgba(85, 98, 242, 0.42) 0%, transparent 55%),
+    radial-gradient(90% 120% at 0% 100%, rgba(6, 182, 212, 0.16) 0%, transparent 60%);
 }
 
 @utility gradient-splash {
-  /* Giriş/karşılama ekranı tam sayfa arkaplanı */
-  background-image: linear-gradient(
-    160deg,
-    var(--color-brand-950) 0%,
-    var(--color-brand-800) 54%,
-    var(--color-aqua-600) 100%
-  );
+  background-color: var(--color-night-950);
+  background-image:
+    radial-gradient(70% 55% at 85% 10%, rgba(85, 98, 242, 0.35) 0%, transparent 70%),
+    radial-gradient(60% 50% at 10% 90%, rgba(6, 182, 212, 0.14) 0%, transparent 70%);
 }
 
 @utility gradient-console {
-  /* Operasyon konsolu kenar çubuğu — hero gradientinin koyu, sakin akrabası.
-     Kokpit hissi verir ama içerik alanı açık kaldığı için göz yorulmaz. */
-  background-image:
-    radial-gradient(circle at 18% 8%, rgba(0, 194, 222, 0.17), transparent 18rem),
-    linear-gradient(180deg, var(--color-console-bg) 0%, #000d25 100%);
+  background-color: var(--color-console-bg);
 }
 
 @utility surface-card {
   background-color: var(--color-surface);
   border-radius: var(--radius-card);
-  box-shadow: 0 16px 38px -28px rgba(0, 31, 77, 0.38), 0 2px 8px rgba(0, 31, 77, 0.035);
-  border: 1px solid rgba(0, 86, 166, 0.085);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-card);
 }
 
 @utility surface-panel {
-  /* Konsolun veri panelleri: kartla aynı zemin, kenarlık yerine iç çizgi.
-     Yan yana dizilen panellerde 1px kenarlıkların çift görünmesini önler. */
   background-color: var(--color-surface);
   border-radius: var(--radius-card);
-  box-shadow: var(--shadow-hairline), 0 16px 34px -30px rgba(0, 31, 77, 0.3);
-  border: 1px solid rgba(0, 86, 166, 0.07);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-card);
 }
 
 @utility surface-elevated {
-  background-color: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(0, 86, 166, 0.1);
-  border-radius: 1.5rem;
-  box-shadow: 0 24px 54px -34px rgba(0, 31, 77, 0.46), 0 3px 10px rgba(0, 31, 77, 0.04);
-  backdrop-filter: blur(20px);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-raised);
 }
 
 @utility canvas-grid {
   background-image:
-    linear-gradient(rgba(0, 86, 166, 0.024) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 86, 166, 0.024) 1px, transparent 1px);
-  background-size: 32px 32px;
+    linear-gradient(color-mix(in srgb, var(--color-ink-400) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-ink-400) 9%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
 @utility text-gradient-brand {
-  background-image: linear-gradient(90deg, var(--color-brand-800) 0%, var(--color-aqua-500) 100%);
+  background-image: linear-gradient(90deg, #a5adfb 0%, #67e8f9 100%);
   background-clip: text;
   color: transparent;
 }
 
 @utility hero-mesh {
-  /* Gradient hero'nun üzerine binen yumuşak ışık — düz gradienti "basılı"
-     görünmekten çıkarır. Referans ekranlardaki derinlik hissi buradan gelir. */
   background-image:
-    radial-gradient(64% 82% at 88% 3%, rgba(0, 194, 222, 0.5) 0%, transparent 62%),
-    radial-gradient(50% 70% at 5% 95%, rgba(255, 201, 0, 0.2) 0%, transparent 65%);
+    radial-gradient(60% 90% at 90% 0%, rgba(124, 135, 247, 0.35) 0%, transparent 62%),
+    radial-gradient(50% 80% at 0% 100%, rgba(34, 211, 238, 0.14) 0%, transparent 65%);
 }
 
+/* Faint grid on the dark hero. */
 @utility brand-grid {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
-  background-size: 36px 36px;
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 @utility glass-card {
-  background: color-mix(in srgb, white 88%, transparent);
-  border: 1px solid rgba(255, 255, 255, 0.74);
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  border: 1px solid var(--color-line);
   box-shadow: var(--shadow-raised);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(16px);
 }
 
 @utility focus-ring {
-  outline: 2px solid var(--color-brand-600);
+  outline: 2px solid var(--color-brand-500);
   outline-offset: 2px;
 }
 
 @utility skeleton-sheen {
-  /* Yükleniyor iskeletlerinin parlaması — @keyframes shimmer'ı kullanır. */
   background-image: linear-gradient(
     90deg,
     var(--color-ink-100) 25%,
@@ -423,7 +510,16 @@
   padding-top: env(safe-area-inset-top, 0px);
 }
 
-/* Hareket hassasiyeti olan kullanıcılar için animasyonları kapat. */
+/* Small uppercase section label. */
+@utility eyebrow {
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-500);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

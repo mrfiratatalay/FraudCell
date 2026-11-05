@@ -13,8 +13,7 @@ export interface FieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
 }
 
 /**
- * Metin alanı: beyaz kart, etiket alanın içinde üstte küçük punto,
- * değer altında büyük punto. Kenarlık yok, yumuşak köşe.
+ * Text field: label above, a bordered input with an optional leading icon.
  *
  * `forwardRef` React Hook Form'un `register()` dönüşünü bağlayabilmesi için
  * şarttır; `error` prop'u da `formState.errors[...].message` ile doldurulur.
@@ -29,45 +28,37 @@ export const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
 
   return (
     <div className="w-full">
+      <label htmlFor={inputId} className="mb-1.5 block text-[13px] font-medium text-ink-700">
+        {label}
+      </label>
       <div
         className={cn(
-          'flex min-h-16 items-center gap-3 rounded-tile bg-white px-4 py-2.5',
-          'transition-[box-shadow,border-color,transform] duration-150',
-          onBrand ? 'shadow-raised' : 'border border-ink-200 shadow-[0_4px_14px_rgba(0,31,77,.035)]',
-          // Alan odaklandığında kenarlığı markaya çevir — focus-within içteki input'u yakalar.
-          'focus-within:-translate-y-px focus-within:border-brand-500 focus-within:ring-3 focus-within:ring-brand-500/15',
+          'flex h-11 items-center gap-2.5 rounded-control border bg-surface px-3',
+          'transition-[box-shadow,border-color] duration-150',
+          onBrand ? 'border-transparent shadow-raised' : 'border-line shadow-card hover:border-ink-300',
+          'focus-within:border-brand-500 focus-within:ring-3 focus-within:ring-brand-500/20 focus-within:hover:border-brand-500',
           error && 'border-danger-500 focus-within:border-danger-500 focus-within:ring-danger-500/20',
           className,
         )}
       >
-        {leadingIcon && <span className="shrink-0 text-ink-400">{leadingIcon}</span>}
-
-        <div className="min-w-0 flex-1">
-          <label htmlFor={inputId} className="block text-xs font-medium text-ink-500">
-            {label}
-          </label>
-          <input
-            ref={ref}
-            id={inputId}
-            aria-invalid={error ? true : undefined}
-            aria-describedby={describedBy}
-            className={cn(
-              'min-h-6 w-full bg-transparent text-base text-ink-900 sm:text-[17px]',
-              'placeholder:text-ink-400 focus:outline-none',
-            )}
-            {...rest}
-          />
-        </div>
-
+        {leadingIcon && <span className="shrink-0 text-ink-400 [&_svg]:size-4">{leadingIcon}</span>}
+        <input
+          ref={ref}
+          id={inputId}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy}
+          className="h-full min-w-0 flex-1 bg-transparent text-[15px] text-ink-900 placeholder:text-ink-400 focus:outline-none sm:text-sm"
+          {...rest}
+        />
         {trailingSlot}
       </div>
 
       {error ? (
-        <p id={`${inputId}-error`} role="alert" className="mt-1.5 px-1 text-sm text-danger-500">
+        <p id={`${inputId}-error`} role="alert" className="mt-1.5 text-[13px] text-danger-600">
           {error}
         </p>
       ) : hint ? (
-        <p id={`${inputId}-hint`} className="mt-1.5 px-1 text-sm text-ink-400">
+        <p id={`${inputId}-hint`} className="mt-1.5 text-[13px] text-ink-500">
           {hint}
         </p>
       ) : null}
@@ -89,9 +80,9 @@ export const PasswordField = forwardRef<HTMLInputElement, Omit<FieldProps, 'type
             type="button"
             onClick={() => setVisible((v) => !v)}
             aria-label={visible ? 'Şifreyi gizle' : 'Şifreyi göster'}
-            className="-mr-2 flex size-10 shrink-0 items-center justify-center rounded-full text-ink-400 transition-colors hover:bg-ink-100 hover:text-ink-700"
+            className="-mr-1.5 flex size-8 shrink-0 items-center justify-center rounded-md text-ink-400 transition-colors hover:bg-ink-100 hover:text-ink-700"
           >
-            {visible ? <Eye className="size-5" /> : <EyeOff className="size-5" />}
+            {visible ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
           </button>
         }
         {...props}
@@ -116,38 +107,31 @@ export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>
 
     return (
       <div className="w-full">
-        <div
+        <label htmlFor={fieldId} className="mb-1.5 block text-[13px] font-medium text-ink-700">
+          {label}
+        </label>
+        <textarea
+          ref={ref}
+          id={fieldId}
+          rows={3}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy}
           className={cn(
-            'rounded-tile border border-ink-200 bg-white px-4 py-3 shadow-[0_4px_14px_rgba(0,31,77,.035)]',
-            'focus-within:border-brand-500 focus-within:ring-3 focus-within:ring-brand-500/15',
-            error &&
-              'border-danger-500 focus-within:border-danger-500 focus-within:ring-danger-500/20',
+            'block w-full resize-y rounded-control border border-line bg-surface px-3 py-2.5 shadow-card',
+            'text-sm leading-relaxed text-ink-900 placeholder:text-ink-400',
+            'transition-[box-shadow,border-color] hover:border-ink-300 focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 focus:outline-none',
+            error && 'border-danger-500 focus:border-danger-500 focus:ring-danger-500/20',
             className,
           )}
-        >
-          <label htmlFor={fieldId} className="block text-xs font-medium text-ink-500">
-            {label}
-          </label>
-          <textarea
-            ref={ref}
-            id={fieldId}
-            rows={3}
-            aria-invalid={error ? true : undefined}
-            aria-describedby={describedBy}
-            className={cn(
-              'w-full resize-y bg-transparent text-[15px] leading-relaxed text-ink-900',
-              'placeholder:text-ink-400 focus:outline-none',
-            )}
-            {...rest}
-          />
-        </div>
+          {...rest}
+        />
 
         {error ? (
-          <p id={`${fieldId}-error`} role="alert" className="mt-1.5 px-1 text-sm text-danger-500">
+          <p id={`${fieldId}-error`} role="alert" className="mt-1.5 text-[13px] text-danger-600">
             {error}
           </p>
         ) : hint ? (
-          <p id={`${fieldId}-hint`} className="mt-1.5 px-1 text-sm text-ink-400">
+          <p id={`${fieldId}-hint`} className="mt-1.5 text-[13px] text-ink-500">
             {hint}
           </p>
         ) : null}
