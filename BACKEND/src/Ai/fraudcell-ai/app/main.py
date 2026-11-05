@@ -16,6 +16,7 @@ from fastapi import FastAPI
 from app.api import health, internal_router, metrics_router, models_router, predictions_router
 from app.bootstrap import bootstrap_models
 from app.config import settings
+from app.messaging.feedback_consumers import CaseDecisionFeedbackConsumer, FraudTypeOverriddenConsumer
 from app.messaging.outbox_worker import run as run_outbox_worker
 from app.messaging.projection_consumers import (
     AnalystPerformanceUpdatedConsumer,
@@ -50,6 +51,8 @@ async def lifespan(app: FastAPI):
         AnalystPerformanceUpdatedConsumer(settings.rabbitmq.url),
         CaseAssignedConsumer(settings.rabbitmq.url),
         CaseClosedConsumer(settings.rabbitmq.url),
+        FraudTypeOverriddenConsumer(settings.rabbitmq.url),
+        CaseDecisionFeedbackConsumer(settings.rabbitmq.url),
     ]
 
     for consumer in consumers:
