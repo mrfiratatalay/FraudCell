@@ -38,8 +38,8 @@ export function Tabs<T extends string>({
     >
       <RadixTabs.List
         className={cn(
-          'flex gap-1 overflow-x-auto border-b border-ink-100',
-          // Yatay kaydırmada çubuk görünmesin.
+          'flex gap-5 overflow-x-auto border-b border-line',
+          // No visible scrollbar when the tabs scroll sideways.
           '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
         )}
       >
@@ -48,19 +48,19 @@ export function Tabs<T extends string>({
             key={item.value}
             value={item.value}
             className={cn(
-              'relative shrink-0 px-4 py-3 text-sm font-semibold whitespace-nowrap',
-              'text-ink-500 transition-colors hover:text-ink-700',
-              'data-[state=active]:text-brand-700',
-              // Aktif sekmenin altındaki camgöbeği çizgi.
-              'after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full',
-              'after:bg-transparent data-[state=active]:after:bg-aqua-500',
+              'relative shrink-0 py-2.5 text-[13px] font-medium whitespace-nowrap',
+              'text-ink-500 transition-colors hover:text-ink-900',
+              'data-[state=active]:text-ink-900',
+              // Turkcell-yellow underline under the active tab.
+              'after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:rounded-full',
+              'after:bg-transparent data-[state=active]:after:bg-tc-500',
             )}
           >
             {item.label}
             {item.count !== undefined && (
               <span
                 className={cn(
-                  'ml-1.5 rounded-pill px-1.5 py-0.5 text-[11px] tabular',
+                  'ml-1.5 rounded px-1.5 py-0.5 text-[11px] tabular',
                   'bg-ink-100 text-ink-500',
                 )}
               >

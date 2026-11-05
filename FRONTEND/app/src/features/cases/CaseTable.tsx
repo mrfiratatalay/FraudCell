@@ -32,8 +32,12 @@ export interface CaseTableColumn {
   cell: (item: CaseResponse) => ReactNode;
 }
 
-const GRID = 'lg:grid-cols-[8.5rem_minmax(12rem,1.6fr)_8.5rem_9.5rem_7.5rem_minmax(6rem,0.8fr)]';
-const GRID_EXTRA = 'lg:grid-cols-[8.5rem_minmax(12rem,1.6fr)_8.5rem_9.5rem_7.5rem_minmax(8rem,1fr)_minmax(6rem,0.8fr)]';
+// Columns follow the table's own width (container queries), not the viewport:
+// the same table sits full-width on a list page and in a column on the dashboard.
+const GRID =
+  '@3xl:grid-cols-[7rem_minmax(10rem,1.6fr)_7.5rem_8.5rem_7.5rem] @5xl:grid-cols-[7.5rem_minmax(12rem,1.6fr)_8.5rem_9.5rem_8rem_minmax(6rem,0.8fr)]';
+const GRID_EXTRA =
+  '@3xl:grid-cols-[7rem_minmax(10rem,1.6fr)_7.5rem_8.5rem_7.5rem] @5xl:grid-cols-[7.5rem_minmax(12rem,1.6fr)_8.5rem_9.5rem_8rem_minmax(8rem,1fr)_minmax(6rem,0.8fr)]';
 
 /**
  * The case list every role works from: one row per case, riskiest first as
@@ -54,10 +58,10 @@ export function CaseTable({
 }) {
   const grid = extra ? GRID_EXTRA : GRID;
   return (
-    <div className="surface-panel overflow-hidden">
+    <div className="surface-panel @container overflow-hidden">
       <div
         className={cn(
-          'hidden border-b border-line bg-subtle px-4 py-2.5 text-xs font-medium text-ink-500 lg:grid lg:gap-4',
+          'hidden border-b border-line bg-subtle px-4 py-2.5 text-xs font-medium text-ink-500 @3xl:grid @3xl:gap-x-4',
           grid,
         )}
         aria-hidden
@@ -67,8 +71,8 @@ export function CaseTable({
         <span className="text-right">Tutar</span>
         <span>Durum</span>
         <span>SLA</span>
-        {extra && <span>{extra.header}</span>}
-        <span className="text-right">Açıldı</span>
+        {extra && <span className="hidden @5xl:block">{extra.header}</span>}
+        <span className="hidden text-right @5xl:block">Açıldı</span>
       </div>
 
       <ul aria-label={label} className="divide-y divide-line">
@@ -82,16 +86,16 @@ export function CaseTable({
                 to={to}
                 params={{ caseId: item.caseId }}
                 className={cn(
-                  'grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 px-4 py-3.5 transition-colors hover:bg-subtle focus-visible:bg-subtle lg:gap-y-0 lg:py-3',
+                  'grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 px-4 py-3.5 transition-colors hover:bg-subtle focus-visible:bg-subtle @3xl:gap-y-0 @3xl:py-3',
                   grid,
                 )}
               >
                 <RiskScore
                   level={item.effectiveRisk.riskLevel}
                   score={item.effectiveRisk.riskScore}
-                  className="order-3 lg:order-none"
+                  className="order-3 @3xl:order-none"
                 />
-                <span className="order-1 min-w-0 lg:order-none">
+                <span className="order-1 min-w-0 @3xl:order-none">
                   <span className="block truncate font-mono text-[13px] font-medium text-ink-900">
                     {item.transaction.transactionNo}
                   </span>
@@ -99,15 +103,15 @@ export function CaseTable({
                     {type} · {item.transaction.city}, {item.transaction.countryCode}
                   </span>
                 </span>
-                <span className="order-4 text-right text-sm font-semibold text-ink-900 tabular lg:order-none">
+                <span className="order-4 text-right text-sm font-semibold text-ink-900 tabular @3xl:order-none">
                   {formatMoney(item.transaction.amount, item.transaction.currency)}
                 </span>
-                <CaseStatusLabel status={item.status} className="order-5 lg:order-none" />
-                <span className="order-2 justify-self-end lg:order-none lg:justify-self-start">
+                <CaseStatusLabel status={item.status} className="order-5 @3xl:order-none" />
+                <span className="order-2 justify-self-end @3xl:order-none @3xl:justify-self-start">
                   <SlaCountdown sla={item.sla} compact />
                 </span>
-                {extra && <span className="order-6 min-w-0 truncate text-[13px] text-ink-700 lg:order-none">{extra.cell(item)}</span>}
-                <span className="order-6 justify-self-end text-xs text-ink-500 lg:order-none">
+                {extra && <span className="order-6 min-w-0 truncate text-[13px] text-ink-700 @3xl:hidden @5xl:order-none @5xl:block">{extra.cell(item)}</span>}
+                <span className="order-6 justify-self-end text-xs text-ink-500 @3xl:hidden @5xl:order-none @5xl:block">
                   {formatRelative(item.createdAt)}
                 </span>
               </Link>
