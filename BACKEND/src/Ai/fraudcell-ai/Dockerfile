@@ -23,6 +23,7 @@ RUN uv sync --frozen --no-dev --group training --no-install-project
 
 COPY src/Ai/fraudcell-ai/app ./app
 COPY src/Ai/fraudcell-ai/train.py ./
+COPY src/Ai/fraudcell-ai/data ./data
 RUN python train.py
 
 # ---- Runtime ----

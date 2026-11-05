@@ -40,7 +40,8 @@ jobs:
         with:
           python-version: '3.13'
       - run: python -m pip install uv==0.11.31
-      - run: uv sync --frozen --group dev --group test
+      # training: pandas, for the test that regenerates the committed data
+      - run: uv sync --frozen --group dev --group test --group training
       - run: uv run --group dev --group test ruff check app tests
       - run: uv run --group dev --group test mypy app
       - run: uv run --group test pytest -q
