@@ -31,11 +31,10 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddFraudCellJwtBearer(builder.Configuration);
 
-// The AI service does not validate tokens itself, so the gateway enforces case §3.3
-// for its routes (appsettings.json "AuthorizationPolicy"). The other services check roles themselves.
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("staff", policy => policy.RequireRole("ANALYST", "SUPERVISOR", "ADMIN"))
-    .AddPolicy("supervisor-or-admin", policy => policy.RequireRole("SUPERVISOR", "ADMIN"));
+// AI routes also require a valid token here ("AuthorizationPolicy": "default" in
+// appsettings.json), as defence in depth. Roles and their 403 audit are decided by
+// each service itself, the AI included, so a denial is audited exactly once.
+builder.Services.AddAuthorization();
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
