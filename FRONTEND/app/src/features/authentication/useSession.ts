@@ -38,7 +38,7 @@ export function useDisplayName(): string {
 /**
  * Rol kontrolü.
  *
- * DESIGN.MD kural 3: bu GÜVENLİK DEĞİLDİR. Menü ve route'ları role göre
+ * bu GÜVENLİK DEĞİLDİR. Menü ve route'ları role göre
  * gizlemek içindir; gerçek yetkilendirme her zaman Gateway ve servistedir.
  */
 export function useHasRole(...roles: Role[]): boolean {

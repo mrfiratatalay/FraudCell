@@ -16,7 +16,7 @@ public sealed record AiAssessmentFailedPayload(string TransactionId, string Reas
 
 /// <summary>
 /// <c>ai.assessment.failed</c> tuketicisi. AI Service teknik/model hatasi
-/// bildirdiginde watchdog ile AYNI guvenli fallback uygulanir (dokuman §9.4).
+/// bildirdiginde watchdog ile AYNI guvenli fallback uygulanir.
 /// </summary>
 public sealed class AiAssessmentFailedConsumer(
     RabbitMqConnectionProvider connectionProvider,

@@ -1,6 +1,6 @@
 namespace FraudCell.Transaction.Service.Common;
 
-/// <summary>Identity Service'teki tanimla birebir ayni (dokuman §14).</summary>
+/// <summary>Identity Service'teki tanimla birebir ayni.</summary>
 public static class RoleNames
 {
     public const string Customer = "CUSTOMER";

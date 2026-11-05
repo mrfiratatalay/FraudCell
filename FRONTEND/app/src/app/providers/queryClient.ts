@@ -4,7 +4,7 @@ import { isAuthError, isRetryableError } from '@/shared/api/errors';
 /**
  * TanStack Query yapılandırması.
  *
- * DESIGN.MD: server state'in tek sahibi burasıdır. Vaka listeleri, SLA
+ * server state'in tek sahibi burasıdır. Vaka listeleri, SLA
  * durumları, dashboard metrikleri Redux/Zustand'a KOPYALANMAZ.
  */
 export function createQueryClient(): QueryClient {

@@ -8,8 +8,8 @@ namespace FraudCell.BuildingBlocks.Messaging.RabbitMq;
 /// Tek, paylasilan RabbitMQ baglantisi.
 ///
 /// Baglanti KASITLI olarak tembeldir. Broker kapaliyken servis ayaga kalkmali,
-/// HTTP isteklerini kabul etmeli ve event'leri outbox'ta biriktirmelidir
-/// (dokuman §19/§21). Bu yuzden constructor'da baglanti kurulmaz ve baglanti
+/// HTTP isteklerini kabul etmeli ve event'leri outbox'ta biriktirmelidir.
+/// Bu yuzden constructor'da baglanti kurulmaz ve baglanti
 /// hatasi uygulamayi dusurmez.
 /// </summary>
 public sealed partial class RabbitMqConnectionProvider : IAsyncDisposable

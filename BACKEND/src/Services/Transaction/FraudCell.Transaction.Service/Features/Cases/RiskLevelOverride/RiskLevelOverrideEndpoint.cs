@@ -16,7 +16,7 @@ public sealed record RiskLevelOverrideSlaResponse(string Priority, DateTimeOffse
 public sealed record RiskLevelOverrideResponse(
     string CaseId, string PreviousRiskLevel, string EffectiveRiskLevel, RiskLevelOverrideSlaResponse Sla, string TransactionControlStatus, long Version);
 
-/// <summary><c>PATCH /api/v1/cases/{caseId}/risk-level</c> (dokuman §47, yalnizca Supervisor).</summary>
+/// <summary><c>PATCH /api/v1/cases/{caseId}/risk-level</c>.</summary>
 public static class RiskLevelOverrideEndpoint
 {
     public static void MapRiskLevelOverride(this IEndpointRouteBuilder app)

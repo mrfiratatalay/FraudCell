@@ -1,5 +1,5 @@
-"""AI'nin analist siralamasi icin kullandigi local projection tuketicileri
-(dokuman `04-SERVICE-BOUNDARIES.md` §9.8, §9.6). Bu projection'lar authoritative
+"""AI'nin analist siralamasi icin kullandigi local projection tuketicileri.
+Bu projection'lar authoritative
 degildir; asil kaynak Identity/Transaction/Gamification servisleridir.
 """
 
@@ -119,7 +119,7 @@ class CaseAssignedConsumer(BaseConsumer):
 
 
 class CaseClosedConsumer(BaseConsumer):
-    """`case.decision.made` ile aktif vaka sayisi azalir (dokuman §33: final karar workload'dan duser)."""
+    """`case.decision.made` ile aktif vaka sayisi azalir."""
 
     queue_name = "ai.case-decision-made"
     routing_keys = ["case.decision.made.v1"]

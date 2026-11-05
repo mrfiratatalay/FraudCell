@@ -1,7 +1,7 @@
 namespace FraudCell.BuildingBlocks.Messaging.Inbox;
 
 /// <summary>
-/// Idempotent consumer kaydi (dokuman §15).
+/// Idempotent consumer kaydi.
 ///
 /// At-least-once teslimde ayni event birden fazla kez gelebilir. Business islem
 /// calistirilmadan once (EventId, ConsumerName) ciftinin varligi kontrol edilir;
@@ -26,7 +26,7 @@ public sealed class InboxMessage
 
     /// <summary>
     /// Ayni EventId farkli payload ile tekrar gelirse (producer hatasi/saldiri
-    /// senaryosu) tespit icin (dokuman §06 §59.3).
+    /// senaryosu) tespit icin.
     /// </summary>
     public string? PayloadHash { get; set; }
 
@@ -41,7 +41,7 @@ public sealed class InboxMessage
     public required string CorrelationId { get; set; }
 }
 
-/// <summary>Dokuman §06 §59.1.</summary>
+/// <summary>§59.1.</summary>
 public enum InboxStatus
 {
     Processing,

@@ -23,7 +23,7 @@ public sealed record StaffLoginUserResponse(
 public sealed record StaffLoginResponse(string AccessToken, DateTimeOffset AccessTokenExpiresAt, StaffLoginUserResponse User);
 
 /// <summary>
-/// <c>POST /api/v1/auth/staff/login</c> (dokuman `07-API-DESIGN.md` §25).
+/// <c>POST /api/v1/auth/staff/login</c>.
 /// Hesap kilidi ASP.NET Core Identity'nin yerlesik lockout altyapisiyla
 /// saglanir: 5 basarisiz denemede 15 dakika kilit, PostgreSQL'de kalici.
 /// </summary>

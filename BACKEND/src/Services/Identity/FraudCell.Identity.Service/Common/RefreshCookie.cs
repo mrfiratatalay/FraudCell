@@ -5,9 +5,9 @@ using FraudCell.Identity.Service.Security;
 namespace FraudCell.Identity.Service.Common;
 
 /// <summary>
-/// Refresh token'in HttpOnly cookie olarak tasinmasi (dokuman `07-API-DESIGN.md`
-/// §13.2, SEC-010). Token asla response body'sine yazilmaz; boylece XSS ile
-/// calinamaz. Cookie adi doküman §24/§26 orneklerindeki <c>fraudcell_refresh</c>
+/// Refresh token'in HttpOnly cookie olarak tasinmasi.
+/// Token asla response body'sine yazilmaz; boylece XSS ile
+/// calinamaz. Cookie adi orneklerindeki <c>fraudcell_refresh</c>
 /// ile birebir eslesir.
 /// </summary>
 public static class RefreshCookie

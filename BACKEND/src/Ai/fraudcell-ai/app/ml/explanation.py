@@ -1,4 +1,4 @@
-"""Gemini tabanli aciklama anlatisi katmani (dokuman 10-AI-SERVICE-DESIGN.md §8 istisnasi).
+"""Gemini tabanli aciklama anlatisi katmani.
 
 ONEMLI: Bu katman risk skorunu veya karari URETMEZ. Skor, risk seviyesi, fraud
 tipi ve reason_codes zaten ML modeli + deterministik kural katmani tarafindan

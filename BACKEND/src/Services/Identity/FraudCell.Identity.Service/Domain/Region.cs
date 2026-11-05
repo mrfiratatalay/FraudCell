@@ -2,7 +2,7 @@ using FraudCell.Identity.Service.Common;
 
 namespace FraudCell.Identity.Service.Domain;
 
-/// <summary><c>identity.regions</c> (dokuman §14.1).</summary>
+/// <summary><c>identity.regions</c>.</summary>
 public sealed class Region
 {
     public required string Id { get; set; }

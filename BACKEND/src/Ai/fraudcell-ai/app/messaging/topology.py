@@ -1,4 +1,4 @@
-"""RabbitMQ topolojisi (dokuman `02-ARCHITECTURE-OVERVIEW.md` §24).
+"""RabbitMQ topolojisi.
 
 .NET tarafindaki FraudCell.BuildingBlocks.Messaging.RabbitMq.RabbitMqTopology
 ile AYNI exchange/kuyruk isimlendirmesini kullanir; boylece iki calisma

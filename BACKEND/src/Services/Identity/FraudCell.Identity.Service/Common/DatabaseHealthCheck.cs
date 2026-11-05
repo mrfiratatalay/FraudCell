@@ -5,7 +5,7 @@ namespace FraudCell.Identity.Service.Common;
 
 /// <summary>
 /// Readiness kontrolu yalnizca bu servisin KENDI veritabanina baglanabildigini
-/// dogrular (dokuman §33.2); RabbitMQ veya diger servislerin durumu readiness'i
+/// dogrular; RabbitMQ veya diger servislerin durumu readiness'i
 /// etkilemez.
 /// </summary>
 public sealed class DatabaseHealthCheck(IdentityServiceDbContext db) : IHealthCheck

@@ -5,9 +5,9 @@ public sealed record ReasonCode(string Code, string Label, string Impact);
 public sealed record AnalystCandidate(string AnalystId, int Rank, decimal Score, decimal ExpertiseScore, decimal CapacityScore, decimal PerformanceScore);
 
 /// <summary>
-/// <c>txn.ai_assessments</c> (dokuman §22). AI Service'ten gelen prediction
+/// <c>txn.ai_assessments</c>. AI Service'ten gelen prediction
 /// snapshot'i; Transaction Service AI Database'e baglanmaz, yalnizca bu
-/// snapshot'i tutar (dokuman `05-DOMAIN-AND-STATE-MACHINE.md` §42). Orijinal
+/// snapshot'i tutar. Orijinal
 /// alanlar IMMUTABLE'dir; sonradan degistirilmez.
 /// </summary>
 public sealed class AiAssessment
@@ -42,7 +42,7 @@ public sealed class AiAssessment
 
     public bool IsLate { get; set; }
 
-    /// <summary>Bu transaction icin ilk/gecerli sayilan degerlendirme mi (dokuman §22.3 unique).</summary>
+    /// <summary>Bu transaction icin ilk/gecerli sayilan degerlendirme mi.</summary>
     public bool IsPrimary { get; set; }
 
     public required string PayloadHash { get; set; }

@@ -95,7 +95,7 @@ export function readLimit(url: URL, fallback = 20): number {
  *
  * Backend `ETagHelper` ile aynı davranış: header yoksa 428, uyuşmuyorsa 412.
  * Mock'ta bunu atlamak, 409/412 ekranlarının hiç test edilmemesi demek olurdu
- * — oysa DESIGN.MD bunları gerçek kullanıcı durumu olarak istiyor.
+ * — oysa ürün bunları gerçek kullanıcı durumu olarak istiyor.
  */
 export function checkIfMatch(request: Request, currentVersion: number) {
   const raw = request.headers.get('If-Match');

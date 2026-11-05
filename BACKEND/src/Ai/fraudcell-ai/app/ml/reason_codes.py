@@ -1,4 +1,4 @@
-"""Deterministik aciklama katmani (dokuman `00-START-HERE.md` §12 "Aciklama katmani").
+"""Deterministik aciklama katmani.
 
 Risk skoru ML modelinden gelir; operasyonel aciklamalar burada, engineered
 feature'lara uygulanan kural degerlendirmesinden uretilir. Bu, model

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace FraudCell.BuildingBlocks.Api;
 
 /// <summary>
-/// Dokuman `07-API-DESIGN.md` §8'deki standart cevap zarfi. Frontend'in
+/// 'deki standart cevap zarfi. Frontend'in
 /// <c>ApiEnvelope&lt;T&gt;</c> tipiyle birebir eslesir; alan adlari degistirilemez.
 /// </summary>
 public sealed record ApiResponse<T>
@@ -65,13 +65,13 @@ public sealed record ApiError(
     IReadOnlyDictionary<string, object?>? Details = null);
 
 /// <summary>
-/// <c>meta.pagination</c> dokuman §8.1'de tanimlanir; yalnizca liste
+/// <c>meta.pagination</c> 'de tanimlanir; yalnizca liste
 /// response'larinda doldurulur. <c>generatedAt</c> yalnizca rapor/dashboard
-/// response'larinda kullanilir (dokuman §53 ornegi).
+/// response'larinda kullanilir.
 /// </summary>
 public sealed record ApiMeta(string TraceId, PageInfo? Pagination = null, DateTimeOffset? GeneratedAt = null);
 
-/// <summary>Cursor/keyset pagination zarfi (dokuman §17).</summary>
+/// <summary>Cursor/keyset pagination zarfi.</summary>
 public sealed record PageInfo(string? NextCursor, bool HasMore, int Limit);
 
 /// <summary>Liste endpoint'lerinin <c>data</c> alani icin standart sekil: <c>{ items, page }</c>.</summary>

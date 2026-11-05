@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 namespace FraudCell.Transaction.Service.Common;
 
 /// <summary>
-/// Yillik okunabilir islem numarasi uretir (dokuman `06-DATA-ARCHITECTURE.md`
-/// §20): <c>TRX-{year}-{000000}</c>. <c>ON CONFLICT DO UPDATE</c> ile atomik
+/// Yillik okunabilir islem numarasi uretir:
+/// <c>TRX-{year}-{000000}</c>. <c>ON CONFLICT DO UPDATE</c> ile atomik
 /// artis saglar; gaps kabul edilebilir, uniqueness zorunludur.
 /// </summary>
 public sealed class TransactionNumberGenerator(TransactionServiceDbContext db, IClock clock)

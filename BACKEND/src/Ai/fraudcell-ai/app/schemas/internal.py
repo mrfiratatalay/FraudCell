@@ -1,4 +1,4 @@
-"""Internal diagnostic score endpoint sema (dokuman `07-API-DESIGN.md` §58)."""
+"""Internal diagnostic score endpoint sema."""
 
 from __future__ import annotations
 

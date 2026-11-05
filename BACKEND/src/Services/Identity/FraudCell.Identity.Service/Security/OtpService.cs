@@ -17,7 +17,7 @@ public sealed class OtpOptions
 
     public int MaxAttempts { get; set; } = 5;
 
-    /// <summary>Dokuman `07-API-DESIGN.md` §23: demo profilinde <c>demoHint</c> alani ve sabit kod doner.</summary>
+    /// <summary>Demo profilinde <c>demoHint</c> alani ve sabit kod doner.</summary>
     public bool UseFixedDemoCode { get; set; }
 
     public string FixedDemoCode { get; set; } = "1234";
@@ -36,8 +36,7 @@ public enum OtpVerifyOutcome
 public sealed record OtpChallengeResult(string ChallengeId, DateTimeOffset ExpiresAt, string? DemoHint);
 
 /// <summary>
-/// GSM + OTP dogrulama akisi (dokuman `06-DATA-ARCHITECTURE.md` §15,
-/// `07-API-DESIGN.md` §23-24). Gercek bir SMS gateway'i bu case kapsaminda
+/// GSM + OTP dogrulama akisi. Gercek bir SMS gateway'i bu case kapsaminda
 /// yok; kod "gonderilmis" gibi loglanir ve demo profilinde sabit deger kabul
 /// edilir.
 /// </summary>

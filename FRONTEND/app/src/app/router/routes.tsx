@@ -97,7 +97,7 @@ const SupervisorDashboardPage = lazyRouteComponent(
  * `routeTree.gen.ts` sürekli çakışırdı. Kod tabanlı ağaçta her taraf kendi
  * route bloğunu düzenler.
  *
- * DESIGN.MD "URL bir state kaynağıdır": filtreler ve sayfalama search
+ * filtreler ve sayfalama search
  * param'larında tutulur, global store'a taşınmaz. Aşağıdaki `validateSearch`
  * kullanımları bunun referans örneğidir.
  */

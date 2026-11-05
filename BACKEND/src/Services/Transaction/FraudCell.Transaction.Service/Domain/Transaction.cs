@@ -1,9 +1,8 @@
 namespace FraudCell.Transaction.Service.Domain;
 
 /// <summary>
-/// <c>txn.transactions</c> (dokuman `06-DATA-ARCHITECTURE.md` §21). Musterinin
-/// gerceklestirdigi islem; risk case olusmasa dahi kalicidir (dokuman
-/// `05-DOMAIN-AND-STATE-MACHINE.md` §4.1/§4.3).
+/// <c>txn.transactions</c>. Musterinin
+/// gerceklestirdigi islem; risk case olusmasa dahi kalicidir (dokuman.
 /// </summary>
 public sealed class FraudTransaction
 {
@@ -39,12 +38,12 @@ public sealed class FraudTransaction
 
     public FraudType? EffectiveFraudType { get; set; }
 
-    /// <summary>Dokuman §13: baslangicta guvenli varsayilan <c>INCELEME</c>'dir; AI kapaliyken de degismez.</summary>
+    /// <summary>Baslangicta guvenli varsayilan <c>INCELEME</c>'dir; AI kapaliyken de degismez.</summary>
     public ScreeningDecision ScreeningDecision { get; set; } = ScreeningDecision.INCELEME;
 
     public ControlStatus ControlStatus { get; set; } = ControlStatus.ALLOWED;
 
-    /// <summary>AI timeout/failure fallback nedeni (dokuman §13 TRX-012).</summary>
+    /// <summary>AI timeout/failure fallback nedeni.</summary>
     public string? ManualReviewReason { get; set; }
 
     public required DateTimeOffset CreatedAt { get; set; }
@@ -54,9 +53,9 @@ public sealed class FraudTransaction
     public long Version { get; set; }
 
     /// <summary>
-    /// AI sonucu ilk kez uygulanirken cagrilir (dokuman §15). Gec/duplicate
+    /// AI sonucu ilk kez uygulanirken cagrilir. Gec/duplicate
     /// sonuclarda cagrilmaz; caller <see cref="AssessmentStatus"/>'un hala
-    /// <c>PENDING</c> oldugunu once kontrol etmelidir (dokuman §44).
+    /// <c>PENDING</c> oldugunu once kontrol etmelidir.
     /// </summary>
     public void ApplyAssessment(decimal riskScore, RiskLevel riskLevel, ScreeningDecision decision, FraudType fraudType, DateTimeOffset now)
     {
@@ -78,7 +77,7 @@ public sealed class FraudTransaction
         Version++;
     }
 
-    /// <summary>Dokuman §9.3/§17: watchdog deadline gecti, AI sonucu gelmedi.</summary>
+    /// <summary>Watchdog deadline gecti, AI sonucu gelmedi.</summary>
     public void MarkAssessmentTimedOut(DateTimeOffset now)
     {
         AssessmentStatus = AssessmentStatus.TIMED_OUT;
@@ -98,7 +97,7 @@ public sealed class FraudTransaction
     }
 
     /// <summary>
-    /// Gec gelen AI sonucu (dokuman §43): control status uzerine yazmaz eger
+    /// Gec gelen AI sonucu: control status uzerine yazmaz eger
     /// zaten nihai APPROVED/BLOCKED ise; yalnizca efektif risk bilgisini
     /// evidence olarak gunceller.
     /// </summary>

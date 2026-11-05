@@ -1,4 +1,4 @@
-"""Internal API (dokuman `07-API-DESIGN.md` §58-59). Yalnizca application-network
+"""Internal API. Yalnizca application-network
 icinden erisilir; Gateway bu route'lari public olarak disari acmaz.
 """
 
@@ -36,7 +36,7 @@ async def models_health(authorization: str | None = Header(default=None)) -> dic
 
 @router.post("/assessments/score")
 async def score_internal(request: InternalScoreRequest, authorization: str | None = Header(default=None)) -> dict:
-    """Diagnostic/contract-test amaclidir; ana transaction akisi HTTP'ye bagli DEGILDIR (dokuman §58)."""
+    """Diagnostic/contract-test amaclidir; ana transaction akisi HTTP'ye bagli DEGILDIR."""
     _require_internal_token(authorization)
 
     if not registry.is_ready:

@@ -5,7 +5,7 @@
     Icerigi yalnizca teknik cross-cutting parcalardir: API zarfi, correlation,
     outbox/inbox altyapisi, RabbitMQ transport, JWT dogrulama, saat soyutlamasi.
 
-    Doküman §22 "shared domain entity package" yasagini ihlal etmez; cunku
+    Paylasilan bir domain entity paketi degildir; cunku
     burada Transaction, RiskCase, User gibi hicbir domain kavrami bulunmaz.
     Servisler kendi domain modellerini kendi projelerinde tutar.
   -->

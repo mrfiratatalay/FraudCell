@@ -1,8 +1,8 @@
 namespace FraudCell.Identity.Service.Common;
 
 /// <summary>
-/// Analistin uzmanlik alanlari. Fraud-type enum'iyla ayni degerleri paylasir
-/// (dokuman §12), ancak "TEMIZ" bir uzmanlik alani olamayacagi icin buraya
+/// Analistin uzmanlik alanlari. Fraud-type enum'iyla ayni degerleri paylasir,
+/// ancak "TEMIZ" bir uzmanlik alani olamayacagi icin buraya
 /// dahil edilmez.
 /// </summary>
 public enum AnalystSpecialty
@@ -15,7 +15,7 @@ public enum AnalystSpecialty
 
 /// <summary>
 /// FraudCell operasyon bolgeleri. PDF bolge bazli atamayi zorunlu kildigi icin
-/// (dokuman §5/§9) somut bir enum olarak sabitlenir; Turkiye'nin cografi
+/// somut bir enum olarak sabitlenir; Turkiye'nin cografi
 /// bolgeleridir.
 /// </summary>
 public enum OperationRegion

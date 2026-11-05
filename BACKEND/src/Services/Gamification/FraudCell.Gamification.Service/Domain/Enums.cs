@@ -1,6 +1,6 @@
 namespace FraudCell.Gamification.Service.Domain;
 
-/// <summary>Dokuman `06-DATA-ARCHITECTURE.md` §49.2.</summary>
+/// <summary>Puan kurali kodlari; puan defterinde (point_ledger) satir basina tutulur.</summary>
 public static class RuleCodes
 {
     public const string CaseDecision = "CASE_DECISION";
@@ -19,7 +19,7 @@ public enum RuleEvaluationResult
     DEFERRED,
 }
 
-/// <summary>Dokuman §53. Seviye siniri: BRONZ 0-499, GUMUS 500-1499, ALTIN 1500-2999, PLATIN 3000+.</summary>
+/// <summary>Seviye siniri: BRONZ 0-499, GUMUS 500-1499, ALTIN 1500-2999, PLATIN 3000+.</summary>
 public enum AnalystLevel
 {
     BRONZ,
@@ -39,7 +39,7 @@ public static class LevelThresholds
     };
 }
 
-/// <summary>Dokuman `00-START-HERE.md` §7.3 seed badge kodlari.</summary>
+/// <summary>Seed badge kodlari.</summary>
 public static class BadgeCodes
 {
     public const string FirstCatch = "FIRST_CATCH";

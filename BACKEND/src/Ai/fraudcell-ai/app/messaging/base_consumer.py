@@ -1,4 +1,4 @@
-"""Yeniden kullanilabilir consumer iskeleti (dokuman §15/§23).
+"""Yeniden kullanilabilir consumer iskeleti.
 
 .NET tarafindaki RabbitMqConsumerHostedService ile ayni retry/DLQ mantigini
 uygular: basarisiz mesaj ACK edilir ve bir kopyasi retry/DLQ zincirine

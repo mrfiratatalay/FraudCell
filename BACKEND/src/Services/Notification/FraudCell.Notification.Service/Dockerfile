@@ -1,9 +1,9 @@
 # Bu Dockerfile repository kökü `BACKEND/` build context'i ile calistirilmalidir
 # (bkz. docker-compose.yml), cunku proje Directory.Packages.props, Directory.Build.props,
-# global.json ve BuildingBlocks'a kok gorelidir (dokuman 03-TECH-STACK.md §39.1).
+# global.json ve BuildingBlocks'a kok gorelidir.
 
 # SDK/runtime image'lari global.json'daki `10.0.403` ile birebir sabitlenmistir
-# (dokuman 03-TECH-STACK.md §4.1: "latest"/floating tag yasak). Floating `10.0`
+#. Floating `10.0`
 # tag'i host'ta kurulu olandan daha yeni bir SDK cekip, o SDK'nin daha sikilastirilmis
 # "latest-recommended" analyzer setiyle build'i kirabiliyor.
 

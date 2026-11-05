@@ -1,6 +1,6 @@
 namespace FraudCell.Transaction.Service.Domain;
 
-/// <summary><c>txn.case_overrides</c> (dokuman §28). Fraud turu/risk seviyesi override gecmisi; append-only.</summary>
+/// <summary><c>txn.case_overrides</c>. Fraud turu/risk seviyesi override gecmisi; append-only.</summary>
 public sealed class CaseOverride
 {
     public required string Id { get; set; }

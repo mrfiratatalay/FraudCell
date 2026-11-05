@@ -15,7 +15,7 @@ public sealed record FraudTypeOverrideResponse(
     string CaseId, string? AiFraudType, string PreviousEffectiveFraudType, string EffectiveFraudType,
     string OverriddenBy, DateTimeOffset OverriddenAt, long Version);
 
-/// <summary><c>PATCH /api/v1/cases/{caseId}/fraud-type</c> (dokuman §46, Analyst/Supervisor).</summary>
+/// <summary><c>PATCH /api/v1/cases/{caseId}/fraud-type</c>.</summary>
 public static class FraudTypeOverrideEndpoint
 {
     public static void MapFraudTypeOverride(this IEndpointRouteBuilder app)

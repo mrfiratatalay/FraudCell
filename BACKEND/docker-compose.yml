@@ -169,7 +169,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
       Jwt__MetadataAddress: http://identity-service:8080/.well-known/openid-configuration
-      # Decided cases close after 48 hours (dokuman §27); the browser tests shorten it.
+      # Decided cases close after 48 hours; the browser tests shorten it.
       CaseClosure__Delay: ${CASE_CLOSURE_DELAY:-2.00:00:00}
       CaseClosure__PollInterval: ${CASE_CLOSURE_POLL_INTERVAL:-00:05:00}
       ConnectionStrings__TransactionDb: Host=postgres-transaction;Port=5432;Database=fraudcell_transaction;Username=transaction_app;Password=${TRANSACTION_DB_PASSWORD};Minimum Pool Size=0;Maximum Pool Size=15

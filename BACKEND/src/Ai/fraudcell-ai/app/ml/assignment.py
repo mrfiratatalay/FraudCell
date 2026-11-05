@@ -1,9 +1,9 @@
-"""Analist aday siralamasi (dokuman `00-START-HERE.md` §13, `05-DOMAIN-AND-STATE-MACHINE.md` §33).
+"""Analist aday siralamasi.
 
 assignment_score = expertise_match*0.50 + capacity_ratio*0.30 + performance*0.20
 
 AI Service yalnizca ONERIR; Transaction Service kapasiteyi authoritative
-olarak dogrulayip atamayi kesinlestirir (dokuman `04-SERVICE-BOUNDARIES.md` §9.9).
+olarak dogrulayip atamayi kesinlestirir.
 """
 
 from __future__ import annotations
@@ -89,7 +89,7 @@ async def rank_candidates(session: AsyncSession, fraud_type: str, region: str | 
             performance_score=round(performance_score, 5),
         )))
 
-    # Tie-break (dokuman §13): 1) en yuksek skor, 2) daha az aktif vaka,
+    # Tie-break: 1) en yuksek skor, 2) daha az aktif vaka,
     # 3) analyst_id lexical order (performansa gore ikincil siralama zaten skora dahildir).
     scored.sort(key=lambda item: (-item[0], item[1], item[2]))
 

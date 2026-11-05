@@ -1,4 +1,4 @@
-"""Health endpoint'leri (dokuman `07-API-DESIGN.md` §3.3, `02-ARCHITECTURE-OVERVIEW.md` §33)."""
+"""Health endpoint'leri."""
 
 from __future__ import annotations
 

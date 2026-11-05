@@ -1,7 +1,7 @@
 namespace FraudCell.BuildingBlocks.Messaging.Outbox;
 
 /// <summary>
-/// Transactional outbox kaydi (dokuman §15).
+/// Transactional outbox kaydi.
 ///
 /// Kritik kural: bu satir, kendisini doguran business degisikligiyle AYNI
 /// database transaction'inda yazilir. Boylece "veri yazildi ama event kayboldu"
@@ -38,12 +38,12 @@ public sealed class OutboxMessage
 
     public int AttemptCount { get; set; }
 
-    /// <summary>Basarisiz denemeden sonraki geri cekilme zamani (dokuman §06 §58: retry backoff).</summary>
+    /// <summary>Basarisiz denemeden sonraki geri cekilme zamani.</summary>
     public DateTimeOffset? NextAttemptAt { get; set; }
 
     /// <summary>
-    /// Birden fazla publisher instance'i ayni kaydi almasin diye kullanilan kira suresi
-    /// (dokuman §06 §58.4). <see cref="NextAttemptAt"/>'ten ayridir: o retry backoff'unu,
+    /// Birden fazla publisher instance'i ayni kaydi almasin diye kullanilan kira suresi.
+    /// <see cref="NextAttemptAt"/>'ten ayridir: o retry backoff'unu,
     /// bu ise "su an baska bir instance isliyor" durumunu ifade eder.
     /// </summary>
     public DateTimeOffset? LockedUntil { get; set; }
@@ -51,7 +51,7 @@ public sealed class OutboxMessage
     /// <summary>Kaydi kiralayan instance kimligi; teshis icin tutulur.</summary>
     public string? LockOwner { get; set; }
 
-    /// <summary>Event zarfindaki opsiyonel ek header'lar (dokuman §06 §58.1). Baseline'da genelde bos.</summary>
+    /// <summary>Event zarfindaki opsiyonel ek header'lar. Baseline'da genelde bos.</summary>
     public string? Headers { get; set; }
 
     /// <summary>Son yayin denemesinin hatasi. Operasyon ekraninda teshis icin tutulur.</summary>

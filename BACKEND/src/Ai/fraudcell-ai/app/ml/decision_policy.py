@@ -1,4 +1,4 @@
-"""Merkezi karar politikasi (dokuman `00-START-HERE.md` §12 esikleri).
+"""Merkezi karar politikasi.
 
 Risk skoru -> (karar, risk seviyesi) esiklemesinin TEK kaynagidir. Daha once bu
 mantik hem event consumer'da hem internal router'da kopyaliydi; esik degistirmek

@@ -102,7 +102,7 @@ export const CONTROL_STATUS_LABEL: Record<ControlStatus, string> = {
 
 /**
  * `TIMED_OUT` frontend sözleşmesinde yeni: AI servisi zamanında cevap
- * veremediğinde işlem kaybolmaz, bu durumda kalır (doküman §9/§21).
+ * veremediğinde işlem kaybolmaz, bu durumda kalır.
  */
 export const ASSESSMENT_STATUSES = ['PENDING', 'COMPLETED', 'TIMED_OUT', 'FAILED'] as const;
 export type AssessmentStatus = (typeof ASSESSMENT_STATUSES)[number];

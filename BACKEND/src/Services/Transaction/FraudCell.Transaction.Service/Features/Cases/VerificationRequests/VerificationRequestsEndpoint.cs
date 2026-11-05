@@ -14,7 +14,7 @@ public sealed record RequestVerificationRequest(string? Message);
 public sealed record VerificationRequestResponse(
     string VerificationId, string CaseId, string Status, DateTimeOffset RequestedAt, DateTimeOffset ExpiresAt, string CaseStatus, long Version);
 
-/// <summary><c>POST /api/v1/cases/{caseId}/verification-requests</c> (dokuman §41). INCELENIYOR -&gt; MUSTERI_DOGRULAMA.</summary>
+/// <summary><c>POST /api/v1/cases/{caseId}/verification-requests</c>. INCELENIYOR -&gt; MUSTERI_DOGRULAMA.</summary>
 public static class VerificationRequestsEndpoint
 {
     public static void MapVerificationRequests(this IEndpointRouteBuilder app)

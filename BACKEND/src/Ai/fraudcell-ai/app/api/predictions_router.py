@@ -1,4 +1,4 @@
-"""<c>GET /api/v1/ai/predictions/{assessmentId}</c> (dokuman §54, Assigned Analyst/Supervisor/Admin).
+"""<c>GET /api/v1/ai/predictions/{assessmentId}</c>.
 
 Staff only: app.security checks the access token and role (wired in app.main).
 """

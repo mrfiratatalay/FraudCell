@@ -64,7 +64,7 @@ builder.Services.AddScoped<IMessagingDbContext>(sp => sp.GetRequiredService<Iden
 builder.Services
     .AddIdentityCore<ApplicationUser>(options =>
     {
-        // Dokuman `01-REQUIREMENTS-TRACEABILITY.md` IDN-009..012: min 8 karakter,
+        // min 8 karakter,
         // buyuk harf, rakam, ozel karakter.
         options.Password.RequiredLength = 8;
         options.Password.RequireDigit = true;
@@ -85,7 +85,7 @@ builder.Services
     .AddEntityFrameworkStores<IdentityServiceDbContext>()
     .AddDefaultTokenProviders();
 
-// Varsayilan PBKDF2 hasher yerine Argon2id (dokuman `03-TECH-STACK.md` §8.3).
+// Varsayilan PBKDF2 hasher yerine Argon2id.
 builder.Services.AddScoped<IPasswordHasher<ApplicationUser>, Argon2idPasswordHasher>();
 
 builder.Services.AddSingleton<RsaKeyProvider>();

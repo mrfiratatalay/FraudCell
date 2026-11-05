@@ -12,7 +12,7 @@ namespace FraudCell.Identity.Service.Features.Auth.RefreshToken;
 public sealed record RefreshTokenResponse(string AccessToken, DateTimeOffset AccessTokenExpiresAt);
 
 /// <summary>
-/// <c>POST /api/v1/auth/refresh</c> (dokuman `07-API-DESIGN.md` §26). Token
+/// <c>POST /api/v1/auth/refresh</c>. Token
 /// her kullanimda rotate edilir; revoke edilmis bir token'in tekrar
 /// sunulmasi calinti token senaryosu sayilir ve TUM aktif oturumlar dusurulur.
 /// </summary>

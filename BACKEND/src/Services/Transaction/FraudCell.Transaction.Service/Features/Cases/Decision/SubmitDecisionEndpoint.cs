@@ -19,7 +19,7 @@ public sealed record SubmitDecisionResponse(
     DateTimeOffset? ClosureDueAt, long Version);
 
 /// <summary>
-/// <c>PATCH /api/v1/cases/{caseId}/decision</c> (dokuman §44-45). INCELENIYOR
+/// <c>PATCH /api/v1/cases/{caseId}/decision</c>. INCELENIYOR
 /// -&gt; ONAYLANDI/BLOKLANDI. Supervisor override icin <c>overrideReason</c> zorunludur.
 /// Puan hesabi burada YAPILMAZ; Gamification sonucu SSE ile ayrica gelir.
 /// </summary>

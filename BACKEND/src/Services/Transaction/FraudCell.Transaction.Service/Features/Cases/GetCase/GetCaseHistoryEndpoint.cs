@@ -10,7 +10,7 @@ public sealed record CaseTransitionResponse(
     string Id, string PreviousStatus, string NewStatus, string? ActorId, string? ActorRole,
     string TransitionSource, string? Reason, DateTimeOffset OccurredAt);
 
-/// <summary><c>GET /api/v1/cases/{caseId}/history</c> (dokuman §33, Assigned Analyst/Supervisor/Admin).</summary>
+/// <summary><c>GET /api/v1/cases/{caseId}/history</c>.</summary>
 public static class GetCaseHistoryEndpoint
 {
     public static void MapGetCaseHistory(this IEndpointRouteBuilder app)

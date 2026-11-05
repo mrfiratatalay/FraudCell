@@ -5,7 +5,7 @@ namespace FraudCell.BuildingBlocks.Api;
 
 /// <summary>
 /// Kritik mutable kaynaklarda (RiskCase, Staff profile, Assignment, ...) ETag/If-Match
-/// tabanli optimistic concurrency sozlesmesi (dokuman §15). Version body icinde degil,
+/// tabanli optimistic concurrency sozlesmesi. Version body icinde degil,
 /// header'da tasinir; bu sinif cagri yerlerinde tekrar eden parse/format kodunu onler.
 /// </summary>
 public static class ETagHelper
@@ -41,7 +41,7 @@ public static class ETagHelper
         }
     }
 
-    /// <summary>Response'a <c>ETag: "N"</c> header'ini yazar (dokuman §15).</summary>
+    /// <summary>Response'a <c>ETag: "N"</c> header'ini yazar.</summary>
     public static void WriteETag(HttpResponse response, long version)
     {
         response.Headers.ETag = new EntityTagHeaderValue($"\"{version}\"").ToString();

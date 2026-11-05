@@ -13,7 +13,7 @@ const SIZES: Record<AvatarSize, string> = {
  * İsim baş harflerinden üretilen avatar.
  *
  * Fotoğraf yok; ada göre stabil bir marka tonu seçilir ki aynı kişi her yerde
- * aynı renkte görünsün. `initials()` tek kaynaktır (format.ts).
+ * aynı renkte görünsün. `initials` tek kaynaktır (format.ts).
  */
 const PALETTE = [
   'bg-brand-100 text-brand-800',

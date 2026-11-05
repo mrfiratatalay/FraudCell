@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FraudCell.Identity.Service.Features.Staff.GetStaff;
 
-/// <summary><c>GET /api/v1/staff/{staffId}</c> (dokuman §22, Admin/Supervisor/Self).</summary>
+/// <summary><c>GET /api/v1/staff/{staffId}</c>.</summary>
 public static class GetStaffEndpoint
 {
     public static void MapGetStaff(this IEndpointRouteBuilder app)
@@ -36,7 +36,7 @@ public static class GetStaffEndpoint
 
         if (!isSelf && !isPrivileged)
         {
-            // Kaynak varligini sizdirmamak icin 404 (dokuman `07-API-DESIGN.md` §14.3).
+            // Kaynak varligini sizdirmamak icin 404.
             throw AppException.NotFound();
         }
 

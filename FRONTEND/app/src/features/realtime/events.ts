@@ -1,7 +1,7 @@
 /**
  * SSE event şeması.
  *
- * DESIGN.MD: gelen event'ler İKİNCİ BİR GLOBAL STORE OLUŞTURMAZ. Tek işleri
+ * gelen event'ler İKİNCİ BİR GLOBAL STORE OLUŞTURMAZ. Tek işleri
  * TanStack Query cache'ini invalidate etmek (ya da hedefli `setQueryData`
  * yapmak) ve gerekirse toast göstermektir. Ekran verisi her zaman query'den
  * gelir.

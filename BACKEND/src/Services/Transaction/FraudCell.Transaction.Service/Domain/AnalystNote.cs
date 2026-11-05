@@ -1,6 +1,6 @@
 namespace FraudCell.Transaction.Service.Domain;
 
-/// <summary><c>txn.analyst_notes</c> (dokuman §29). Plain text, hard delete yok; duzenleme yeni revision uretir.</summary>
+/// <summary><c>txn.analyst_notes</c>. Plain text, hard delete yok; duzenleme yeni revision uretir.</summary>
 public sealed class AnalystNote
 {
     public required string Id { get; set; }

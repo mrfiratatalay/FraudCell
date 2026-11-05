@@ -9,7 +9,7 @@ import { useRealtime } from '@/features/realtime/useRealtime';
  * Uygulama kökü.
  *
  * İki işi var:
- *   1. SSE bağlantısını BİR KEZ kurmak (DESIGN.MD: tek kullanıcı = tek bağlantı)
+ *   1. SSE bağlantısını BİR KEZ kurmak
  *   2. Açılıştaki oturum tazeleme bitene kadar route'ları çizmemek
  *
  * (2) olmazsa şu olurdu: token henüz gelmemişken guard "anonim" görür ve

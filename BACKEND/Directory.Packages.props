@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <!--
-    Sürümler bilinçli olarak sabitlenmiştir (03-TECH-STACK.md).
+    Sürümler bilinçli olarak sabitlenmiştir.
     Demo günü sürpriz restore davranışı olmaması için floating version kullanılmaz.
   -->
   <ItemGroup Label="ASP.NET Core / .NET 10">

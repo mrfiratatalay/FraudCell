@@ -12,7 +12,7 @@
  */
 
 interface AuthBridge {
-  /** Bellekteki access token. localStorage KULLANILMAZ (DESIGN.MD). */
+  /** Bellekteki access token. localStorage KULLANILMAZ. */
   getAccessToken: () => string | null;
   /**
    * Refresh cookie'siyle yeni access token alır. Başarısızsa null döner.

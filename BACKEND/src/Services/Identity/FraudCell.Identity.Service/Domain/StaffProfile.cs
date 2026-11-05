@@ -1,9 +1,9 @@
 namespace FraudCell.Identity.Service.Domain;
 
 /// <summary>
-/// <c>identity.staff_profiles</c> (dokuman §11). Uzmanlik ve bolge coktan-coge
+/// <c>identity.staff_profiles</c>. Uzmanlik ve bolge coktan-coge
 /// iliskilerdir; AI Service bunlari <c>identity.staff.profile.updated</c>
-/// event'iyle projection olarak alir (dokuman `04-SERVICE-BOUNDARIES.md` §7.8).
+/// event'iyle projection olarak alir.
 /// </summary>
 public sealed class StaffProfile
 {
@@ -15,7 +15,7 @@ public sealed class StaffProfile
 
     public string? EmployeeNumber { get; set; }
 
-    /// <summary>Yalnizca ANALYST rolundeki personeller icin anlamlidir (dokuman §11).</summary>
+    /// <summary>Yalnizca ANALYST rolundeki personeller icin anlamlidir.</summary>
     public bool AssignmentEnabled { get; set; } = true;
 
     public required string CreatedByAdminId { get; set; }
@@ -24,7 +24,7 @@ public sealed class StaffProfile
 
     public DateTimeOffset UpdatedAt { get; set; }
 
-    /// <summary>API ETag/If-Match sozlesmesinin kaynagi (dokuman `07-API-DESIGN.md` §15).</summary>
+    /// <summary>API ETag/If-Match sozlesmesinin kaynagi.</summary>
     public long Version { get; set; }
 
     public ApplicationUser User { get; set; } = null!;
@@ -34,7 +34,7 @@ public sealed class StaffProfile
     public List<StaffRegion> Regions { get; set; } = [];
 }
 
-/// <summary><c>identity.staff_specialties</c> (dokuman §13.2).</summary>
+/// <summary><c>identity.staff_specialties</c>.</summary>
 public sealed class StaffSpecialty
 {
     public required string StaffUserId { get; set; }
@@ -48,7 +48,7 @@ public sealed class StaffSpecialty
     public Specialty Specialty { get; set; } = null!;
 }
 
-/// <summary><c>identity.staff_regions</c> (dokuman §14.2).</summary>
+/// <summary><c>identity.staff_regions</c>.</summary>
 public sealed class StaffRegion
 {
     public required string StaffUserId { get; set; }

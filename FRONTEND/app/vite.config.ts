@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 import path from 'node:path';
 
 /**
- * DESIGN.MD "Production topolojisi": tarayıcı yalnızca Gateway ile konuşur.
+ * tarayıcı yalnızca Gateway ile konuşur.
  * Development'ta Vite çalışır, /api isteklerini Gateway'e proxy eder;
  * böylece dev ile production arasında origin farkı oluşmaz ve CORS'a hiç
  * girmeyiz. Gateway ayakta değilken VITE_API_MODE=mock ile MSW devreye girer.

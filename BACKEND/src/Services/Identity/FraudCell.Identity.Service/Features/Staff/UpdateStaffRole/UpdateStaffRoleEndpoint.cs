@@ -10,7 +10,7 @@ namespace FraudCell.Identity.Service.Features.Staff.UpdateStaffRole;
 
 public sealed record UpdateStaffRoleRequest(string Role);
 
-/// <summary><c>PUT /api/v1/staff/{staffId}/role</c> (dokuman §22, Admin).</summary>
+/// <summary><c>PUT /api/v1/staff/{staffId}/role</c>.</summary>
 public static class UpdateStaffRoleEndpoint
 {
     public static void MapUpdateStaffRole(this IEndpointRouteBuilder app)

@@ -156,7 +156,7 @@ public sealed partial class OutboxPublisherService(
         foreach (var message in batch)
         {
             message.AttemptCount++;
-            // Kira: bu sure icinde baska instance ayni kaydi almaz (dokuman §06 §58.4).
+            // Kira: bu sure icinde baska instance ayni kaydi almaz.
             // NextAttemptAt bu asamada BILEREK dokunulmaz; o yalnizca hata sonrasi
             // retry backoff'unu ifade eder.
             message.LockedUntil = now.AddSeconds(_options.LeaseSeconds);

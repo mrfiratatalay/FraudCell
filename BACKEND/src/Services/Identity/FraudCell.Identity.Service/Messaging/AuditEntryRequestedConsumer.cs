@@ -28,12 +28,12 @@ public sealed record AuditEntryRequestedPayload(
 /// <summary>
 /// Diger servislerin (Transaction, AI, Gamification, Edge) yayinladigi
 /// <c>audit.entry.requested</c> event'ini tuketip append-only audit kaydina
-/// donusturur (dokuman `02-ARCHITECTURE-OVERVIEW.md` §18/§26). Identity
+/// donusturur. Identity
 /// Service audit persistence otoritesidir; bu consumer tek yazma noktasidir.
 ///
 /// Idempotency IKI katmandadir: BuildingBlocks inbox tablosu (ayni event'in
 /// consumer tarafindan tekrar islenmesini engeller) ve <c>audit_logs.source_event_id</c>
-/// unique constraint'i (dokuman §18.3, veritabani seviyesinde ikinci savunma).
+/// unique constraint'i.
 /// </summary>
 public sealed class AuditEntryRequestedConsumer(
     RabbitMqConnectionProvider connectionProvider,

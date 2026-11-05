@@ -1,4 +1,4 @@
-"""Uygulama ayarlari (dokuman 03-TECH-STACK.md paket/config konvansiyonu)."""
+"""Uygulama ayarlari."""
 
 from __future__ import annotations
 
@@ -44,7 +44,7 @@ class ModelSettings(BaseSettings):
 
 
 class GeminiSettings(BaseSettings):
-    """Harici LLM ayarlari; SADECE aciklama anlatisi icin (dokuman 10-AI-SERVICE-DESIGN.md §8).
+    """Harici LLM ayarlari; SADECE aciklama anlatisi icin.
 
     Risk skorlama / fraud-type siniflandirma bu servisi ASLA kullanmaz. api_key
     bos veya enabled=False ise ozellik sessizce devre disi kalir ve cagiran taraf

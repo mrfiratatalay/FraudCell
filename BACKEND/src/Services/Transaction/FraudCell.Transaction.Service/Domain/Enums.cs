@@ -1,6 +1,6 @@
 namespace FraudCell.Transaction.Service.Domain;
 
-/// <summary>Dokuman `05-DOMAIN-AND-STATE-MACHINE.md` §7.</summary>
+/// <summary>Islem turleri.</summary>
 public enum TransactionType
 {
     ODEME,
@@ -9,7 +9,7 @@ public enum TransactionType
     CEKIM,
 }
 
-/// <summary>Dokuman §8. <c>TEMIZ</c> AI'in "supheli degil" sinifidir; analist uzmanligi degildir.</summary>
+/// <summary><c>TEMIZ</c> AI'in "supheli degil" sinifidir; analist uzmanligi degildir.</summary>
 public enum FraudType
 {
     CALINTI_KART,
@@ -19,7 +19,7 @@ public enum FraudType
     TEMIZ,
 }
 
-/// <summary>Dokuman §11. <c>DUSUK/ORTA/YUKSEK/KRITIK</c> eslesmesi §11'de sabittir.</summary>
+/// <summary><c>DUSUK/ORTA/YUKSEK/KRITIK</c> eslesmesi §11'de sabittir.</summary>
 public enum RiskLevel
 {
     DUSUK,
@@ -28,7 +28,7 @@ public enum RiskLevel
     KRITIK,
 }
 
-/// <summary>Dokuman §10 esik kararlari: <c>ONAY/INCELEME/BLOK</c>.</summary>
+/// <summary>Esik kararlari: <c>ONAY/INCELEME/BLOK</c>.</summary>
 public enum ScreeningDecision
 {
     ONAY,
@@ -36,7 +36,7 @@ public enum ScreeningDecision
     BLOK,
 }
 
-/// <summary>Dokuman §9. AI degerlendirme durumu.</summary>
+/// <summary>AI degerlendirme durumu.</summary>
 public enum AssessmentStatus
 {
     PENDING,
@@ -45,7 +45,7 @@ public enum AssessmentStatus
     FAILED,
 }
 
-/// <summary>Dokuman §14. Transaction'in finansal/operasyonel kontrol durumu.</summary>
+/// <summary>Transaction'in finansal/operasyonel kontrol durumu.</summary>
 public enum ControlStatus
 {
     ALLOWED,
@@ -54,7 +54,7 @@ public enum ControlStatus
     BLOCKED,
 }
 
-/// <summary>Dokuman §16. RiskCase state machine.</summary>
+/// <summary>RiskCase state machine.</summary>
 public enum CaseStatus
 {
     YENI,
@@ -66,7 +66,7 @@ public enum CaseStatus
     KAPANDI,
 }
 
-/// <summary>Dokuman §32. Case state'inden BAGIMSIZ assignment durumu.</summary>
+/// <summary>Case state'inden BAGIMSIZ assignment durumu.</summary>
 public enum AssignmentStatus
 {
     UNASSIGNED,
@@ -78,7 +78,7 @@ public enum AssignmentStatus
     CANCELLED,
 }
 
-/// <summary>Dokuman `06-DATA-ARCHITECTURE.md` §24 assignment kaydinin kendi durumu.</summary>
+/// <summary>Assignment kaydinin kendi durumu.</summary>
 public enum CaseAssignmentStatus
 {
     ASSIGNED,
@@ -95,7 +95,7 @@ public enum AssignmentSource
     MANUAL_QUEUE,
 }
 
-/// <summary>Dokuman §35. SLA sureleri risk seviyesine gore belirlenir.</summary>
+/// <summary>SLA sureleri risk seviyesine gore belirlenir.</summary>
 public enum SlaPriority
 {
     DUSUK,
@@ -110,7 +110,7 @@ public enum FinalDecision
     BLOCK,
 }
 
-/// <summary>Dokuman §15/§31. Gecici blok nedenleri.</summary>
+/// <summary>Gecici blok nedenleri.</summary>
 public enum TemporaryBlockReason
 {
     AI_CRITICAL_RISK,

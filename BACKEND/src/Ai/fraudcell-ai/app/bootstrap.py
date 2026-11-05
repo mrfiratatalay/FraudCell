@@ -1,5 +1,5 @@
 """Aciliste model registry'i yukler ve DB'de model_versions/model_bundles
-satirlarini idempotent olarak olusturur (dokuman §37/§38).
+satirlarini idempotent olarak olusturur.
 
 Training script (train.py) DB baglantisi olmadan calisabilir; bu modul
 uretilen `metadata.json`'i okuyup gerekli kayitlari senkronize eder.

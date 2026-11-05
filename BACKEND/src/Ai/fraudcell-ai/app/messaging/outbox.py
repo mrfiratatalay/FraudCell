@@ -1,4 +1,4 @@
-"""Transactional outbox yazici (dokuman §15/§58). SaveChanges/commit CAGIRMAZ;
+"""Transactional outbox yazici. SaveChanges/commit CAGIRMAZ;
 cagiran kod business degisiklikleriyle ayni transaction'da flush/commit eder.
 """
 

@@ -3,14 +3,14 @@ using FraudCell.BuildingBlocks.Api;
 namespace FraudCell.Transaction.Service.Domain;
 
 /// <summary>
-/// <c>txn.risk_cases</c> (dokuman §23) — sistemin risk vakasi state machine'i
-/// (dokuman `05-DOMAIN-AND-STATE-MACHINE.md` §16-30). Durum degisikligi
+/// <c>txn.risk_cases</c> — sistemin risk vakasi state machine'i.
+/// Durum degisikligi
 /// yalnizca bu sinifin niyet belirten metotlariyla yapilir; generic bir
-/// <c>Status</c> setter'i YOKTUR (dokuman §2.1).
+/// <c>Status</c> setter'i YOKTUR.
 /// </summary>
 public sealed class RiskCase
 {
-    /// <summary>Dokuman §27: a decided case closes 48 hours later (configurable via <c>CaseClosure:Delay</c>).</summary>
+    /// <summary>A decided case closes 48 hours later (configurable via <c>CaseClosure:Delay</c>).</summary>
     public static readonly TimeSpan DefaultClosureDelay = TimeSpan.FromHours(48);
 
     public required string Id { get; set; }
@@ -73,7 +73,7 @@ public sealed class RiskCase
 
     public static TimeSpan DurationFor(SlaPriority priority) => SlaDurations[priority];
 
-    /// <summary>Dokuman §36: SLA case olusturuldugu anda baslar, atamayi/review'i beklemez.</summary>
+    /// <summary>SLA case olusturuldugu anda baslar, atamayi/review'i beklemez.</summary>
     public void StartSla(SlaPriority priority, DateTimeOffset caseCreatedAt)
     {
         SlaPriority = priority;
@@ -85,7 +85,7 @@ public sealed class RiskCase
 
     public bool IsFinal => Status is CaseStatus.ONAYLANDI or CaseStatus.BLOKLANDI or CaseStatus.KAPANDI;
 
-    /// <summary>Dokuman §20 YENI -> ATANDI.</summary>
+    /// <summary>YENI -> ATANDI.</summary>
     public void Assign(string analystId, DateTimeOffset now)
     {
         if (Status != CaseStatus.YENI)
@@ -100,7 +100,7 @@ public sealed class RiskCase
         Touch(now);
     }
 
-    /// <summary>Dokuman §32.2/§32.3 QUEUED veya MANUAL_QUEUE'ya alma (kapasite yok / AI yok).</summary>
+    /// <summary>QUEUED veya MANUAL_QUEUE'ya alma (kapasite yok / AI yok).</summary>
     public void EnqueueForAssignment(bool manual, DateTimeOffset now)
     {
         if (Status != CaseStatus.YENI)
@@ -112,7 +112,7 @@ public sealed class RiskCase
         Touch(now);
     }
 
-    /// <summary>Dokuman §34 supervisor manuel atama/reassignment.</summary>
+    /// <summary>Supervisor manuel atama/reassignment.</summary>
     public void Reassign(string newAnalystId, DateTimeOffset now)
     {
         if (IsFinal)
@@ -131,12 +131,12 @@ public sealed class RiskCase
         Touch(now);
     }
 
-    /// <summary>Dokuman §21 ATANDI -> INCELENIYOR.</summary>
+    /// <summary>ATANDI -> INCELENIYOR.</summary>
     public void StartReview(string actorAnalystId, bool isSupervisorOverride, DateTimeOffset now)
     {
         if (Status == CaseStatus.INCELENIYOR)
         {
-            return; // Idempotent: ayni analist tekrar cagirirsa (dokuman §21).
+            return; // Idempotent: ayni analist tekrar cagirirsa.
         }
 
         if (Status != CaseStatus.ATANDI)
@@ -156,7 +156,7 @@ public sealed class RiskCase
         Touch(now);
     }
 
-    /// <summary>Dokuman §22 INCELENIYOR -> MUSTERI_DOGRULAMA.</summary>
+    /// <summary>INCELENIYOR -> MUSTERI_DOGRULAMA.</summary>
     public void RequestCustomerVerification(DateTimeOffset now)
     {
         if (Status != CaseStatus.INCELENIYOR)
@@ -169,7 +169,7 @@ public sealed class RiskCase
         Touch(now);
     }
 
-    /// <summary>Dokuman §23 MUSTERI_DOGRULAMA -> INCELENIYOR (cevap veya timeout).</summary>
+    /// <summary>MUSTERI_DOGRULAMA -> INCELENIYOR (cevap veya timeout).</summary>
     public void ResumeReviewAfterVerification(DateTimeOffset now)
     {
         if (Status != CaseStatus.MUSTERI_DOGRULAMA)
@@ -181,7 +181,7 @@ public sealed class RiskCase
         Touch(now);
     }
 
-    /// <summary>Dokuman §25: "Ben yapmadim" cevabi risk seviyesini KRITIK'e yukseltir ve SLA'yi yeniden hesaplar.</summary>
+    /// <summary>"Ben yapmadim" cevabi risk seviyesini KRITIK'e yukseltir ve SLA'yi yeniden hesaplar.</summary>
     public void EscalateToCriticalFromCustomerDenial(DateTimeOffset caseCreatedAt, DateTimeOffset now)
     {
         EffectiveRiskScore = EffectiveRiskScore is { } current ? Math.Max(current, 0.91m) : 0.91m;
@@ -193,7 +193,7 @@ public sealed class RiskCase
         Touch(now);
     }
 
-    /// <summary>Dokuman §26 INCELENIYOR -> ONAYLANDI.</summary>
+    /// <summary>INCELENIYOR -> ONAYLANDI.</summary>
     public void Approve(string decidedBy, string? note, DateTimeOffset now, TimeSpan? closureDelay = null)
     {
         RequireInReview();
@@ -209,7 +209,7 @@ public sealed class RiskCase
         Touch(now);
     }
 
-    /// <summary>Dokuman §27 INCELENIYOR -> BLOKLANDI. Karar notu zorunludur.</summary>
+    /// <summary>INCELENIYOR -> BLOKLANDI. Karar notu zorunludur.</summary>
     public void Block(string decidedBy, string note, DateTimeOffset now, TimeSpan? closureDelay = null)
     {
         RequireInReview();
@@ -248,7 +248,7 @@ public sealed class RiskCase
     }
 
     /// <summary>
-    /// Dokuman §43.2-43.4: gec gelen AI sonucu final karar oncesinde evidence
+    /// gec gelen AI sonucu final karar oncesinde evidence
     /// olarak efektif risk bilgisini gunceller; state/assignment DEGISTIRMEZ.
     /// </summary>
     public void ApplyLateEvidence(decimal riskScore, RiskLevel riskLevel, FraudType fraudType, DateTimeOffset now)
@@ -270,7 +270,7 @@ public sealed class RiskCase
         Touch(now);
     }
 
-    /// <summary>Dokuman §12/§40: supervisor efektif risk seviyesini degistirir, SLA yeniden hesaplanir.</summary>
+    /// <summary>Supervisor efektif risk seviyesini degistirir, SLA yeniden hesaplanir.</summary>
     public void OverrideRiskLevel(RiskLevel newLevel, DateTimeOffset now)
     {
         if (IsFinal)

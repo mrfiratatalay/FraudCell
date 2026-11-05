@@ -1,4 +1,4 @@
-"""app.ml.decision_policy boundary testleri (dokuman §12 esikleri).
+"""app.ml.decision_policy boundary testleri.
 
 Esik degerlerinin tam sinirlarda dogru karar/risk seviyesi urettigini dogrular;
 ozellikle tam 0.90'in BLOK OLMADIGINI (case kurali `> 0.90`).

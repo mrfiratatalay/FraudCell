@@ -1,6 +1,6 @@
 namespace FraudCell.Identity.Service.Domain;
 
-/// <summary><c>identity.customer_profiles</c> (dokuman §10).</summary>
+/// <summary><c>identity.customer_profiles</c>.</summary>
 public sealed class CustomerProfile
 {
     public required string UserId { get; set; }

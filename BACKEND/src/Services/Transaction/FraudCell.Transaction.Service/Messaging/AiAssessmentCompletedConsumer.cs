@@ -29,11 +29,11 @@ public sealed record AiAssessmentCompletedPayload(
     IReadOnlyList<AnalystCandidatePayload> AnalystCandidates);
 
 /// <summary>
-/// <c>ai.assessment.completed</c> tuketicisi (dokuman `02-ARCHITECTURE-OVERVIEW.md`
-/// §14-15). AI'nin risk skorunu Transaction Service'in KENDI esik politikasiyla
-/// (dokuman §10-11) uygular; AI yalnizca oneri sunar (dokuman `04-SERVICE-BOUNDARIES.md` §9.9).
+/// <c>ai.assessment.completed</c> tuketicisi.
+/// AI'nin risk skorunu Transaction Service'in KENDI esik politikasiyla
+/// uygular; AI yalnizca oneri sunar.
 ///
-/// Tum islem TEK bir explicit transaction icinde yapilir (dokuman §60.2):
+/// Tum islem TEK bir explicit transaction icinde yapilir:
 /// inbox + ai_assessments + transactions + risk_cases + case_assignments +
 /// analyst_workloads + case_transitions + outbox, hepsi ya birlikte commit
 /// olur ya da hic olmaz.
@@ -242,7 +242,7 @@ public sealed class AiAssessmentCompletedConsumer(
     private static async Task ApplyLateAssessmentAsync(
         TransactionServiceDbContext db, Domain.FraudTransaction fraudTransaction, AiAssessment assessment, DateTimeOffset now, CancellationToken cancellationToken)
     {
-        // Dokuman §43: gec gelen AI sonucu manuel fallback nedenini kaldirmaz;
+        // gec gelen AI sonucu manuel fallback nedenini kaldirmaz;
         // evidence olarak uygulanir. Manuel review case zaten olusturulmustur (watchdog).
         fraudTransaction.ApplyLateAssessmentEvidence(assessment.RiskScore, assessment.RiskLevel, assessment.FraudType, now);
 

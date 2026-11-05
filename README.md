@@ -106,12 +106,12 @@ npm run e2e
 
 ## Dokümantasyon
 
-- Gereksinim izlenebilirliği: [BACKEND/docs/01-REQUIREMENTS-TRACEABILITY.md](BACKEND/docs/01-REQUIREMENTS-TRACEABILITY.md)
-- Mimari ve servis sınırları: [BACKEND/docs/02-ARCHITECTURE-OVERVIEW.md](BACKEND/docs/02-ARCHITECTURE-OVERVIEW.md)
-- State machine: [BACKEND/docs/05-DOMAIN-AND-STATE-MACHINE.md](BACKEND/docs/05-DOMAIN-AND-STATE-MACHINE.md)
+Hackathon gecesinin tasarım dokümanları `allstar-final-2026-07-23` tag'inde durur.
+
+
+- Case denetimi: [docs/CASE-CHECKLIST.md](docs/CASE-CHECKLIST.md)
 - Event kataloğu: [BACKEND/EVENTS.md](BACKEND/EVENTS.md)
-- AI yaklaşımı/eğitim: [BACKEND/docs/10-AI-SERVICE-DESIGN.md](BACKEND/docs/10-AI-SERVICE-DESIGN.md)
-- Sunum ve teslim playbook'u: [BACKEND/docs/11-FINAL-DELIVERY-PLAYBOOK.md](BACKEND/docs/11-FINAL-DELIVERY-PLAYBOOK.md)
+- AI model kartı: [BACKEND/src/Ai/fraudcell-ai/MODEL_CARD.md](BACKEND/src/Ai/fraudcell-ai/MODEL_CARD.md)
 - OpenAPI snapshot'ları: `BACKEND/contracts/openapi/`
 
 Servislerin sorumlulukları, endpoint grupları ve environment değişkenleri kendi

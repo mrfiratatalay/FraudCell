@@ -1,7 +1,7 @@
 namespace FraudCell.Identity.Service.Domain;
 
 /// <summary>
-/// <c>identity.refresh_sessions</c> (dokuman §17). Refresh token rotation,
+/// <c>identity.refresh_sessions</c>. Refresh token rotation,
 /// session yonetimi ve token reuse tespiti. Her rotation'da yeni bir satir
 /// olusur ve eskisi <see cref="RevokedAt"/>/<see cref="ReplacedBySessionId"/>
 /// ile isaretlenir. Revoke edilmis bir token TEKRAR kullanilirsa

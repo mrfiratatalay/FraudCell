@@ -33,7 +33,7 @@ public class AppException : Exception
 
     /// <summary>
     /// Ownership ihlallerinde de bunu kullaniriz: kaynagin varligini sizdirmamak
-    /// icin 403 yerine 404 doneriz (dokuman §7).
+    /// icin 403 yerine 404 doneriz.
     /// </summary>
     public static AppException NotFound(string message = "Kayıt bulunamadı.")
         => new(HttpStatusCode.NotFound, ErrorCodes.NotFound, message);
@@ -47,19 +47,19 @@ public class AppException : Exception
     public static AppException Conflict(string code, string message, IReadOnlyDictionary<string, object?>? details = null)
         => new(HttpStatusCode.Conflict, code, message, details);
 
-    /// <summary>Domain/state machine kurali ihlali — 422 (dokuman §19).</summary>
+    /// <summary>Domain/state machine kurali ihlali — 422.</summary>
     public static AppException DomainRule(string code, string message, IReadOnlyDictionary<string, object?>? details = null)
         => new(HttpStatusCode.UnprocessableEntity, code, message, details);
 
     public static AppException Unavailable(string message)
         => new(HttpStatusCode.ServiceUnavailable, ErrorCodes.ServiceTemporarilyUnavailable, message);
 
-    /// <summary>Kritik state-changing endpoint'te <c>If-Match</c> header'i eksik (dokuman §15.1).</summary>
+    /// <summary>Kritik state-changing endpoint'te <c>If-Match</c> header'i eksik.</summary>
     public static AppException PreconditionRequired(string message = "Bu işlem için If-Match header'ı zorunludur.")
         => new((HttpStatusCode)428, ErrorCodes.PreconditionRequired, message);
 
     /// <summary>
-    /// <c>If-Match</c> header'i mevcut kaynak versiyonuyla eslesmiyor (dokuman §15.2).
+    /// <c>If-Match</c> header'i mevcut kaynak versiyonuyla eslesmiyor.
     /// Canonical status 412'dir; genel <see cref="ConcurrencyConflict"/> (409) ile karistirilmaz.
     /// </summary>
     public static AppException PreconditionFailed(long expectedVersion, long currentVersion)

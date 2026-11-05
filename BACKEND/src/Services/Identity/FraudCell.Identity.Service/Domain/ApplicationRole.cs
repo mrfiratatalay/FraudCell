@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FraudCell.Identity.Service.Domain;
 
-/// <summary><c>identity.roles</c> (dokuman §12.1). <see cref="IdentityRole{TKey}.Name"/> "code" kolonuna eslenir.</summary>
+/// <summary><c>identity.roles</c>. <see cref="IdentityRole{TKey}.Name"/> "code" kolonuna eslenir.</summary>
 public sealed class ApplicationRole : IdentityRole<string>
 {
     public ApplicationRole()

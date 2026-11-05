@@ -15,7 +15,7 @@
  *   2. `mocks/handlers/` altındaki karşılığını sil,
  *   3. Bu dosyadan kaldır.
  *
- * Şekiller doküman §13 (gamification) ve §53 (dashboard) baz alınarak
+ * Şekiller ve §53 (dashboard) baz alınarak
  * tasarlandı; gerçek servis geldiğinde DEĞİŞMESİ BEKLENİR.
  */
 
@@ -55,7 +55,7 @@ export interface AppNotification {
 /* ========================================================================== */
 
 /**
- * DESIGN.MD kural 2: dashboard metrikleri frontend'de HESAPLANMAZ. Servis
+ * dashboard metrikleri frontend'de HESAPLANMAZ. Servis
  * aggregate döndürür, frontend yalnızca görselleştirir. Mock da bu kurala
  * uyar — vaka listesinden türetmez, kendi aggregate'ini üretir.
  */

@@ -1,4 +1,4 @@
-"""SQLAlchemy engine ve oturum yonetimi (dokuman 03-TECH-STACK.md SQLAlchemy 2.x).
+"""SQLAlchemy engine ve oturum yonetimi.
 
 psycopg3, ayni "postgresql+psycopg://" dialect'i hem sync hem async
 motorlarda destekler; ayri bir "psycopg_async" surucusune gerek yoktur.
@@ -23,7 +23,7 @@ if sys.platform == "win32":
 
 
 class Base(DeclarativeBase):
-    """Tum ORM modellerinin ortak temeli; `ai` schema'sinda yasar (dokuman 06 §2/§3)."""
+    """Tum ORM modellerinin ortak temeli; `ai` schema'sinda yasar."""
 
 
 engine = create_async_engine(settings.database.dsn, pool_pre_ping=True)

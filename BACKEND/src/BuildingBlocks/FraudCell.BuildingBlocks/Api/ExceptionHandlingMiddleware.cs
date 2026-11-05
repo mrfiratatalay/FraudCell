@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace FraudCell.BuildingBlocks.Api;
 
 /// <summary>
-/// Tek hata cikis noktasi. Her hata dokuman §19'daki zarf formatinda doner ve
+/// Tek hata cikis noktasi. Her hata 'daki zarf formatinda doner ve
 /// <c>meta.traceId</c> tasir (API-013).
 ///
 /// Beklenmeyen hatalarda istemciye stack trace veya exception mesaji SIZDIRILMAZ;

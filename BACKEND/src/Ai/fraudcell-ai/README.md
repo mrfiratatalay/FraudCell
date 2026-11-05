@@ -21,4 +21,4 @@ uv run pytest -q
 ```
 
 Eğitim verisi, leakage önlemleri, kalibrasyon ve metrikler için
-`BACKEND/docs/10-AI-SERVICE-DESIGN.md` ve `models/metadata.json` esas alınır.
+[MODEL_CARD.md](MODEL_CARD.md) ve `models/metadata.json` esas alınır.

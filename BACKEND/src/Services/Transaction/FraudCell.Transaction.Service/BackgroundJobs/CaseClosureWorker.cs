@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace FraudCell.Transaction.Service.BackgroundJobs;
 
 /// <summary>
-/// Dokuman §29-31: final karardan (ONAYLANDI/BLOKLANDI) 48 saat sonra vakayi
+/// final karardan (ONAYLANDI/BLOKLANDI) 48 saat sonra vakayi
 /// KAPANDI yapar. <c>FOR UPDATE SKIP LOCKED</c> ile birden fazla instance'in
 /// ayni vakayi ikinci kez kapatmasi engellenir.
 /// </summary>

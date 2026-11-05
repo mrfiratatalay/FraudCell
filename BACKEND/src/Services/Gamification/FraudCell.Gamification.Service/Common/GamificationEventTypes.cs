@@ -1,6 +1,6 @@
 namespace FraudCell.Gamification.Service.Common;
 
-/// <summary>Dokuman `04-SERVICE-BOUNDARIES.md` §10.5-10.6.</summary>
+/// <summary>Gamification servisinin yayinladigi ve dinledigi event tipleri.</summary>
 public static class GamificationEventTypes
 {
     // --- Yayinlanan ---

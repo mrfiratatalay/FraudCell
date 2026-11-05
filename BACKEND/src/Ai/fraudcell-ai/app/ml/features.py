@@ -1,7 +1,7 @@
-"""Ozellik muhendisligi (dokuman `02-ARCHITECTURE-OVERVIEW.md` §13 ek alanlar).
+"""Ozellik muhendisligi.
 
-AI Service Transaction Database'e baglanamaz (dokuman `04-SERVICE-BOUNDARIES.md`
-§9.7); bu yuzden hiz/yenilik sinyalleri AI'nin KENDI `predictions.feature_snapshot`
+AI Service Transaction Database'e baglanamaz;
+bu yuzden hiz/yenilik sinyalleri AI'nin KENDI `predictions.feature_snapshot`
 gecmisinden turetilir. Bu, ayri bir tablo eklemeden servis sinirini korur.
 """
 

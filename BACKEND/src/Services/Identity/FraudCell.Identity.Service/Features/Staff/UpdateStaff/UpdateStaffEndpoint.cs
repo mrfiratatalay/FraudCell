@@ -12,7 +12,7 @@ namespace FraudCell.Identity.Service.Features.Staff.UpdateStaff;
 public sealed record UpdateStaffRequest(string? FirstName, string? LastName, bool? AssignmentEnabled, bool? IsActive);
 
 /// <summary>
-/// <c>PATCH /api/v1/staff/{staffId}</c> (dokuman §30). Yalnizca request'te
+/// <c>PATCH /api/v1/staff/{staffId}</c>. Yalnizca request'te
 /// bulunan alanlar degistirilir; sifre bu endpoint uzerinden degismez.
 /// </summary>
 public static class UpdateStaffEndpoint

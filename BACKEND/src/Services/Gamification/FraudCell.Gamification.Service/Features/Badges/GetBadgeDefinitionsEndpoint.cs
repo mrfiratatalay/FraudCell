@@ -8,7 +8,7 @@ namespace FraudCell.Gamification.Service.Features.Badges;
 
 public sealed record BadgeDefinitionResponse(string Code, string DisplayName, string Description);
 
-/// <summary><c>GET /api/v1/game/badges</c> (dokuman §60). Tum aktif rozet tanimlari.</summary>
+/// <summary><c>GET /api/v1/game/badges</c>. Tum aktif rozet tanimlari.</summary>
 public static class GetBadgeDefinitionsEndpoint
 {
     public static void MapGetBadgeDefinitions(this IEndpointRouteBuilder app)

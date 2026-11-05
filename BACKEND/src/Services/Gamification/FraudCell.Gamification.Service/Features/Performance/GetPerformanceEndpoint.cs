@@ -13,7 +13,7 @@ public sealed record PerformanceResponse(
     string AnalystId, int TotalDecisions, int CorrectDecisions, int FalsePositiveCount, int SlaCompliantCount, int SlaBreachCount,
     double? AverageDecisionSeconds, decimal AccuracyRate, IReadOnlyList<FraudTypeStatResponse> FraudTypeBreakdown);
 
-/// <summary><c>GET /api/v1/game/performance/{analystId}</c> (dokuman §60, Analyst Self/Supervisor/Admin).</summary>
+/// <summary><c>GET /api/v1/game/performance/{analystId}</c>.</summary>
 public static class GetPerformanceEndpoint
 {
     public static void MapGetPerformance(this IEndpointRouteBuilder app)

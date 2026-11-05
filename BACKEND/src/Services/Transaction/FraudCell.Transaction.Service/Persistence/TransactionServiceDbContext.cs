@@ -7,8 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace FraudCell.Transaction.Service.Persistence;
 
 /// <summary>
-/// Transaction Service'in TEK veritabani baglantisi (dokuman `06-DATA-ARCHITECTURE.md`
-/// §2/§3: <c>fraudcell_transaction</c> database, <c>txn</c> schema).
+/// Transaction Service'in TEK veritabani baglantisi:
+/// <c>fraudcell_transaction</c> database, <c>txn</c> schema).
 /// </summary>
 public sealed class TransactionServiceDbContext(DbContextOptions<TransactionServiceDbContext> options)
     : DbContext(options), IMessagingDbContext

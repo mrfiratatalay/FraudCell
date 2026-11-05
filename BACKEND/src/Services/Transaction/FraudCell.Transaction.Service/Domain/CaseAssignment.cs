@@ -1,6 +1,6 @@
 namespace FraudCell.Transaction.Service.Domain;
 
-/// <summary><c>txn.case_assignments</c> (dokuman §24). Gecmis silinmez; reassignment eskisini CANCELLED yapar.</summary>
+/// <summary><c>txn.case_assignments</c>. Gecmis silinmez; reassignment eskisini CANCELLED yapar.</summary>
 public sealed class CaseAssignment
 {
     public required string Id { get; set; }

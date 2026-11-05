@@ -10,8 +10,8 @@ namespace FraudCell.Identity.Service.Security;
 public sealed record AccessTokenResult(string Token, string Jti, DateTimeOffset ExpiresAt);
 
 /// <summary>
-/// Access token uretimi (dokuman §6/§27). RSA private key ile imzalar; yalnizca
-/// bu servis private key'e sahiptir. Claim seti dokuman §6'daki ornekle birebir
+/// Access token uretimi. RSA private key ile imzalar; yalnizca
+/// bu servis private key'e sahiptir. Claim seti 'daki ornekle birebir
 /// eslesir.
 /// </summary>
 public sealed class JwtTokenService(RsaKeyProvider keyProvider, IOptions<JwtSigningOptions> options, IClock clock)

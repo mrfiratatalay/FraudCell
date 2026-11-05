@@ -4,15 +4,15 @@ import '@testing-library/jest-dom/vitest';
  * Vitest ortak kurulumu.
  *
  * MSW node sunucusu burada BAŞLATILMAZ: her test dosyası kendi handler
- * setiyle çalışsın diye. Ortak bir sunucu, bir testin `server.use()` ile
+ * setiyle çalışsın diye. Ortak bir sunucu, bir testin `server.use` ile
  * eklediği geçici handler'ın diğerine sızmasına yol açar.
  *
  * Component testleri için önerilen kalıp:
  *
  *   const server = setupServer(...handlers)
- *   beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
- *   afterEach(() => server.resetHandlers())
- *   afterAll(() => server.close())
+ *   beforeAll( => server.listen({ onUnhandledRequest: 'error' }))
+ *   afterEach( => server.resetHandlers)
+ *   afterAll( => server.close)
  */
 
 // jsdom `crypto.randomUUID` sağlamıyor; client ve mock katmanı buna dayanıyor.

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace FraudCell.Transaction.Service.BackgroundJobs;
 
 /// <summary>
-/// Dokuman `05-DOMAIN-AND-STATE-MACHINE.md` §38-39: SLA deadline'i gecmis ve
+/// SLA deadline'i gecmis ve
 /// henuz final karari olmayan vakalari <c>slaBreachedAt</c> ile isaretler.
 /// KRITIK vakalarda transaction'i ayrica geçici bloklar.
 /// </summary>

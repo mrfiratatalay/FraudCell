@@ -15,7 +15,7 @@ import { Skeleton } from './Feedback';
  * Konsol veri tablosu — TanStack Table v8 sarmalayıcı.
  *
  * Sıralama istemci tarafındadır ve GÖRÜNEN sayfa ÜZERİNDE çalışır: backend
- * keyset pagination kullandığı için (DESIGN.MD) tüm veri bir arada değildir;
+ * keyset pagination kullandığı için tüm veri bir arada değildir;
  * kolon sıralaması yalnızca eldeki satırları düzenler, veri kaynağını değiştirmez.
  *
  * Satıra tıklama detay sayfasına götürür (`onRowClick`); bu yüzden satır

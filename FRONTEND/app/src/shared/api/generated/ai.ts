@@ -151,7 +151,7 @@ export interface paths {
         put?: never;
         /**
          * Score Internal
-         * @description Diagnostic/contract-test amaclidir; ana transaction akisi HTTP'ye bagli DEGILDIR (dokuman §58).
+         * @description Diagnostic/contract-test amaclidir; ana transaction akisi HTTP'ye bagli DEGILDIR.
          */
         post: operations["score_internal_internal_v1_assessments_score_post"];
         delete?: never;

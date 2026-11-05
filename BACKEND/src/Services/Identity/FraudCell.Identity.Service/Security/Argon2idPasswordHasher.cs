@@ -5,10 +5,9 @@ using Microsoft.AspNetCore.Identity;
 namespace FraudCell.Identity.Service.Security;
 
 /// <summary>
-/// ASP.NET Core Identity'nin varsayilan PBKDF2 hasher'inin yerini alir (dokuman
-/// §8.3). Parametreler hash'in kendisiyle birlikte saklanir; boylece ileride
-/// maliyet artirilirsa eski kullanicilar basarili login sonrasi rehash edilebilir
-/// (dokuman §8.3 son paragraf).
+/// ASP.NET Core Identity'nin varsayilan PBKDF2 hasher'inin yerini alir.
+/// Parametreler hash'in kendisiyle birlikte saklanir; boylece ileride
+/// maliyet artirilirsa eski kullanicilar basarili login sonrasi rehash edilebilir.
 /// </summary>
 public sealed class Argon2idPasswordHasher : IPasswordHasher<Domain.ApplicationUser>
 {

@@ -252,7 +252,7 @@ ayrı ayrı görünür.
 | 14.1-b | Ana branch'te çalışır kod, anlamlı commit geçmişi | ⚠️ | 2.2-d, 12-b | Part 1 |
 | 14.1-c | **Kök dizinde** `docker-compose.yml` (servisler, veritabanları, gateway) | ❌ | Compose dosyası `BACKEND/` altında. | Part 2 |
 | 14.1-d | Servis başına `.env.example` | ❌ | Tek ve ortak bir dosya var ([BACKEND/.env.example]). | Part 7 |
-| 14.2-a | Ana README: genel bakış, mimari diyagram, kurulum (`docker compose up` + seed), demo kullanıcıları | ✅ | [README.MD]: her işletim sistemi için kurulum, otomatik seed, 7 demo kullanıcısı. | Part 7 |
+| 14.2-a | Ana README: genel bakış, mimari diyagram, kurulum (`docker compose up` + seed), demo kullanıcıları | ✅ | [README.md]: her işletim sistemi için kurulum, otomatik seed, 7 demo kullanıcısı. | Part 7 |
 | 14.2-b | Servis başına README | ⚠️ | 2.2-e | Part 7 |
 | 14.2-c | EVENTS.md | ⚠️ | 9-c | Part 7 |
 | 14.2-d | AI yaklaşım dokümanı (yöntem, gerekçe, çalışma şekli, eğitim verisi ve süreç) | ✅ | [MODEL_CARD.md]: veri, özellikler, eşikler, offline ve canlı metrikler, sınırlar. Eğitim verisi repoda. | |
@@ -281,7 +281,7 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 [BACKEND/.env.example]: ../BACKEND/.env.example
 [BACKEND/EVENTS.md]: ../BACKEND/EVENTS.md
 [BACKEND/contracts/openapi/]: ../BACKEND/contracts/openapi
-[README.MD]: ../README.MD
+[README.md]: ../README.md
 [ci.yml]: ../.github/workflows/ci.yml
 
 [RabbitMqTopology.cs]: ../BACKEND/src/BuildingBlocks/FraudCell.BuildingBlocks/Messaging/RabbitMq/RabbitMqTopology.cs

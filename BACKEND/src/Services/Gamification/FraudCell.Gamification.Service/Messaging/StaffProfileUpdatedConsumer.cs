@@ -15,7 +15,7 @@ namespace FraudCell.Gamification.Service.Messaging;
 public sealed record StaffProfileUpdatedPayload(string UserId, bool IsActive, string? DisplayName, DateTimeOffset UpdatedAt);
 
 /// <summary>
-/// <c>identity.staff.profile.updated</c> tuketicisi (dokuman §48). Identity
+/// <c>identity.staff.profile.updated</c> tuketicisi. Identity
 /// Service authoritative sahibidir; bu yalnizca leaderboard/profil gosterimi
 /// icin kullanilan bir local projection'dir.
 /// </summary>

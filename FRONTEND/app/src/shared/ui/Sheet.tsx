@@ -8,7 +8,7 @@ import { cn } from '@/shared/lib/cn';
  *   - `Sheet`  → mobilde alttan açılan panel (tasarımdaki bottom sheet)
  *   - `Modal`  → masaüstünde ortalanmış diyalog (karar onayı, override formu)
  *
- * DESIGN.MD primitive kararı: shadcn CLI'ın değişken varsayılanına güvenmek
+ * shadcn CLI'ın değişken varsayılanına güvenmek
  * yerine Radix doğrudan ve sürümü sabitlenmiş olarak kullanılır.
  *
  * Radix odak tuzağı, ESC ile kapatma, scroll kilidi ve `aria-modal`ı kendisi
@@ -89,7 +89,7 @@ export function Sheet({
 /**
  * Onay diyaloğu.
  *
- * Approve/block gibi geri alınamaz işlemler DESIGN.MD kural 1 gereği optimistic
+ * Approve/block gibi geri alınamaz işlemler kural gereği optimistic
  * yapılmaz; `loading` backend cevabı beklenirken true kalır ve buton kilitlenir.
  */
 export function ConfirmDialog({

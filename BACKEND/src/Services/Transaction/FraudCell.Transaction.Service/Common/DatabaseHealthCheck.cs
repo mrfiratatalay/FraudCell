@@ -3,7 +3,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace FraudCell.Transaction.Service.Common;
 
-/// <summary>Readiness yalnizca bu servisin KENDI veritabanina baglanabildigini dogrular (dokuman §33.2).</summary>
+/// <summary>Readiness yalnizca bu servisin KENDI veritabanina baglanabildigini dogrular.</summary>
 public sealed class DatabaseHealthCheck(TransactionServiceDbContext db) : IHealthCheck
 {
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)

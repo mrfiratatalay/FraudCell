@@ -1,4 +1,4 @@
-"""Standart event zarfi (dokuman `02-ARCHITECTURE-OVERVIEW.md` §25).
+"""Standart event zarfi.
 
 .NET tarafindaki EventEnvelope ile alan alan ayni: eventId, eventType,
 eventVersion, occurredAt, producer, correlationId, causationId, subjectId, payload.

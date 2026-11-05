@@ -23,8 +23,7 @@ public sealed record RefreshRotationResult(
     string? PreviousFamilyId = null);
 
 /// <summary>
-/// Refresh token family, rotation ve reuse detection (dokuman
-/// `06-DATA-ARCHITECTURE.md` §17, `07-API-DESIGN.md` §26, SEC-006).
+/// Refresh token family, rotation ve reuse detection.
 ///
 /// Her rotation eskisini revoke edip ayni family'de yeni bir satir olusturur.
 /// Revoke edilmis bir token TEKRAR kullanilirsa (calinti token senaryosu),

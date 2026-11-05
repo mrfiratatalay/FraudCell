@@ -13,7 +13,7 @@ public sealed record SubmitFeedbackRequest(int Rating, string? Comment);
 
 public sealed record FeedbackResponse(string FeedbackId, string CaseId, int Rating, string? Comment, DateTimeOffset SubmittedAt);
 
-/// <summary><c>POST /api/v1/cases/{caseId}/feedback</c> (dokuman §50). Yalnizca KAPANDI vakada, tek seferlik.</summary>
+/// <summary><c>POST /api/v1/cases/{caseId}/feedback</c>. Yalnizca KAPANDI vakada, tek seferlik.</summary>
 public static class SubmitFeedbackEndpoint
 {
     private const int MaxCommentLength = 1000;

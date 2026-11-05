@@ -1,4 +1,4 @@
-"""Sentetik egitim verisi ureticisi (dokuman `00-START-HERE.md` §12 egitim verisi).
+"""Sentetik egitim verisi ureticisi.
 
 Tasarim ilkeleri (kritik):
   1. **Ortusen dagilimlar** — temiz ve fraud islemlerinin ozellik dagilimlari

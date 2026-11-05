@@ -13,7 +13,7 @@ namespace FraudCell.Identity.Service.Features.Staff.UpdateStaffRegions;
 
 public sealed record UpdateStaffRegionsRequest(IReadOnlyCollection<OperationRegion> Regions);
 
-/// <summary><c>PUT /api/v1/staff/{staffId}/regions</c> (dokuman §22). Butun bolge setini replace eder.</summary>
+/// <summary><c>PUT /api/v1/staff/{staffId}/regions</c>. Butun bolge setini replace eder.</summary>
 public static class UpdateStaffRegionsEndpoint
 {
     public static void MapUpdateStaffRegions(this IEndpointRouteBuilder app)

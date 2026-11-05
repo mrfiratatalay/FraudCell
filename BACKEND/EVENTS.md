@@ -6,8 +6,7 @@ Tüm domain event'leri RabbitMQ `fraudcell.events` topic exchange'i üzerinden
 `correlationId`, `causationId`, `payload`. Domain producer'ları transactional outbox,
 consumer'lar idempotent inbox kullanır. DB tutmayan gateway'in 403 audit producer'ı
 publisher-confirm ile doğrudan yayınlar ve broker hatasını güvenlik loguna yazar.
-Ayrıntılı payload örnekleri ve akış diyagramları
-[docs/08-EVENT-DRIVEN-ARCHITECTURE.md](docs/08-EVENT-DRIVEN-ARCHITECTURE.md) dosyasındadır.
+Akış diyagramları ve tasarım kararları [docs/03-mimari.md](../docs/03-mimari.md) dosyasındadır.
 
 | Producer | Event'ler | Temel payload |
 |---|---|---|

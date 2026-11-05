@@ -16,7 +16,7 @@ public sealed record CurrentUserResponse(
     IReadOnlyCollection<string> Specialties,
     IReadOnlyCollection<string> Regions);
 
-/// <summary><c>GET /api/v1/auth/me</c> (dokuman `07-API-DESIGN.md` §28).</summary>
+/// <summary><c>GET /api/v1/auth/me</c>.</summary>
 public static class GetCurrentUserEndpoint
 {
     public static void MapGetCurrentUser(this IEndpointRouteBuilder app)

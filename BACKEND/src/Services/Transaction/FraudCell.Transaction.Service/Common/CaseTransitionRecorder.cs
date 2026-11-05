@@ -5,7 +5,7 @@ using FraudCell.Transaction.Service.Persistence;
 
 namespace FraudCell.Transaction.Service.Common;
 
-/// <summary>Her case state degisikligini append-only gecmise yazar (dokuman §48).</summary>
+/// <summary>Her case state degisikligini append-only gecmise yazar.</summary>
 public sealed class CaseTransitionRecorder(TransactionServiceDbContext db, IClock clock, CorrelationContext correlation)
 {
     public void Record(

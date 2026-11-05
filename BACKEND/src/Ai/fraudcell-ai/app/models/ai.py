@@ -1,4 +1,4 @@
-"""AI Database domain tablolari (dokuman 06-DATA-ARCHITECTURE.md §34-46)."""
+"""AI Database domain tablolari."""
 
 from __future__ import annotations
 

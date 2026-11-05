@@ -14,7 +14,7 @@ namespace FraudCell.Identity.Service.Features.Staff.UpdateStaffSpecialties;
 public sealed record UpdateStaffSpecialtiesRequest(IReadOnlyCollection<AnalystSpecialty> Specialties);
 
 /// <summary>
-/// <c>PUT /api/v1/staff/{staffId}/specialties</c> (dokuman §31). Bütün uzmanlik
+/// <c>PUT /api/v1/staff/{staffId}/specialties</c>. Bütün uzmanlik
 /// setini replace eder ve <c>identity.staff.profile.updated</c> event'i yayinlar
 /// (AI Service bunu analyst ranking projection'i icin tuketir).
 /// </summary>

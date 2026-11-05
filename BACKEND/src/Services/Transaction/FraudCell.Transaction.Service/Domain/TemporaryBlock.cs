@@ -1,7 +1,7 @@
 namespace FraudCell.Transaction.Service.Domain;
 
 /// <summary>
-/// <c>txn.temporary_blocks</c> (dokuman §31). Ayni transaction+reason icin
+/// <c>txn.temporary_blocks</c>. Ayni transaction+reason icin
 /// tek aktif blok olur (unique partial index, released_at IS NULL).
 /// </summary>
 public sealed class TemporaryBlock

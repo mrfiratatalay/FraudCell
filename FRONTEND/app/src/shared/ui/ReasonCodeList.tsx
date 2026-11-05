@@ -5,7 +5,7 @@ import type { ReasonImpact } from '@/shared/api/enums';
 /**
  * AI reason code listesi — kararın gerekçeleri.
  *
- * DESIGN.MD §12: bunlar model açıklaması DEĞİL, rule/feature katmanından gelen
+ * bunlar model açıklaması DEĞİL, rule/feature katmanından gelen
  * gerekçelerdir. Etki (impact) rengi ile ağırlığı gösterilir; hem müşteri işlem
  * detayında hem analist vaka tezgâhında aynı görünür.
  */

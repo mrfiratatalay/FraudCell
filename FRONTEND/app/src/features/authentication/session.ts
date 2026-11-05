@@ -1,14 +1,14 @@
 /**
  * Oturum durumu.
  *
- * DESIGN.MD kararı: access token BELLEKTE tutulur, refresh token
+ * access token BELLEKTE tutulur, refresh token
  * Secure/HttpOnly cookie'dedir. `localStorage` KULLANILMAZ — XSS ile çalınabilir
  * ve "JWT localStorage" açıkça çıkarılacaklar listesinde.
  *
  * Sonucu: sayfa yenilendiğinde token kaybolur. Bu kasıtlıdır; uygulama açılışta
  * `/auth/refresh` çağırıp cookie'den yeni access token alır (`bootstrapSession`).
  *
- * Global client state kütüphanesi yok (DESIGN.MD). Bu, React ağacının dışında
+ * Global client state kütüphanesi yok. Bu, React ağacının dışında
  * da okunabilmesi gereken tek gerçek global — HTTP client'ın token'a erişmesi
  * lazım. `useSyncExternalStore` ile React'e bağlanan minik bir store yeterli.
  */
@@ -124,7 +124,7 @@ export function startSession(token: string, user: SessionUser): void {
   setState({ user, status: 'authenticated' });
 }
 
-/** Oturumu yerelde kapatır; sunucu tarafı `logout()` içinde yapılır. */
+/** Oturumu yerelde kapatır; sunucu tarafı `logout` içinde yapılır. */
 export function clearSession(): void {
   accessToken = null;
   setState({ user: null, status: 'anonymous' });

@@ -200,7 +200,7 @@ export function messageFor(error: unknown): string {
 /**
  * Başka bir kullanıcı aynı kaydı değiştirmiş demektir.
  *
- * Bu ikisi DESIGN.MD kural 1 gereği gerçek kullanıcı durumu olarak gösterilir:
+ * Bu ikisi kural gereği gerçek kullanıcı durumu olarak gösterilir:
  * sessizce yeniden denenmez, kullanıcıya kaydı yenilemesi söylenir.
  */
 export function isConcurrencyError(error: unknown): boolean {

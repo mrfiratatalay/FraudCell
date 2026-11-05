@@ -19,7 +19,7 @@ public sealed class JwtSigningOptions
 
     public int RefreshTokenLifetimeDays { get; set; } = 7;
 
-    /// <summary>PEM formatinda RSA private key dosya yolu. Repository'ye girmez (dokuman §20/SEC-011).</summary>
+    /// <summary>PEM formatinda RSA private key dosya yolu. Repository'ye girmez.</summary>
     public string? PrivateKeyPath { get; set; }
 
     /// <summary>Optional PEM copy of the public key for operators; services read keys from /.well-known/jwks.json.</summary>
@@ -27,7 +27,7 @@ public sealed class JwtSigningOptions
 }
 
 /// <summary>
-/// RSA anahtar ciftini saglar (dokuman §6/§27). Private key yalnizca Identity
+/// RSA anahtar ciftini saglar. Private key yalnizca Identity
 /// Service'te bulunur; Gateway ve diger servisler yalnizca public key'e sahiptir.
 ///
 /// Development/demo ortaminda dosya bulunmazsa gecici bir anahtar ciftinin

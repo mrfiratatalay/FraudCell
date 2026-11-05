@@ -8,7 +8,7 @@ using FraudCell.Identity.Service.Security;
 namespace FraudCell.Identity.Service.Features.Auth.Logout;
 
 /// <summary>
-/// <c>POST /api/v1/auth/logout</c> (dokuman `07-API-DESIGN.md` §27). Idempotenttir:
+/// <c>POST /api/v1/auth/logout</c>. Idempotenttir:
 /// zaten revoke edilmis bir oturum icin tekrar cagri guvenli sekilde 204 doner.
 /// </summary>
 public static class LogoutEndpoint

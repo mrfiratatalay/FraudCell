@@ -1,4 +1,4 @@
-"""<c>/api/v1/ai/models/*</c> (dokuman `07-API-DESIGN.md` §54-55)."""
+"""<c>/api/v1/ai/models/*</c>."""
 
 from __future__ import annotations
 

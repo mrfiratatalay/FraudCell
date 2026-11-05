@@ -1,4 +1,4 @@
-"""Standart outbox/inbox tablolari (dokuman 06-DATA-ARCHITECTURE.md §58-59).
+"""Standart outbox/inbox tablolari.
 
 .NET tarafindaki FraudCell.BuildingBlocks ile ayni mantiksal semaya sahiptir;
 boylece outbox publisher worker'i ve retry/DLQ davranisi tum servislerde tutarlidir.

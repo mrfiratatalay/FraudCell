@@ -22,7 +22,7 @@ public sealed record CreateStaffRequest(
     bool AssignmentEnabled = true);
 
 /// <summary>
-/// <c>POST /api/v1/staff</c> (dokuman `07-API-DESIGN.md` §29). Yalnizca admin
+/// <c>POST /api/v1/staff</c>. Yalnizca admin
 /// personel hesabi olusturabilir. Sifre politikasi ASP.NET Core Identity
 /// validator'lari ile, hash'leme Argon2id ile yapilir.
 /// </summary>

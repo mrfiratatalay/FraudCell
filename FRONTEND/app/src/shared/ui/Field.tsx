@@ -15,7 +15,7 @@ export interface FieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
 /**
  * Text field: label above, a bordered input with an optional leading icon.
  *
- * `forwardRef` React Hook Form'un `register()` dönüşünü bağlayabilmesi için
+ * `forwardRef` React Hook Form'un `register` dönüşünü bağlayabilmesi için
  * şarttır; `error` prop'u da `formState.errors[...].message` ile doldurulur.
  */
 export const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(

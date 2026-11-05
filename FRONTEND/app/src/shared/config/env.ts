@@ -1,7 +1,7 @@
 /**
  * Çalışma zamanı yapılandırması.
  *
- * DESIGN.MD "Production topolojisi": frontend ve API aynı origin'de yayınlanır,
+ * frontend ve API aynı origin'de yayınlanır,
  * tarayıcı yalnızca Gateway ile konuşur. Bu yüzden base URL varsayılan olarak
  * BOŞTUR — istekler `/api/v1/...` şeklinde göreli gider. Development'ta Vite
  * proxy'si, production'da Gateway'in kendisi karşılar.
