@@ -6,7 +6,7 @@ import { LogoWordmark } from '@/shared/ui/Logo';
 /**
  * Müşteri kabuğu — mobil öncelikli, masaüstünde gerçek web çalışma alanı.
  *
- * Mobilde tam ekran Paycell dili (gradient, tam pill nav, ortada FAB).
+ * Mobilde tam ekran mobil uygulama dili (gradient, tam pill nav, ortada FAB).
  * Masaüstünde üst navigasyon ve geniş, merkezlenmiş içerik alanı kullanılır;
  * sayfalar mobil cihaz maketine sıkışmadan ekranı verimli biçimde doldurur.
  *

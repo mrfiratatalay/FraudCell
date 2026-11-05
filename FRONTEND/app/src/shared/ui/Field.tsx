@@ -13,7 +13,7 @@ export interface FieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
 }
 
 /**
- * Paycell metin alanı: beyaz kart, etiket alanın içinde üstte küçük punto,
+ * Metin alanı: beyaz kart, etiket alanın içinde üstte küçük punto,
  * değer altında büyük punto. Kenarlık yok, yumuşak köşe.
  *
  * `forwardRef` React Hook Form'un `register()` dönüşünü bağlayabilmesi için

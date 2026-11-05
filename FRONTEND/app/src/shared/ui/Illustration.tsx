@@ -4,7 +4,7 @@ import { cn } from '@/shared/lib/cn';
  * Boş/başarı/hata durumları için inline SVG illüstrasyonlar.
  *
  * Harici asset yok: hepsi marka mavisi + Turkcell sarısı tonlarında, gömülü.
- * Paycell'in yuvarlak, dolgun ikon dilini taklit eder. `currentColor` yerine
+ * Yuvarlak, dolgun bir ikon dili kullanır. `currentColor` yerine
  * sabit token'lar kullanır ki koyu/açık zeminde tutarlı görünsün.
  */
 

@@ -81,7 +81,7 @@ export function AuthScaffold({
             </div>
           </div>
 
-          <p className="shrink-0 text-xs tracking-wide text-white/50">TURKCELL · PAYCELL EKOSİSTEMİ</p>
+          <p className="shrink-0 text-xs tracking-wide text-white/50">TURKCELL CODENIGHT 2026 · FRAUDCELL</p>
         </div>
       </aside>
 

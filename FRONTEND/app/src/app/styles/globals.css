@@ -11,17 +11,16 @@
 
 /* ==========================================================================
    FraudCell Design System
-   Kaynak: FRONTEND/design/fraudcell/*.jpeg (Paycell mobil uygulama ekranları)
-   Tokenlar doğrudan ekran görüntülerinden örneklenmiştir.
+   Mobil öncelikli müşteri yüzü ve yoğun veri gösteren konsol yüzü.
 
    İki yüz, tek aile:
-     • Müşteri  — Paycell mobil dilinin devamı (gradient, pill, tile, açık zemin)
+     • Müşteri  — mobil uygulama dili (gradient, pill, tile, açık zemin)
      • Konsol   — operasyon kokpiti (koyu lacivert kenar çubuğu, yoğun veri)
    Renk/uzay/hareket token'ları ORTAKTIR; ayrışma yüzey ve yoğunlukta olur.
    ========================================================================== */
 
 @theme {
-  /* --- Marka: Paycell mavi–camgöbeği rampası ------------------------------ */
+  /* --- Marka: mavi–camgöbeği rampası ------------------------------ */
   --color-brand-950: #001331;
   --color-brand-900: #001f4d;
   --color-brand-800: #003b7a;
@@ -251,7 +250,7 @@
     background-attachment: fixed;
     color: var(--color-ink-900);
     font-family: var(--font-sans);
-    /* cv02–cv04: tek katlı a/g/l — Inter'i Paycell'in geometrik grotesk'ine
+    /* cv02–cv04: tek katlı a/g/l — Inter'i geometrik bir grotesk'e
        yaklaştırır. ss03: Türkçe'de sık geçen 'ğ/ş' formlarını yumuşatır. */
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'ss03';
     font-size: var(--text-body);
