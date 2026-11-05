@@ -38,7 +38,7 @@ public sealed class JwtTokenService(RsaKeyProvider keyProvider, IOptions<JwtSign
         claims.AddRange(specialties.Select(specialty => new Claim("specialties", specialty)));
         claims.AddRange(regions.Select(region => new Claim("regions", region)));
 
-        var credentials = new SigningCredentials(new RsaSecurityKey(keyProvider.Rsa), SecurityAlgorithms.RsaSha256);
+        var credentials = new SigningCredentials(keyProvider.SigningKey, SecurityAlgorithms.RsaSha256);
 
         var token = new JwtSecurityToken(
             issuer: _options.Issuer,

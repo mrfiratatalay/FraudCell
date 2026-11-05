@@ -127,7 +127,7 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
             ValidAudience = jwtOptions.Audience,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new RsaSecurityKey(keyProvider.Rsa),
+            IssuerSigningKey = keyProvider.SigningKey,
             ValidAlgorithms = [SecurityAlgorithms.RsaSha256],
             RoleClaimType = "role",
             NameClaimType = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub,
@@ -159,6 +159,7 @@ if (app.Environment.IsDevelopment())
 
 app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
+app.MapJwks();
 
 app.MapRequestOtpChallenge();
 app.MapVerifyOtpChallenge();
