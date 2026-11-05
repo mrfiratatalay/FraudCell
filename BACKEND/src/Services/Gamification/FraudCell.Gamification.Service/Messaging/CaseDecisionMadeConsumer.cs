@@ -51,9 +51,10 @@ public sealed class CaseDecisionMadeConsumer(
 
         if (!string.IsNullOrWhiteSpace(payload.AnalystId))
         {
-            await engine.ApplyCaseDecisionAsync(
+            var decision = new CaseDecision(
                 envelope.EventId, payload.AnalystId, payload.CaseId, payload.FraudType, payload.RiskLevel,
-                payload.SlaCompliant, payload.DecidedAt, payload.CreatedAt, payload.Decision == "BLOCK", now, cancellationToken);
+                payload.SlaCompliant, payload.DecidedAt, payload.CreatedAt, payload.Decision == "BLOCK");
+            await engine.ApplyCaseDecisionAsync(decision, now, cancellationToken);
         }
 
         db.InboxMessages.Add(new InboxMessage

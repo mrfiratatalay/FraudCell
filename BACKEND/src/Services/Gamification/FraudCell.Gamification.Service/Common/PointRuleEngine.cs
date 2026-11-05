@@ -6,6 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FraudCell.Gamification.Service.Common;
 
+/// <summary>The customer's answer to a verification request (case §4.5).</summary>
+public enum CustomerVerdict
+{
+    None,
+    Mine,
+    NotMine,
+}
+
+/// <summary>A final case decision as the scoring rules need it.</summary>
+public sealed record CaseDecision(
+    string SourceEventId, string AnalystId, string CaseId, string? FraudType, string? RiskLevel, bool SlaCompliant,
+    DateTimeOffset DecidedAt, DateTimeOffset CaseCreatedAt, bool IsBlock, CustomerVerdict CustomerVerdict = CustomerVerdict.None);
+
 /// <summary>
 /// Puan kurallarini uygulayan merkezi motor (dokuman `00-START-HERE.md` §17,
 /// `06-DATA-ARCHITECTURE.md` §49-57). Ground-truth tanimi (bir kararin
@@ -23,10 +36,9 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
     private const int SpecialistHunterThreshold = 50;
     private const int ZeroErrorThreshold = 50;
 
-    public async Task ApplyCaseDecisionAsync(
-        string sourceEventId, string analystId, string caseId, string? fraudType, string? riskLevel,
-        bool slaCompliant, DateTimeOffset decidedAt, DateTimeOffset caseCreatedAt, bool isBlockDecision, DateTimeOffset now, CancellationToken cancellationToken)
+    public async Task ApplyCaseDecisionAsync(CaseDecision decision, DateTimeOffset now, CancellationToken cancellationToken)
     {
+        var (sourceEventId, analystId, caseId, fraudType, riskLevel, slaCompliant, decidedAt, caseCreatedAt, isBlockDecision, _) = decision;
         var decisionSeconds = Math.Max(0, (decidedAt - caseCreatedAt).TotalSeconds);
         var isFast = decisionSeconds <= FastDecisionSeconds;
         var isCritical = string.Equals(riskLevel, "KRITIK", StringComparison.Ordinal);
