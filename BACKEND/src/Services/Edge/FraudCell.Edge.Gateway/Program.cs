@@ -31,10 +31,27 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddFraudCellJwtBearer(builder.Configuration);
 
-builder.Services.AddAuthorization();
+// The AI service does not validate tokens itself, so the gateway enforces case §3.3
+// for its routes (appsettings.json "AuthorizationPolicy"). The other services check roles themselves.
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("staff", policy => policy.RequireRole("ANALYST", "SUPERVISOR", "ADMIN"))
+    .AddPolicy("supervisor-or-admin", policy => policy.RequireRole("SUPERVISOR", "ADMIN"));
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    // Case §10 brute force: staff login and the OTP endpoints get a tight budget per
+    // address and endpoint, on top of the general limit below.
+    options.AddPolicy("auth", context => RateLimitPartition.GetFixedWindowLimiter(
+        $"{context.Connection.RemoteIpAddress}|{context.Request.Path}",
+        _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 30,
+            Window = TimeSpan.FromMinutes(1),
+            QueueLimit = 0,
+            AutoReplenishment = true,
+        }));
+
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
     {
         var key = context.User.Identity?.IsAuthenticated == true
