@@ -1,61 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Crown, Medal } from 'lucide-react';
 import { getLeaderboard } from '@/features/gamification/api';
-import type { LeaderboardItemResponse, LeaderboardPeriod } from '@/shared/api/contract';
+import { ANALYST_LEVEL_LABEL, type AnalystLevel, type LeaderboardPeriod } from '@/shared/api/contract';
 import { queryKeys } from '@/shared/api/query-keys';
 import { formatNumber } from '@/shared/lib/format';
 import { cn } from '@/shared/lib/cn';
 import { Avatar, EmptyState, ErrorState, PageHeader, SkeletonList, Tabs } from '@/shared/ui';
-
-/** İlk üç için podyum sırası: 2 · 1 · 3 (ortada birinci, yükseltilmiş). */
-const PODIUM_ORDER = [1, 0, 2];
-const PODIUM_STYLE = [
-  { ring: 'ring-tc-500', badge: 'bg-tc-500 text-brand-900', height: 'sm:mt-0', icon: Crown },
-  { ring: 'ring-ink-300', badge: 'bg-ink-300 text-ink-800', height: 'sm:mt-6', icon: Medal },
-  { ring: 'ring-warning-500/60', badge: 'bg-warning-500 text-white', height: 'sm:mt-10', icon: Medal },
-];
-
-function Podium({ items }: { items: LeaderboardItemResponse[] }) {
-  const top = items.slice(0, 3);
-  return (
-    <div className="mb-6 grid grid-cols-3 items-end gap-3">
-      {PODIUM_ORDER.map((rankIndex) => {
-        const item = top[rankIndex];
-        if (!item) return <div key={rankIndex} />;
-        const style = PODIUM_STYLE[rankIndex]!;
-        const Icon = style.icon;
-        return (
-          <div
-            key={item.analystId}
-            className={cn(
-              'surface-panel flex flex-col items-center p-4 text-center',
-              style.height,
-            )}
-          >
-            <div className="relative">
-              <Avatar name={item.displayName ?? item.analystId} size="lg" className={cn('ring-2', style.ring)} />
-              <span
-                className={cn(
-                  'absolute -top-1.5 -right-1.5 flex size-6 items-center justify-center rounded-full text-micro font-bold',
-                  style.badge,
-                )}
-              >
-                {item.rank}
-              </span>
-            </div>
-            <Icon className="mt-2 size-4 text-tc-500" aria-hidden />
-            <p className="mt-1 line-clamp-1 text-sm font-semibold text-ink-900">
-              {item.displayName ?? 'Analist'}
-            </p>
-            <p className="text-lg font-bold tabular text-brand-800">{formatNumber(item.points)}</p>
-            <p className="text-micro text-ink-400">{item.decisionCount} karar</p>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 
 export function LeaderboardPage({ period }: { period: LeaderboardPeriod }) {
   const navigate = useNavigate();
@@ -65,63 +15,74 @@ export function LeaderboardPage({ period }: { period: LeaderboardPeriod }) {
   });
 
   const items = leaderboard.data?.items ?? [];
-  const rest = items.slice(3);
+  const top = Math.max(1, ...items.map((item) => item.points));
 
   return (
     <div>
-      <PageHeader title="Liderlik tablosu" description="Analist puanları ve karar hacmi." />
+      <PageHeader title="Liderlik tablosu" description="Analistlerin puanı, karar sayısı ve rozetleri." />
 
-      <div className="mb-5">
-        <Tabs
-          items={[
-            { value: 'daily', label: 'Günlük' },
-            { value: 'weekly', label: 'Haftalık' },
-          ]}
-          value={period}
-          onValueChange={(value) =>
-            void navigate({
-              to: '/supervisor/leaderboard',
-              search: { period: value as LeaderboardPeriod },
-            })
-          }
-        />
-      </div>
+      <Tabs
+        className="mb-5"
+        items={[
+          { value: 'daily', label: 'Günlük' },
+          { value: 'weekly', label: 'Haftalık' },
+        ]}
+        value={period}
+        onValueChange={(value) =>
+          void navigate({ to: '/supervisor/leaderboard', search: { period: value as LeaderboardPeriod } })
+        }
+      />
 
       <section aria-live="polite">
         {leaderboard.isPending ? <SkeletonList rows={6} /> : null}
-        {leaderboard.isError ? (
-          <ErrorState error={leaderboard.error} onRetry={() => void leaderboard.refetch()} />
-        ) : null}
-        {!leaderboard.isPending && !leaderboard.isError && items.length === 0 ? (
-          <EmptyState illustration="reward" title="Bu dönemde sıralama oluşmadı" />
+        {leaderboard.isError ? <ErrorState error={leaderboard.error} onRetry={() => void leaderboard.refetch()} /> : null}
+        {leaderboard.isSuccess && items.length === 0 ? (
+          <div className="surface-panel">
+            <EmptyState illustration="reward" title="Bu dönemde sıralama yok" description="Analistler karar verdikçe tablo dolar." />
+          </div>
         ) : null}
 
-        {items.length > 0 ? <Podium items={items} /> : null}
-
-        {rest.length > 0 ? (
-          <div className="surface-panel divide-y divide-ink-100 overflow-hidden">
-            {rest.map((item) => (
-              <div
-                key={item.analystId}
-                className="grid grid-cols-[2.5rem_1fr_auto] items-center gap-4 px-4 py-3"
-              >
-                <span className="flex size-8 items-center justify-center rounded-full bg-canvas font-bold text-ink-500">
-                  {item.rank}
-                </span>
-                <div className="flex min-w-0 items-center gap-3">
-                  <Avatar name={item.displayName ?? item.analystId} size="sm" />
-                  <div className="min-w-0">
-                    <p className="truncate font-semibold text-ink-900">
-                      {item.displayName ?? 'Analist'}
-                    </p>
-                    <p className="mt-0.5 text-xs text-ink-500">
-                      {item.level} · {item.decisionCount} karar · {item.badgeCount} rozet
-                    </p>
+        {items.length > 0 ? (
+          <div className="surface-panel overflow-hidden">
+            <div className="hidden grid-cols-[3rem_minmax(12rem,1fr)_minmax(10rem,1.2fr)_6rem_6rem] gap-4 border-b border-line bg-subtle px-5 py-2.5 text-xs font-medium text-ink-500 md:grid" aria-hidden>
+              <span>Sıra</span>
+              <span>Analist</span>
+              <span>Puan</span>
+              <span className="text-right">Karar</span>
+              <span className="text-right">Rozet</span>
+            </div>
+            <ol className="divide-y divide-line" aria-label="Sıralama">
+              {items.map((item) => (
+                <li
+                  key={item.analystId}
+                  className="grid grid-cols-[3rem_1fr_auto] items-center gap-x-4 gap-y-2 px-5 py-3.5 md:grid-cols-[3rem_minmax(12rem,1fr)_minmax(10rem,1.2fr)_6rem_6rem]"
+                >
+                  <span
+                    className={cn(
+                      'flex size-7 items-center justify-center rounded-md font-mono text-[13px] font-semibold tabular',
+                      item.rank === 1 ? 'bg-tc-500 text-night-900' : item.rank <= 3 ? 'bg-ink-100 text-ink-900' : 'text-ink-500',
+                    )}
+                  >
+                    {item.rank}
+                  </span>
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Avatar name={item.displayName ?? item.analystId} size="sm" />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-ink-900">{item.displayName ?? 'Analist'}</p>
+                      <p className="text-xs text-ink-500">{ANALYST_LEVEL_LABEL[item.level as AnalystLevel] ?? item.level}</p>
+                    </div>
                   </div>
-                </div>
-                <p className="font-bold tabular text-brand-800">{formatNumber(item.points)}</p>
-              </div>
-            ))}
+                  <div className="col-span-3 flex items-center gap-3 md:col-span-1">
+                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-ink-100">
+                      <div className={cn('h-full rounded-full', item.rank === 1 ? 'bg-tc-500' : 'bg-brand-500')} style={{ width: `${Math.max(2, (item.points / top) * 100)}%` }} />
+                    </div>
+                    <span className="w-14 text-right text-sm font-semibold text-ink-900 tabular">{formatNumber(item.points)}</span>
+                  </div>
+                  <span className="hidden text-right text-sm text-ink-700 tabular md:block">{item.decisionCount}</span>
+                  <span className="hidden text-right text-sm text-ink-700 tabular md:block">{item.badgeCount}</span>
+                </li>
+              ))}
+            </ol>
           </div>
         ) : null}
       </section>

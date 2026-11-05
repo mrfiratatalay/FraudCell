@@ -732,6 +732,13 @@ export type PointRuleCode = (typeof POINT_RULE_CODES)[number];
 export const ANALYST_LEVELS = ['BRONZ', 'GUMUS', 'ALTIN', 'PLATIN'] as const;
 export type AnalystLevel = (typeof ANALYST_LEVELS)[number];
 
+export const ANALYST_LEVEL_LABEL: Record<AnalystLevel, string> = {
+  BRONZ: 'Bronz',
+  GUMUS: 'Gümüş',
+  ALTIN: 'Altın',
+  PLATIN: 'Platin',
+};
+
 export type LeaderboardPeriod = 'daily' | 'weekly';
 
 export interface BadgeDefinitionResponse {

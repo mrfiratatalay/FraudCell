@@ -54,7 +54,7 @@ export function DataTable<T>({
     getRowId: rowKey,
   });
 
-  const cellPad = dense ? 'px-3 py-2' : 'px-4 py-3';
+  const cellPad = dense ? 'px-3 py-2' : 'px-4 py-3 text-[13px]';
 
   return (
     <div className={cn('surface-panel overflow-hidden', className)}>
@@ -62,7 +62,7 @@ export function DataTable<T>({
         <table className="w-full min-w-[640px] border-collapse text-sm">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="border-b border-ink-100 bg-canvas/60">
+              <tr key={headerGroup.id} className="border-b border-line bg-subtle">
                 {headerGroup.headers.map((header) => {
                   const canSort = header.column.getCanSort();
                   const sorted = header.column.getIsSorted();
@@ -70,7 +70,7 @@ export function DataTable<T>({
                     <th
                       key={header.id}
                       className={cn(
-                        'text-left text-caption font-semibold text-ink-500 select-none',
+                        'text-left text-xs font-medium text-ink-500 select-none',
                         cellPad,
                       )}
                       aria-sort={
@@ -108,7 +108,7 @@ export function DataTable<T>({
           <tbody>
             {isLoading
               ? Array.from({ length: skeletonRows }, (_, rowIndex) => (
-                  <tr key={rowIndex} className="border-b border-ink-100 last:border-0">
+                  <tr key={rowIndex} className="border-b border-line last:border-0">
                     {columns.map((_, colIndex) => (
                       <td key={colIndex} className={cellPad}>
                         <Skeleton className="h-4 w-full max-w-28" />
@@ -133,9 +133,9 @@ export function DataTable<T>({
                     role={onRowClick ? 'button' : undefined}
                     tabIndex={onRowClick ? 0 : undefined}
                     className={cn(
-                      'border-b border-ink-100 last:border-0',
+                      'border-b border-line last:border-0',
                       onRowClick &&
-                        'cursor-pointer transition-colors hover:bg-brand-50/60 focus-visible:bg-brand-50 focus-visible:outline-none',
+                        'cursor-pointer transition-colors hover:bg-subtle focus-visible:bg-subtle focus-visible:outline-none',
                     )}
                   >
                     {row.getVisibleCells().map((cell) => (
