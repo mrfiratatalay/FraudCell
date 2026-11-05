@@ -12,7 +12,13 @@ import {
   ShieldX,
 } from 'lucide-react';
 import { getExplanationByTransaction } from '@/features/ai/api';
-import { getCase, startCaseReview, submitCaseDecision } from '@/features/cases/api';
+import {
+  getCase,
+  getCaseHistory,
+  requestCustomerVerification,
+  startCaseReview,
+  submitCaseDecision,
+} from '@/features/cases/api';
 import { CASE_STATUS_LABEL, FRAUD_TYPE_LABEL } from '@/shared/api/enums';
 import { messageFor } from '@/shared/api/errors';
 import { queryKeys } from '@/shared/api/query-keys';
@@ -36,6 +42,9 @@ export function CaseDetailPage({ caseId }: { caseId: string }) {
   const riskCase = useQuery({
     queryKey: queryKeys.cases.detail(caseId),
     queryFn: () => getCase(caseId),
+    // Müşterinin cevabı gelince vaka INCELENIYOR'a döner; bekleme sırasında hafifçe yokla.
+    refetchInterval: (query) =>
+      query.state.data?.data.status === 'MUSTERI_DOGRULAMA' ? 3000 : false,
   });
 
   const refresh = async () => {
@@ -54,6 +63,25 @@ export function CaseDetailPage({ caseId }: { caseId: string }) {
     onSuccess: refresh,
     onError: (error) => setActionError(messageFor(error)),
   });
+
+  const verification = useMutation({
+    mutationFn: () => {
+      const version = riskCase.data?.etag ?? riskCase.data?.data.version;
+      if (version === undefined || version === null) throw new Error('Vaka sürümü bulunamadı.');
+      return requestCustomerVerification(caseId, version);
+    },
+    onSuccess: refresh,
+    onError: (error) => setActionError(messageFor(error)),
+  });
+
+  // Müşterinin "ben yaptım / yapmadım" cevabı vaka geçmişinde CUSTOMER kaynaklı geçiş olarak durur.
+  const history = useQuery({
+    queryKey: queryKeys.cases.history(caseId),
+    queryFn: () => getCaseHistory(caseId),
+  });
+  const customerAnswer = history.data
+    ?.filter((item) => item.transitionSource === 'CUSTOMER')
+    .at(-1);
 
   const decision = useMutation({
     mutationFn: (selected: 'APPROVE' | 'BLOCK') => {
@@ -278,7 +306,37 @@ export function CaseDetailPage({ caseId }: { caseId: string }) {
               </div>
             ) : null}
 
-            {!canReview && !canDecide ? (
+            {item.status === 'MUSTERI_DOGRULAMA' ? (
+              <p className="mt-4 rounded-tile bg-canvas p-3.5 text-sm text-ink-600" role="status">
+                Müşteriden doğrulama bekleniyor.
+              </p>
+            ) : null}
+
+            {customerAnswer ? (
+              <p className="mt-4 rounded-tile bg-canvas p-3.5 text-sm text-ink-700" data-testid="customer-answer">
+                Müşteri cevabı:{' '}
+                <strong>
+                  {customerAnswer.reason?.includes('NOT_MINE') ? 'Ben yapmadım' : 'Ben yaptım'}
+                </strong>
+              </p>
+            ) : null}
+
+            {canDecide && !customerAnswer ? (
+              <Button
+                className="mt-4"
+                variant="secondary"
+                fullWidth
+                loading={verification.isPending}
+                onClick={() => {
+                  setActionError(null);
+                  verification.mutate();
+                }}
+              >
+                Müşteriden doğrulama iste
+              </Button>
+            ) : null}
+
+            {!canReview && !canDecide && item.status !== 'MUSTERI_DOGRULAMA' ? (
               <div className="mt-4 flex items-start gap-2.5 rounded-tile bg-canvas p-3.5 text-sm text-ink-600">
                 <Send className="mt-0.5 size-4 shrink-0 text-ink-400" aria-hidden />
                 <span>Bu vaka için aktif bir analist işlemi bulunmuyor.</span>

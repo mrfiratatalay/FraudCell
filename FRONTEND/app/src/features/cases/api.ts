@@ -1,6 +1,9 @@
 import { api, fetchPage, type ApiResult } from '@/shared/api/client';
 import type {
   CaseResponse,
+  CaseTransitionResponse,
+  RequestVerificationBody,
+  VerificationRequestResponse,
   CursorPage,
   AssignmentQueueItemResponse,
   AssignmentQueueQuery,
@@ -96,4 +99,17 @@ export async function submitCaseFeedback(
 ): Promise<FeedbackResponse> {
   const result = await api.post<FeedbackResponse>(endpoints.cases.feedback(caseId), { body });
   return result.data;
+}
+
+export async function getCaseHistory(caseId: string): Promise<CaseTransitionResponse[]> {
+  return (await api.get<CaseTransitionResponse[]>(endpoints.cases.history(caseId))).data;
+}
+
+/** Analist müşteriden "ben yaptım / yapmadım" cevabı ister (case §4.5): INCELENIYOR → MUSTERI_DOGRULAMA. */
+export function requestCustomerVerification(
+  caseId: string,
+  version: number,
+  body: RequestVerificationBody = {},
+): Promise<ApiResult<VerificationRequestResponse>> {
+  return api.post(endpoints.cases.verificationRequests(caseId), { body, ifMatch: version });
 }
