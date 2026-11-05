@@ -1,3 +1,4 @@
+using FraudCell.BuildingBlocks.Api;
 using FraudCell.Transaction.Service.Domain;
 using FraudCell.Transaction.Service.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -55,6 +56,14 @@ public sealed class AssignmentService(TransactionServiceDbContext db)
     /// <summary>Manuel/supervisor atamasinda tek bir analyst icin kapasite kontrolu (dokuman §48 ANALYST_CAPACITY_EXCEEDED).</summary>
     public async Task AssignSpecificAnalystAsync(string analystId, DateTimeOffset now, CancellationToken cancellationToken)
     {
+        // The supervisor screen only offers active analysts open to assignment; the API holds the same line.
+        var eligible = await db.AnalystEligibilityProjections.AsNoTracking()
+            .SingleOrDefaultAsync(p => p.AnalystId == analystId, cancellationToken);
+        if (eligible is null || !eligible.IsActive || !eligible.AssignmentEnabled)
+        {
+            throw AppException.DomainRule(ErrorCodes.AnalystNotAssignable, "Analist aktif degil ya da atamaya kapali.");
+        }
+
         await db.Database.ExecuteSqlAsync(
             $"""
              INSERT INTO txn.analyst_workloads (analyst_id, active_case_count, updated_at, version)
