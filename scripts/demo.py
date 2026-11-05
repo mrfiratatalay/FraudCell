@@ -173,8 +173,8 @@ def seed() -> None:
 
     accounts = [(email, first, last, "ANALYST", [specialty])
                 for specialty, (email, first, last) in DEMO_ANALYSTS.items()]
-    # Supervisors do not need a specialty, but the API still requires one (checklist 3.1-b).
-    accounts.append((SUPERVISOR_EMAIL, "Demo", "Supervizor", "SUPERVISOR", ["SUPHELI_DAVRANIS"]))
+    # Only analysts need a specialty (case §3.1, §5.3); the supervisor is created without one.
+    accounts.append((SUPERVISOR_EMAIL, "Demo", "Supervizor", "SUPERVISOR", []))
 
     for email, first, last, role, specialties in accounts:
         status, payload, _ = call("POST", "/api/v1/staff", admin, {
