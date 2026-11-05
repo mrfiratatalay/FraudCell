@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check, Hourglass, Play, ShieldCheck, ShieldX, UserRoundCheck, UserRoundX } from 'lucide-react';
 import { CaseFacts, CaseHeader, CaseHistoryPanel, RiskAssessmentPanel } from '@/features/cases/CaseParts';
@@ -58,6 +58,13 @@ export function CaseDetailPage({ caseId }: { caseId: string }) {
     queryKey: queryKeys.cases.history(caseId),
     queryFn: () => getCaseHistory(caseId),
   });
+  // The answer is a history entry: refetch history whenever the case changes status.
+  const status = riskCase.data?.data.status;
+  const refetchHistory = history.refetch;
+  useEffect(() => {
+    if (status) void refetchHistory();
+  }, [status, refetchHistory]);
+
   const customerAnswer = history.data
     ?.filter((item) => item.transitionSource === 'CUSTOMER')
     .at(-1);

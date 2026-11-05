@@ -12,7 +12,7 @@ const screens = [
     name: 'tablet-staff',
     path: '/auth/staff',
     heading: 'Personel girişi',
-    viewport: { width: 1024, height: 768 },
+    viewport: { width: 900, height: 1024 },
     showsBrandPanel: false,
   },
   {
@@ -23,9 +23,9 @@ const screens = [
     showsBrandPanel: false,
   },
   {
-    name: 'small-mobile-options',
+    name: 'small-mobile-customer',
     path: '/auth',
-    heading: 'Hoş geldin',
+    heading: 'Müşteri girişi',
     viewport: { width: 320, height: 568 },
     showsBrandPanel: false,
   },

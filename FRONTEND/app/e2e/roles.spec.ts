@@ -96,7 +96,7 @@ test('four roles take one case from transaction to rating', async ({ browser }, 
 
   await test.step('customer signs in with OTP and sends a risky transfer', async () => {
     await customer.goto('/auth');
-    await customer.getByRole('link', { name: /Yeni müşteri/ }).click();
+    await customer.getByRole('link', { name: 'Yeni müşteri kaydı' }).click();
     await customer.getByLabel('Cep telefonu').fill(`5${String(Date.now()).slice(-9)}`);
     await customer.getByLabel('Ad', { exact: true }).fill('Eteste');
     await customer.getByLabel('Soyad').fill('Musteri');
@@ -126,7 +126,7 @@ test('four roles take one case from transaction to rating', async ({ browser }, 
 
   await test.step('supervisor sees the dashboard and queue, then assigns the case', async () => {
     await signInStaff(supervisor, SUPERVISOR.email, SUPERVISOR.password, /\/supervisor\/?$/);
-    await expect(supervisor.getByRole('heading', { name: 'Operasyon kontrol merkezi' })).toBeVisible();
+    await expect(supervisor.getByRole('heading', { name: 'Operasyon paneli' })).toBeVisible();
     await expect(supervisor.getByText('Model doğruluğu', { exact: true })).toBeVisible();
     await expect(supervisor.getByText('SLA uyumu', { exact: true })).toBeVisible();
     await shot(supervisor, 'supervisor-dashboard');
@@ -141,7 +141,7 @@ test('four roles take one case from transaction to rating', async ({ browser }, 
     await expect(supervisor.getByRole('heading', { name: 'Tüm vakalar' })).toBeVisible();
     await expect(async () => {
       await supervisor.reload();
-      await supervisor.getByRole('button', { name: new RegExp(transactionNo) }).click({ timeout: 2_000 });
+      await supervisor.getByRole('link', { name: new RegExp(transactionNo) }).click({ timeout: 2_000 });
     }).toPass({ timeout: 30_000 });
     await expect(supervisor.getByRole('heading', { name: transactionNo })).toBeVisible();
 
@@ -180,7 +180,7 @@ test('four roles take one case from transaction to rating', async ({ browser }, 
     });
     await analystPage.getByLabel('Karar notu').fill('Müşteri işlemi reddetti, kart çalıntı.');
     await analystPage.getByRole('button', { name: 'Blokla' }).click();
-    await expect(analystPage.getByText('Bloklandı', { exact: true })).toBeVisible();
+    await expect(analystPage.getByText('Bloklandı', { exact: true }).first()).toBeVisible();
     // Case §6.4: the badge arrives over SSE and shows as a toast.
     await expect(analystPage.getByText('Yeni rozet kazandiniz').first()).toBeVisible({ timeout: 30_000 });
     await shot(analystPage, 'analyst-badge-toast');
@@ -214,6 +214,14 @@ test('four roles take one case from transaction to rating', async ({ browser }, 
       await expect(supervisor.getByText(analystName).first()).toBeVisible({ timeout: 2_000 });
     }).toPass({ timeout: 30_000 });
     await shot(supervisor, 'supervisor-leaderboard');
+  });
+
+  await test.step('the analyst signs out', async () => {
+    const menuButton = analystPage.getByRole('button', { name: 'Kullanıcı menüsü' });
+    await menuButton.click();
+    await analystPage.getByRole('menuitem', { name: 'Çıkış yap' }).click();
+    await expect(analystPage).toHaveURL(/\/auth\/?$/);
+    await expect(analystPage.getByRole('heading', { name: 'Müşteri girişi' })).toBeVisible();
   });
 
   expect(errors).toEqual([]);
