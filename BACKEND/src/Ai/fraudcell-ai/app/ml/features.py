@@ -29,6 +29,10 @@ _TRANSACTION_TYPE_KEYS = {
 # cold-start icin acik ve muhafazakar bir operasyonel referanstir.
 _COLD_START_AVERAGE_AMOUNT_TRY = 5_000.0
 
+# Customers are in Turkey, so hour and "night" are local time. Istanbul has been
+# UTC+3 all year since 2016 (no daylight saving), so a fixed offset is exact.
+ISTANBUL = dt.timezone(dt.timedelta(hours=3), "Europe/Istanbul")
+
 
 async def build_feature_vector(
     session: AsyncSession,
@@ -85,10 +89,11 @@ async def build_feature_vector(
     device_age_days = (now - device_seen_at).days if device_seen_at else 0
     recipient_age_days = (now - recipient_seen_at).days if recipient_seen_at else 0
 
+    local_hour = now.astimezone(ISTANBUL).hour
     features: dict[str, Any] = {
         "amount": float(amount),
-        "hour_of_day": now.hour,
-        "is_night": 1.0 if now.hour < 6 or now.hour >= 23 else 0.0,
+        "hour_of_day": local_hour,
+        "is_night": 1.0 if local_hour < 6 or local_hour >= 23 else 0.0,
         "is_foreign_country": 0.0 if country_code.upper() == "TR" else 1.0,
         "is_new_device": 1.0 if device_seen_at is None else 0.0,
         "is_new_recipient": 1.0 if recipient_seen_at is None else 0.0,
