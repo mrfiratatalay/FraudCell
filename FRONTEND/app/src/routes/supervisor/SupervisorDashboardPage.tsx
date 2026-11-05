@@ -102,7 +102,7 @@ export function SupervisorDashboardPage() {
         label: FRAUD_TYPE_LABEL[row.fraudType as keyof typeof FRAUD_TYPE_LABEL] ?? row.fraudType,
         value: Math.round((row.precision ?? 0) * 100),
         color: seriesColor(index),
-        meta: `${formatNumber(row.sampleCount)} örnek · yakalama %${Math.round((row.recall ?? 0) * 100)}`,
+        meta: `${formatNumber(row.sampleCount)} örnek · yakalama ${row.recall == null ? '—' : `%${Math.round(row.recall * 100)}`}`,
       })) ?? [];
 
   const busy = cases.isPending;

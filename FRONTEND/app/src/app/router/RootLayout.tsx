@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Outlet } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
@@ -16,6 +16,9 @@ import { useRealtime } from '@/features/realtime/useRealtime';
  * kullanıcıyı giriş ekranına atar, hemen ardından refresh başarılı olur ve
  * kullanıcı geri fırlar. Ekranda bir titreme oluşur.
  */
+// Live builds compare the constant to 'live' and drop the demo chunk entirely.
+const DemoBar = import.meta.env.VITE_API_MODE !== 'live' ? lazy(() => import('@/demo/DemoBar')) : null;
+
 export function RootLayout() {
   const { status } = useSession();
   const queryClient = useQueryClient();
@@ -37,5 +40,14 @@ export function RootLayout() {
     );
   }
 
-  return <Outlet />;
+  return (
+    <>
+      {DemoBar ? (
+        <Suspense fallback={null}>
+          <DemoBar />
+        </Suspense>
+      ) : null}
+      <Outlet />
+    </>
+  );
 }

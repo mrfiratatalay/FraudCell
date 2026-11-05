@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { ArrowRight, Plus, ShieldAlert, ShieldCheck } from 'lucide-react';
-import { TransactionList } from '@/features/transactions/TransactionList';
+import { customerStatus, TransactionList } from '@/features/transactions/TransactionList';
 import { useSession } from '@/features/authentication/useSession';
 import { listTransactions } from '@/features/transactions/api';
 import { listPendingVerifications } from '@/features/customer/api';
@@ -21,7 +21,7 @@ export function CustomerHomePage() {
 
   const pendingCount = verifications.data?.length ?? 0;
   const items = transactions.data?.items ?? [];
-  const inReview = items.filter((item) => item.controlStatus === 'TEMPORARILY_BLOCKED').length;
+  const inReview = items.filter((item) => customerStatus(item).label === 'İncelemede').length;
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:py-10">

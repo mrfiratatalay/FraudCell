@@ -144,26 +144,3 @@ export const endpoints = {
       `/ai/predictions/by-transaction/${transactionId}/explanation`,
   },
 } as const;
-
-/**
- * Persist edilen bildirim ve demo sistem yönetimi için henüz backend'i olmayan
- * uçlar. Canlı bildirimler bu listeden bağımsız olarak Gateway SSE ile gelir.
- *
- * `endpoints` ile aynı nesnede tutulmaz ki gerçek sözleşme ile varsayım
- * karışmasın. Servis yazıldığında buradan `endpoints`e taşınır.
- */
-export const pendingEndpoints = {
-  notifications: {
-    root: '/notifications',
-    read: (notificationId: string) => `/notifications/${notificationId}/read`,
-    readAll: '/notifications/read-all',
-  },
-  dashboard: {
-    root: '/dashboard',
-  },
-  system: {
-    health: '/system/health',
-    /** Demo kontrol paneli: servis durdur/başlat. Üretimde bulunmaz. */
-    setHealth: (service: string) => `/system/health/${service}`,
-  },
-} as const;
