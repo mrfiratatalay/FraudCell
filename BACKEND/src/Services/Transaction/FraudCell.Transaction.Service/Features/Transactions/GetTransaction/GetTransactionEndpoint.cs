@@ -47,9 +47,20 @@ public static class GetTransactionEndpoint
         var role = httpContext.RequireRole();
         var userId = httpContext.RequireUserId();
 
-        if (role == RoleNames.Customer && txn.CustomerId != userId)
+        var riskCase = await db.RiskCases.AsNoTracking().SingleOrDefaultAsync(c => c.TransactionId == transactionId, cancellationToken);
+
+        // Case §3.3: a customer sees their own transactions, an analyst only the ones
+        // whose case is assigned to them. 404, not 403, so the id's existence does not leak.
+        var canRead = role switch
         {
-            // Ownership ihlali varligi sizdirmamak icin 404 (dokuman §14.3).
+            RoleNames.Customer => txn.CustomerId == userId,
+            RoleNames.Analyst => riskCase?.AssignedAnalystId == userId,
+            RoleNames.Supervisor or RoleNames.Admin => true,
+            _ => false,
+        };
+
+        if (!canRead)
+        {
             throw AppException.NotFound();
         }
 
@@ -60,8 +71,6 @@ public static class GetTransactionEndpoint
         var reasonCodes = assessment is null
             ? []
             : System.Text.Json.JsonSerializer.Deserialize<List<ReasonCodeResponse>>(assessment.ReasonCodesJson, JsonDefaults.Events) ?? [];
-
-        var riskCase = await db.RiskCases.AsNoTracking().SingleOrDefaultAsync(c => c.TransactionId == transactionId, cancellationToken);
 
         httpContext.Response.Headers.ETag = $"\"{txn.Version}\"";
 

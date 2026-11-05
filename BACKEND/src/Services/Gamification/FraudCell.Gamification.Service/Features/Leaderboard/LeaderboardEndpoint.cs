@@ -1,5 +1,6 @@
 using FraudCell.BuildingBlocks.Api;
 using FraudCell.BuildingBlocks.Correlation;
+using FraudCell.Gamification.Service.Common;
 using FraudCell.Gamification.Service.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +21,7 @@ public static class LeaderboardEndpoint
            .WithName("GetLeaderboard")
            .WithTags("Gamification")
            .ProducesApi<LeaderboardResponse>()
-           .RequireAuthorization();
+           .RequireAuthorization(policy => policy.RequireRole(RoleNames.Staff));
     }
 
     private static async Task<IResult> HandleAsync(

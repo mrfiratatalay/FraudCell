@@ -1,7 +1,8 @@
 """<c>GET /api/v1/ai/predictions/{assessmentId}</c> (dokuman §54, Assigned Analyst/Supervisor/Admin).
 
-Rol/ownership kontrolu Gateway + Transaction Service tarafindan zaten
-uygulanmistir; bu servis JWT'nin gecerliligini kendisi de dogrular.
+The gateway validates the JWT and allows only staff roles on /api/v1/ai/*
+(supervisor and admin on /metrics). This service does not validate the
+token itself yet.
 """
 
 from __future__ import annotations

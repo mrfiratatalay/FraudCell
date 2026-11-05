@@ -1,7 +1,7 @@
 # FraudCell commands for macOS/Linux. On Windows use scripts\start-fraudcell.bat.
 COMPOSE := docker compose --project-directory BACKEND -f BACKEND/docker-compose.yml
 
-.PHONY: help up down reset ps logs seed demo demo-ai-down resilience
+.PHONY: help up down reset ps logs seed demo demo-ai-down resilience security
 
 help: ## List the commands
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-14s %s\n", $$1, $$2}'
@@ -37,3 +37,6 @@ demo-ai-down: ## Case 11.3 step 7: stop the AI and check that transactions still
 
 resilience: ## Stop each container in turn (RabbitMQ too) and check the rest keeps working
 	python3 scripts/demo.py resilience
+
+security: ## Try the jury's attacks (case 10); logins from this IP are throttled for a minute after
+	python3 scripts/security.py

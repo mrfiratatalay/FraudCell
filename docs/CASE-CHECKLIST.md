@@ -26,19 +26,19 @@ yapılan uçtan uca çalıştırmayı gösterir (iki kurulum engeli geçici olar
 | Bölüm | ✅ | ⚠️ | ❌ | 🐛 |
 |---|---:|---:|---:|---:|
 | 2. Mimari | 7 | 4 | 0 | 0 |
-| 3. Identity | 15 | 4 | 0 | 1 |
+| 3. Identity | 18 | 2 | 0 | 0 |
 | 4. Transaction | 17 | 2 | 1 | 0 |
 | 5. AI | 8 | 1 | 2 | 3 |
 | 6. Gamification | 12 | 1 | 0 | 0 |
 | 7. Süpervizör paneli | 1 | 4 | 0 | 1 |
 | 8. API tasarımı | 2 | 2 | 0 | 0 |
 | 9. Event akışı | 2 | 1 | 0 | 0 |
-| 10. Güvenlik | 2 | 4 | 0 | 1 |
-| 11. Demo senaryosu | 5 | 4 | 0 | 1 |
+| 10. Güvenlik | 7 | 0 | 0 | 0 |
+| 11. Demo senaryosu | 6 | 3 | 0 | 1 |
 | 12. Değerlendirme ve bonus | 3 | 3 | 0 | 1 |
 | 13. Diskalifiye koşulları | 4 | 1 | 0 | 0 |
 | 14. Teslimat | 3 | 4 | 2 | 0 |
-| **Toplam (129 satır)** | **81** | **35** | **5** | **8** |
+| **Toplam (129 satır)** | **90** | **28** | **5** | **6** |
 
 Bazı satırlar aynı kök nedene bağlıdır. Örneğin `docker compose up` sorunu 2.2-d, 11.3-1 ve 13.2-b'de
 ayrı ayrı görünür.
@@ -47,7 +47,7 @@ ayrı ayrı görünür.
 
 1. Analistin AI kararını değiştirmesi AI servisine ulaşmıyor. Bu yüzden doğruluk metrikleri her zaman boş (4.3-c, 5.4).
 2. ~~"+15 doğrulanmış dolandırıcılık" puanı her blok kararına veriliyor (6.1-c).~~ Part 3'te düzeltildi.
-3. AI servisinin endpoint'leri token olmadan erişilebilir (10-b).
+3. ~~AI servisinin endpoint'leri token olmadan erişilebilir (10-b).~~ Part 4'te gateway'de kapatıldı.
 4. Veritabanları tek PostgreSQL container'ında; jüri bunu "ortak veritabanı" sayabilir (2.2-a).
 
 ## Yol haritası
@@ -88,21 +88,21 @@ ayrı ayrı görünür.
 | 3.1-b | Personel hesabını admin oluşturur; e-posta + şifre; uzmanlık/bölge çoklu seçilir | ✅ | Uzmanlık yalnızca analist için zorunlu; süpervizör ve admin uzmanlıksız oluşturulabiliyor ([CreateStaffEndpoint.cs]). `demo.py seed` süpervizörü uzmanlıksız açıyor, CI'da her PR'da koşuyor. | |
 | 3.1-c | Şifre politikası (min 8, 1 büyük harf, 1 rakam, 1 özel karakter); ihlal edilen kural net mesajla dönülür | ⚠️ | Kurallar doğru ([Identity/Program.cs#L68-L73]). Hata `violations` kodlarıyla dönüyor ([CreateStaffEndpoint.cs#L91-L98]) ama mesajlar ASP.NET Identity'nin İngilizce varsayılanları. | Part 4 |
 | 3.1-d | bcrypt veya argon2 ile hash | ✅ | Argon2id ([Argon2idPasswordHasher.cs], kayıt [Identity/Program.cs#L88]) | |
-| 3.1-e | 5 başarısız girişte 15 dk kilit; kilitli hesapta kalan süre döner | ✅ | [Identity/Program.cs#L75-L78]; kilitli hesap 423 `ACCOUNT_LOCKED` ve `remainingSeconds` döner ([StaffLoginEndpoint.cs#L69-L82]). Otomatik test yok. | Part 4 |
+| 3.1-e | 5 başarısız girişte 15 dk kilit; kilitli hesapta kalan süre döner | ✅ | [Identity/Program.cs#L75-L78]; kilitli hesap 423 `ACCOUNT_LOCKED` ve `remainingSeconds` döner ([StaffLoginEndpoint.cs#L69-L82]). Test: `scripts/security.py` (CI demo-e2e), 5 yanlış şifreden sonra doğru şifre 423 alıyor. | |
 | 3.2-a | Access token JWT, 15 dk; payload'da user_id, rol, uzmanlık/bölge | ✅ | RS256, [Identity/appsettings.json#L16-L17], claim'ler [JwtTokenService.cs#L38-L39] | |
 | 3.2-b | Refresh token 7 gün, veritabanında saklanır | ✅ | Hash'lenmiş olarak saklanıyor, HttpOnly cookie ile taşınıyor ([RefreshTokenService.cs]) | |
-| 3.2-c | Rotation; iptal edilmiş refresh token tekrar kullanılırsa kullanıcının **tüm** oturumları sonlanır | ⚠️ | Rotation ve reuse tespiti var. Reuse'da yalnızca o token ailesi iptal ediliyor ([RefreshTokenService.cs#L81-L99]); kullanıcının başka cihazdaki oturumları açık kalıyor. `RevokeAllForUserAsync` var ama çağrılmıyor. | Part 4 |
+| 3.2-c | Rotation; iptal edilmiş refresh token tekrar kullanılırsa kullanıcının **tüm** oturumları sonlanır | ✅ | Reuse'da kullanıcının bütün oturumları (başka cihazdakiler dahil) iptal ediliyor ([RefreshTokenService.cs]). Test: [RefreshTokenServiceTests.cs] (Postgres), `scripts/security.py` (CI demo-e2e). | |
 | 3.2-d | Logout refresh token'ı geçersiz kılar | ✅ | [LogoutEndpoint.cs] | |
 | 3.3-a | İşlem oluşturma: yalnızca müşteri | ✅ | [CreateTransactionEndpoint.cs#L60] | |
-| 3.3-b | Kayıt görme: müşteri kendininkini, personel atananı, süpervizör ve admin tümünü | ⚠️ | Vaka detayı doğru ([GetCaseEndpoint.cs]). İşlem detayı yalnızca müşteri sahipliğini kontrol ediyor; analist kendisine atanmamış işlemi de okuyabiliyor ([GetTransactionEndpoint.cs]). | Part 4 |
+| 3.3-b | Kayıt görme: müşteri kendininkini, personel atananı, süpervizör ve admin tümünü | ✅ | Vaka detayı [GetCaseEndpoint.cs]; işlem detayında analist yalnızca kendisine atanmış vakanın işlemini görüyor, aksi 404 ([GetTransactionEndpoint.cs]). Test: `scripts/security.py` (CI demo-e2e). | |
 | 3.3-c | Durum değiştirme: personel ve süpervizör | ✅ | İnceleme, doğrulama ve karar endpoint'leri `ANALYST, SUPERVISOR` istiyor | |
 | 3.3-d | Manuel atama: yalnızca süpervizör | ✅ | [ManualAssignmentEndpoint.cs], [ReassignmentEndpoint.cs] | |
 | 3.3-e | Kategori/tür değiştirme (AI override): personel ve süpervizör | ✅ | [FraudTypeOverrideEndpoint.cs#L27] | |
-| 3.3-f | Dashboard görüntüleme: süpervizör ve admin | 🐛 | Liderlik tablosu müşteri dahil her role 200 dönüyor ([LeaderboardEndpoint.cs#L23]); AI metrik endpoint'lerinde hiç auth yok ([metrics_router.py]). | Part 4 |
+| 3.3-f | Dashboard görüntüleme: süpervizör ve admin | ✅ | AI metrikleri gateway'de yalnızca süpervizör ve admin'e açık ([Edge/Program.cs]). Liderlik tablosu ve rozet listesi personele açık, müşteriye 403 (§6.4 analistler için de). Test: `scripts/security.py` (CI demo-e2e) rol matrisi. | |
 | 3.3-g | Personel hesabı oluşturma: admin | ✅ | [CreateStaffEndpoint.cs#L37] | |
 | 3.3-h | Audit log görüntüleme: admin | ✅ | [GetAuditLogsEndpoint.cs] | |
-| 3.3-i | Yetkisiz erişim 403 döner ve audit log'a yazılır | ⚠️ | Gateway 403 cevaplarını audit event'i olarak yayınlıyor ([Edge/Program.cs#L177-L231]) ama outbox kullanmadan: broker kapalıyken kayıt kayboluyor. Sahiplik ihlallerinde varlığı sızdırmamak için bilinçli olarak 404 dönülüyor. | Part 2, 4 |
-| 3.4-a | Audit: başarılı/başarısız giriş, kilitlenme, rol değişikliği, 403, kritik durum değişiklikleri | ✅ | [AuditWriter.cs]; diğer servisler `audit.entry.requested` yayınlıyor, Identity tüketiyor ([AuditEntryRequestedConsumer.cs]). Otomatik test yok. | Part 4 |
+| 3.3-i | Yetkisiz erişim 403 döner ve audit log'a yazılır | ⚠️ | .NET servisleri 403'ü kendi outbox'ları üzerinden audit'e yazıyor ([AuthorizationDeniedAuditMiddleware.cs]). Test: `scripts/security.py` (CI demo-e2e), müşterinin 403'ü çağıran ve path ile audit log'da. AI route'larında 403'ü gateway veriyor ve gateway audit yazmıyor. Sahiplik ihlallerinde bilinçli olarak 404 dönülüyor. | Part 5 |
+| 3.4-a | Audit: başarılı/başarısız giriş, kilitlenme, rol değişikliği, 403, kritik durum değişiklikleri | ✅ | [AuditWriter.cs]; diğer servisler `audit.entry.requested` yayınlıyor, Identity tüketiyor ([AuditEntryRequestedConsumer.cs]). 403 kaydı `scripts/security.py` (CI demo-e2e) ile test ediliyor; diğer eylemlerin otomatik testi yok. | |
 | 3.4-b | Kayıt alanları: kim, ne, ne zaman, nereden (IP), sonuç, detay | ✅ | [AuditLog.cs] | |
 
 ## 4. Transaction Service
@@ -199,13 +199,13 @@ ayrı ayrı görünür.
 
 | # | Senaryo | Durum | Kanıt | Plan |
 |---|---|:---:|---|---|
-| 10-a | SQL injection | ✅ | EF Core sorguları parametreli; ham SQL'ler `FromSql` / `ExecuteSqlAsync` interpolasyonuyla parametreleniyor. Otomatik test yok. | Part 4 |
-| 10-b | Müşteri token'ıyla süpervizör endpoint'i | 🐛 | .NET endpoint'leri rolü kontrol ediyor. Liderlik tablosu müşteriye açık; AI endpoint'leri token'sız bile açık. AI servisinde JWT doğrulaması yok, kod yorumu aksini söylüyor ([predictions_router.py#L1-L5]). | Part 4 |
-| 10-c | IDOR (kayıt ID'si değiştirerek başkasının verisi) | ⚠️ | Vaka ve işlem detayı müşteri için doğru (404 dönüyor). Analist işlem detayında sahiplik kontrolüne takılmıyor; Gamification profilleri her role açık. | Part 4 |
-| 10-d | Süresi dolmuş ya da değiştirilmiş JWT | ✅ | RS256 imza ve süre doğrulaması; gateway geçersiz token'ı 401 ile reddediyor. canlı: değiştirilmiş JWT 401 aldı. | Part 4 |
-| 10-e | İptal edilmiş refresh token'ın yeniden kullanımı | ⚠️ | 3.2-c | Part 4 |
-| 10-f | XSS | ⚠️ | React çıktıyı escape ediyor, CSP `script-src 'self'`. Not ve yorum alanları için otomatik test yok. | Part 4 |
-| 10-g | Brute-force (ardışık hızlı giriş, rate limit) | ⚠️ | Gateway'de kullanıcı/IP başına dakikada 300 istek (genel limit), personel için hesap kilidi, OTP'de 5 deneme. Giriş ve OTP için ayrı, sıkı bir limit yok. | Part 4 |
+| 10-a | SQL injection | ✅ | EF Core sorguları parametreli; ham SQL'ler `FromSql` / `ExecuteSqlAsync` ile parametreleniyor. Test: `scripts/security.py` (CI demo-e2e), login, OTP ve liste filtrelerine `' OR 1=1 --`: 400/401 ya da boş sonuç, hiç 5xx yok. | |
+| 10-b | Müşteri token'ıyla süpervizör endpoint'i | ✅ | .NET endpoint'leri rolü kontrol ediyor; liderlik tablosu müşteriye kapandı; AI route'ları gateway'de token ve personel rolü istiyor ([Edge/Program.cs]). Test: `scripts/security.py` (CI demo-e2e), 9 endpoint × 4 rol + token'sız. AI servisi token'ı kendisi doğrulamıyor. | Part 5 |
+| 10-c | IDOR (kayıt ID'si değiştirerek başkasının verisi) | ✅ | Başka müşterinin işlemi, vakası, doğrulaması 404; atanmamış analist işlemi, vakayı göremiyor ve karar veremiyor (404); başkasının oyun profili ve performansı 403. Test: `scripts/security.py` (CI demo-e2e). | |
+| 10-d | Süresi dolmuş ya da değiştirilmiş JWT | ✅ | RS256, issuer, audience ve süre doğrulaması. Test: [JwtValidationTests.cs] (süresi dolmuş, yanlış issuer/audience, başka anahtar, alg=none, HS256, değiştirilmiş rol) ve `scripts/security.py` (CI demo-e2e) (gateway'de değiştirilmiş rol, alg=none, kesilmiş imza 401). | |
+| 10-e | İptal edilmiş refresh token'ın yeniden kullanımı | ✅ | 3.2-c | |
+| 10-f | XSS | ✅ | API metni JSON olarak saklıyor ve döndürüyor (`nosniff`); React çıktıyı escape ediyor; CSP `script-src 'self'`. Test: `scripts/security.py` (CI demo-e2e), script'li alan JSON'da düz metin, CSP başlığı var, frontend'de `dangerouslySetInnerHTML`/`innerHTML`/`eval` yok. | |
+| 10-g | Brute-force (ardışık hızlı giriş, rate limit) | ✅ | Gateway'de personel girişi ve OTP için adres ve endpoint başına dakikada 30 istek ([Edge/Program.cs]); personel hesabı 5 hatada kilitleniyor; OTP 5 yanlış kodda kapanıyor. Test: `scripts/security.py` (CI demo-e2e), 40 hızlı deneme 429 alıyor. | |
 
 ## 11. Kullanıcı akışları ve zorunlu demo
 
@@ -220,7 +220,7 @@ ayrı ayrı görünür.
 | 11.3-5 | Analist vakayı inceler ve blok kararı verir | ✅ | canlı | |
 | 11.3-6 | Puan liderlik tablosuna yansır | 🐛 | Yansıyor ama puan yanlış (6.1-c): tek blok kararı 30 puan getiriyor, rozet sayısı 0 kalıyor (6.2). | Part 3 |
 | 11.3-7 | Bir servis `docker stop` ile kapatılır, geri kalanı çalışır | ⚠️ | AI'ın kapatılması canlı doğrulandı; diğer servisler için senaryo ve otomatik test yok. | Part 2 |
-| 11.3-8 | Jürinin güvenlik testlerine hazır olmak | ⚠️ | §10 | Part 4 |
+| 11.3-8 | Jürinin güvenlik testlerine hazır olmak | ✅ | §10 senaryolarının hepsi `scripts/security.py` (CI demo-e2e) ile her PR'da koşuyor (`make security`). | |
 
 ## 12. Değerlendirme kriterleri ve bonus
 
@@ -263,12 +263,12 @@ ayrı ayrı görünür.
 Hackathon sonrası ilk planda yer almayan, kod okunurken çıkan bulgular. Her biri ilgili part'ta önce
 başarısız bir testle gösterilip sonra düzeltilecek.
 
-1. AI servisinde JWT doğrulaması yok, kod yorumu aksini söylüyor ([predictions_router.py#L1-L5]). Gateway token'sız isteği geçirdiği için `/api/v1/ai/**` herkese açık. (Part 4)
+1. ~~Gateway token'sız isteği geçirdiği için `/api/v1/ai/**` herkese açık.~~ Part 4'te düzeltildi: gateway token ve personel rolü istiyor, kod yorumu düzeltildi. AI servisinin token'ı kendisi doğrulaması Part 5'e kaldı. (Part 5)
 2. `prediction_feedback` tablosuna hiçbir kod yazmıyor; AI doğruluk metrikleri ve kategori kırılımı her zaman boş. (Part 5)
-3. Rozet koşulları henüz kaydedilmemiş satırları sayıyor; off-by-one şüphesi. (Part 3)
+3. ~~Rozet koşulları henüz kaydedilmemiş satırları sayıyor.~~ Part 3'te düzeltildi.
 4. "Gece" özelliği UTC saatine göre hesaplanıyor. (Part 5)
-5. Analist, kendisine atanmamış işlemin detayını okuyabiliyor. (Part 4)
-6. Refresh token yeniden kullanıldığında kullanıcının tüm oturumları değil, yalnızca o token ailesi iptal ediliyor. (Part 4)
+5. ~~Analist, kendisine atanmamış işlemin detayını okuyabiliyor.~~ Part 4'te düzeltildi.
+6. ~~Refresh token yeniden kullanıldığında yalnızca o token ailesi iptal ediliyor.~~ Part 4'te düzeltildi: kullanıcının tüm oturumları iptal ediliyor.
 7. Müşterinin 1–5 yıldız vereceği ekran yok. (Part 6)
 8. Personel oluşturma tek bir transaction değil: kullanıcı ve profil ayrı `SaveChanges` çağrılarında; profil adımı hata verirse profilsiz kullanıcı kalıyor ([CreateStaffEndpoint.cs]). (Part 3)
 9. ~~CI tag push'larında da çalışıyor.~~ Part 0'da düzeltildi: CI yalnızca main ve PR'larda çalışıyor.
@@ -291,7 +291,6 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 
 [Edge/Program.cs#L73-L90]: ../BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/Program.cs#L73-L90
 [Edge/Program.cs#L149-L170]: ../BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/Program.cs#L149-L170
-[Edge/Program.cs#L177-L231]: ../BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/Program.cs#L177-L231
 [Edge/appsettings.json#L21-L75]: ../BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/appsettings.json#L21-L75
 [RealtimeEndpoints.cs]: ../BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/Realtime/RealtimeEndpoints.cs
 
@@ -308,7 +307,6 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 [StaffLoginEndpoint.cs#L69-L82]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Features/Auth/StaffLogin/StaffLoginEndpoint.cs#L69-L82
 [JwtTokenService.cs#L38-L39]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Security/JwtTokenService.cs#L38-L39
 [RefreshTokenService.cs]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Security/RefreshTokenService.cs
-[RefreshTokenService.cs#L81-L99]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Security/RefreshTokenService.cs#L81-L99
 [LogoutEndpoint.cs]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Features/Auth/Logout/LogoutEndpoint.cs
 [GetAuditLogsEndpoint.cs]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Features/Audit/GetAuditLogs/GetAuditLogsEndpoint.cs
 [AuditWriter.cs]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Common/AuditWriter.cs
@@ -354,7 +352,6 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 [CustomerFeedbackSubmittedConsumer.cs]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Messaging/CustomerFeedbackSubmittedConsumer.cs
 [Gamification/Domain/Enums.cs#L31-L40]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Domain/Enums.cs#L31-L40
 [LeaderboardEndpoint.cs]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Features/Leaderboard/LeaderboardEndpoint.cs
-[LeaderboardEndpoint.cs#L23]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Features/Leaderboard/LeaderboardEndpoint.cs#L23
 [ProfilesEndpoints.cs]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Features/Profiles/ProfilesEndpoints.cs
 [GetPerformanceEndpoint.cs]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Features/Performance/GetPerformanceEndpoint.cs
 
@@ -368,7 +365,6 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 [assignment.py#L79-L81]: ../BACKEND/src/Ai/fraudcell-ai/app/ml/assignment.py#L79-L81
 [ai/app/main.py#L48-L52]: ../BACKEND/src/Ai/fraudcell-ai/app/main.py#L48-L52
 [metrics_router.py]: ../BACKEND/src/Ai/fraudcell-ai/app/api/metrics_router.py
-[predictions_router.py#L1-L5]: ../BACKEND/src/Ai/fraudcell-ai/app/api/predictions_router.py#L1-L5
 
 [SlaCountdown.tsx]: ../FRONTEND/app/src/shared/ui/SlaCountdown.tsx
 [CaseDetailPage.tsx]: ../FRONTEND/app/src/routes/analyst/CaseDetailPage.tsx
@@ -378,3 +374,7 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 [SupervisorDashboardPage.tsx#L200-L210]: ../FRONTEND/app/src/routes/supervisor/SupervisorDashboardPage.tsx#L200-L210
 [AnalystPointsPage.tsx]: ../FRONTEND/app/src/routes/analyst/AnalystPointsPage.tsx
 [AssignmentQueuePage.tsx]: ../FRONTEND/app/src/routes/supervisor/AssignmentQueuePage.tsx
+[RefreshTokenServiceTests.cs]: ../BACKEND/tests/FraudCell.Identity.Service.Tests/RefreshTokenServiceTests.cs
+[Edge/Program.cs]: ../BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/Program.cs
+[AuthorizationDeniedAuditMiddleware.cs]: ../BACKEND/src/BuildingBlocks/FraudCell.BuildingBlocks/Security/AuthorizationDeniedAuditMiddleware.cs
+[JwtValidationTests.cs]: ../BACKEND/tests/FraudCell.BuildingBlocks.Tests/JwtValidationTests.cs
