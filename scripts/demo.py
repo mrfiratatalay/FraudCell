@@ -276,6 +276,18 @@ def smoke() -> None:
     check("the confirmed catch earns the First Catch badge",
           any(badge.get("code") == "FIRST_CATCH" for badge in items_of(payload)), payload)
 
+    # Case §5.4: the decision flows back to the AI and grades its prediction.
+    overview: dict = {}
+    for _ in range(20):
+        overview = data_of(call("GET", "/api/v1/ai/metrics/overview", supervisor)[1])
+        if overview.get("sampleCount", 0) > 0 and overview.get("fraudTypeAccuracy") is not None:
+            break
+        time.sleep(1)
+    check("the decision reaches the AI's accuracy metrics", overview.get("sampleCount", 0) > 0, overview)
+    categories = items_of(call("GET", "/api/v1/ai/metrics/categories", supervisor)[1])
+    check(f"the AI reports precision for {fraud_type}",
+          any(c.get("fraudType") == fraud_type and c.get("precision") is not None for c in categories), categories)
+
     sys.exit(1 if failures else 0)
 
 
