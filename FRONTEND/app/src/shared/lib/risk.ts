@@ -158,3 +158,31 @@ export function slaTone(sla: { status: SlaStatus; priority: SlaPriority; breache
   const breached = sla.status === 'BREACHED' || sla.breachedAt !== null;
   return breached ? SLA_BREACHED_TONE[sla.priority] : SLA_TONE[sla.status];
 }
+
+const SLA_PRIORITY_RANK: Record<SlaPriority, number> = { KRITIK: 3, YUKSEK: 2, ORTA: 1, DUSUK: 0 };
+
+type SlaLike = { priority: SlaPriority; deadlineAt: string; breachedAt: string | null; status: SlaStatus };
+
+/**
+ * Panel sıralaması (case §4.4): SLA'sı aşılmış vakalar en üstte, aralarında KRITIK
+ * önce; sonra kalan süresi en az olan. `Array.prototype.sort` için karşılaştırıcı.
+ */
+export function compareSlaUrgency(a: { sla: SlaLike }, b: { sla: SlaLike }): number {
+  const breachedA = a.sla.status === 'BREACHED' || a.sla.breachedAt !== null ? 1 : 0;
+  const breachedB = b.sla.status === 'BREACHED' || b.sla.breachedAt !== null ? 1 : 0;
+  if (breachedA !== breachedB) return breachedB - breachedA;
+  if (breachedA && a.sla.priority !== b.sla.priority) {
+    return SLA_PRIORITY_RANK[b.sla.priority] - SLA_PRIORITY_RANK[a.sla.priority];
+  }
+  return new Date(a.sla.deadlineAt).getTime() - new Date(b.sla.deadlineAt).getTime();
+}
+
+/**
+ * SLA uyum oranı (case §7): SLA'sı durmuş (karar verilmiş) vakalardan süresi
+ * içinde kalanların oranı. Hiç karar yoksa null.
+ */
+export function slaComplianceRate(items: { sla: SlaLike & { stoppedAt: string | null } }[]): number | null {
+  const decided = items.filter((item) => item.sla.stoppedAt !== null);
+  if (decided.length === 0) return null;
+  return decided.filter((item) => item.sla.breachedAt === null).length / decided.length;
+}

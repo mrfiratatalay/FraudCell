@@ -8,6 +8,7 @@ import {
   FolderKanban,
   Handshake,
   ListChecks,
+  TimerReset,
 } from 'lucide-react';
 import {
   getAiCategoryAccuracy,
@@ -26,7 +27,13 @@ import {
 import type { CaseResponse } from '@/shared/api/contract';
 import { queryKeys } from '@/shared/api/query-keys';
 import { formatMoney, formatNumber, formatPercent } from '@/shared/lib/format';
-import { riskTone, seriesColor, SLA_TONE } from '@/shared/lib/risk';
+import {
+  compareSlaUrgency,
+  riskTone,
+  seriesColor,
+  slaComplianceRate,
+  SLA_TONE,
+} from '@/shared/lib/risk';
 import {
   ErrorState,
   PageHeader,
@@ -91,7 +98,11 @@ export function SupervisorDashboardPage() {
   });
 
   const items = cases.data?.items ?? [];
-  const openCases = items.filter((item) => !OPEN_EXCLUDED.includes(item.status));
+  // Case §4.4: SLA'sı aşılmış vakalar panelde en üstte, KRITIK önce.
+  const openCases = items
+    .filter((item) => !OPEN_EXCLUDED.includes(item.status))
+    .sort(compareSlaUrgency);
+  const slaCompliance = slaComplianceRate(items);
   const urgentCases = openCases.filter((item) => ['URGENT', 'BREACHED'].includes(item.sla.status));
   const criticalCases = openCases.filter((item) => item.effectiveRisk.riskLevel === 'KRITIK');
 
@@ -136,7 +147,7 @@ export function SupervisorDashboardPage() {
       ) : cases.isPending ? (
         <SkeletonCards count={4} />
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <StatTile
             label="Açık vaka"
             value={openCases.length}
@@ -147,6 +158,12 @@ export function SupervisorDashboardPage() {
             value={urgentCases.length}
             tone="text-danger-600"
             icon={<Clock3 className="size-5" />}
+          />
+          <StatTile
+            label="SLA uyumu"
+            value={formatPercent(slaCompliance)}
+            hint="Karar verilen vakalarda süresinde kalan"
+            icon={<TimerReset className="size-5" />}
           />
           <StatTile
             label="Kritik risk"
