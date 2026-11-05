@@ -1,8 +1,6 @@
 """<c>GET /api/v1/ai/predictions/{assessmentId}</c> (dokuman §54, Assigned Analyst/Supervisor/Admin).
 
-The gateway validates the JWT and allows only staff roles on /api/v1/ai/*
-(supervisor and admin on /metrics). This service does not validate the
-token itself yet.
+Staff only: app.security checks the access token and role (wired in app.main).
 """
 
 from __future__ import annotations
