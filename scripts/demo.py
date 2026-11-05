@@ -256,6 +256,12 @@ def smoke() -> None:
                               {"If-Match": headers.get("ETag", "")})
     check("analyst blocks the transaction with a decision note", status == 200, payload)
 
+    # Case §4.2: a transition outside the state machine returns 422.
+    _, _, headers = call("GET", f"/api/v1/cases/{case_id}", analyst)
+    status, payload, _ = call("PATCH", f"/api/v1/cases/{case_id}/decision", analyst,
+                              {"decision": "APPROVE", "note": "Ikinci karar denemesi."}, {"If-Match": headers.get("ETag", "")})
+    check("a second decision on the blocked case is rejected with 422", status == 422, payload)
+
     # Case §6.1: decision +10, under 15 minutes +5, customer-confirmed block +15,
     # KRITIK (the "not mine" answer raises it) within SLA +15.
     expected = points_before + 45
