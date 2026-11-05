@@ -96,7 +96,13 @@ public static class ListCasesEndpoints
             query = query.Where(c => c.Status != CaseStatus.KAPANDI);
         }
 
-        var cases = await query.OrderBy(c => c.SlaDeadlineAt).Take(limit).ToListAsync(cancellationToken);
+        // Case §11.2: the analyst works the riskiest case first; a breached SLA (KRITIK on top, §4.4) jumps the line.
+        var cases = await query
+            .OrderByDescending(c => c.SlaBreachedAt != null)
+            .ThenByDescending(c => c.EffectiveRiskScore ?? 0m)
+            .ThenBy(c => c.SlaDeadlineAt)
+            .Take(limit)
+            .ToListAsync(cancellationToken);
         return await BuildPageAsync(cases, limit, db, clock, correlation, cancellationToken);
     }
 
