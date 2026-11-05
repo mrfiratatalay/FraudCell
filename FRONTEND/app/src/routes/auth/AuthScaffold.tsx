@@ -51,7 +51,7 @@ function AuthTabs({ active }: { active: AuthTab }) {
       className={cn(
         'flex h-8 flex-1 items-center justify-center rounded-md text-[13px] font-medium transition-colors',
         active === tab
-          ? 'bg-surface text-ink-900 shadow-[0_1px_2px_rgba(16,20,28,.12)] ring-1 ring-line'
+          ? 'bg-surface text-ink-900 shadow-[0_1px_2px_rgba(0,19,49,.12)] ring-1 ring-line'
           : 'text-ink-500 hover:text-ink-900',
       )}
     >
@@ -110,7 +110,7 @@ function ProductStill() {
       <div className="brand-grid absolute inset-0 [mask-image:radial-gradient(70%_60%_at_60%_40%,black,transparent)]" />
 
       <div className="relative mx-auto w-full max-w-[520px]">
-        <p className="text-[13px] font-medium text-[#a5adfb]">Gerçek zamanlı dolandırıcılık tespiti</p>
+        <p className="text-[13px] font-medium text-tc-500">Gerçek zamanlı dolandırıcılık tespiti</p>
         <h2 className="mt-3 text-[2.25rem] leading-[1.1] font-semibold tracking-[-0.035em] xl:text-[2.6rem]">
           Şüpheli işlem, müşteriye ulaşmadan durur.
         </h2>
@@ -120,7 +120,7 @@ function ProductStill() {
 
         <div className="relative mt-10">
           {/* Case card */}
-          <div className="relative z-10 rounded-xl border border-white/10 bg-night-800/90 p-5 shadow-[0_30px_80px_-20px_rgba(0,0,0,.8)] backdrop-blur">
+          <div className="relative z-10 rounded-xl border border-white/10 bg-night-800/95 p-5 shadow-[0_30px_80px_-20px_rgba(0,0,0,.8)] backdrop-blur">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
                 <span className="font-mono text-[13px] text-night-300">TRX-2026-000142</span>
@@ -166,7 +166,7 @@ function ProductStill() {
                 <span
                   className={cn(
                     'relative mt-1.5 size-[11px] shrink-0 rounded-full border-2',
-                    index === STEPS.length - 1 ? 'border-[#22d3ee] bg-[#22d3ee]/20' : 'border-white/25 bg-night-900',
+                    index === STEPS.length - 1 ? 'border-tc-500 bg-tc-500/25' : 'border-white/25 bg-night-900',
                   )}
                 />
                 <div className="flex min-w-0 flex-1 items-baseline justify-between gap-3">

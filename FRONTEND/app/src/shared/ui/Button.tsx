@@ -5,16 +5,16 @@ import { cn } from '@/shared/lib/cn';
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'onBrand';
 type Size = 'sm' | 'md' | 'lg';
 
-/** Action hierarchy: one indigo primary per view, quiet bordered secondary, text-only ghost. */
+/** Action hierarchy: one Turkcell-yellow primary per view, quiet bordered secondary, text-only ghost. */
 const VARIANTS: Record<Variant, string> = {
   primary:
-    'gradient-action text-white shadow-[inset_0_1px_0_rgba(255,255,255,.18),0_1px_2px_rgba(16,20,28,.2)] hover:brightness-110 active:brightness-95',
+    'bg-tc-500 text-night-900 font-semibold shadow-[inset_0_-1px_0_rgba(0,0,0,.08),0_1px_2px_rgba(0,19,49,.18)] hover:bg-tc-400 active:bg-tc-600',
   secondary:
     'bg-surface text-ink-900 border border-line shadow-card hover:bg-subtle hover:border-ink-300 active:bg-ink-100',
   ghost: 'bg-transparent text-ink-700 hover:bg-ink-100 hover:text-ink-900 active:bg-ink-200',
   danger:
     'bg-critical-600 text-white shadow-[inset_0_1px_0_rgba(255,255,255,.14)] hover:bg-critical-700 active:brightness-95 [[data-theme=dark]_&]:bg-critical-500',
-  onBrand: 'bg-white text-night-900 shadow-raised hover:bg-white/90 active:bg-white/80',
+  onBrand: 'bg-tc-500 text-night-900 font-semibold shadow-raised hover:bg-tc-400 active:bg-tc-600',
 };
 
 const SIZES: Record<Size, string> = {

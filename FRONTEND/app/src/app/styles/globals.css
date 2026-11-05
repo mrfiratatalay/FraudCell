@@ -5,10 +5,11 @@
 @import '@fontsource-variable/jetbrains-mono/wght.css';
 
 /* ==========================================================================
-   FraudCell design system — "Gece Nöbeti"
+   FraudCell design system
 
-   A security-operations look: calm neutral surfaces, one indigo accent for
-   actions and focus, and a separate, ordered colour language for risk and SLA
+   Turkcell's colours, on purpose: Turkcell yellow marks the one primary action
+   and the active place in the app; Turkcell navy is the chrome, the dark theme
+   and the accent. Risk and SLA have their own ordered colour language
    (Düşük → Orta → Yüksek → Kritik get darker as well as warmer, so they read
    apart without relying on hue alone).
 
@@ -19,18 +20,26 @@
    ========================================================================== */
 
 @theme {
-  /* --- Accent: indigo ------------------------------------------------------ */
-  --color-brand-950: #0e1033;
-  --color-brand-900: #1a1e5c;
-  --color-brand-800: #252b8c;
-  --color-brand-700: #3139b8;
-  --color-brand-600: #4049de;
-  --color-brand-500: #5562f2;
-  --color-brand-400: #7c87f7;
-  --color-brand-300: #a5adfb;
-  --color-brand-200: #cbd0fd;
-  --color-brand-100: #e4e7fe;
-  --color-brand-50: #f2f3ff;
+  /* --- Turkcell navy (accent, links, focus) ------------------------------- */
+  --color-brand-950: #001331;
+  --color-brand-900: #001f4d;
+  --color-brand-800: #002c6b;
+  --color-brand-700: #003c8f;
+  --color-brand-600: #0052b4;
+  --color-brand-500: #1a6fd1;
+  --color-brand-400: #4d93e3;
+  --color-brand-300: #8ab8ee;
+  --color-brand-200: #c2daf7;
+  --color-brand-100: #e2edfb;
+  --color-brand-50: #f1f6fd;
+
+  /* --- Turkcell yellow (primary action, active nav) ------------------------ */
+  --color-tc-700: #8a6a00;
+  --color-tc-600: #e6b400;
+  --color-tc-500: #ffc900;
+  --color-tc-400: #ffd633;
+  --color-tc-100: #fff4c2;
+  --color-tc-50: #fffae6;
 
   /* --- Live signal: cyan (realtime dots, focus on dark surfaces) ----------- */
   --color-aqua-700: #0e7490;
@@ -47,62 +56,64 @@
   --color-success-500: #14a86f;
   --color-success-100: #e2f6ec;
 
-  --color-warning-700: #8f5400;
-  --color-warning-600: #b86e00;
-  --color-warning-500: #e8a10c;
-  --color-warning-100: #fdf2d8;
+  /* Orta risk — a deeper amber than Turkcell yellow so the two never read as one. */
+  --color-warning-700: #8a4b00;
+  --color-warning-600: #b25f00;
+  --color-warning-500: #e07b00;
+  --color-warning-100: #fdeed9;
 
   /* Yüksek risk, form errors */
-  --color-danger-700: #b93a0a;
-  --color-danger-600: #d24a10;
-  --color-danger-500: #f06424;
-  --color-danger-100: #fde9df;
+  --color-danger-700: #b2350f;
+  --color-danger-600: #cf4416;
+  --color-danger-500: #ec5a24;
+  --color-danger-100: #fde8df;
 
   /* Kritik risk, breached SLA */
-  --color-critical-700: #a3123a;
-  --color-critical-600: #be1845;
-  --color-critical-500: #d81f4f;
-  --color-critical-100: #fbe4ea;
+  --color-critical-700: #a1102c;
+  --color-critical-600: #bf1636;
+  --color-critical-500: #dc1e3e;
+  --color-critical-100: #fbe3e7;
 
   /* --- Neutrals (cool grey) ----------------------------------------------- */
-  --color-ink-900: #0e1116;
-  --color-ink-800: #1d232c;
-  --color-ink-700: #343c48;
-  --color-ink-600: #4c5563;
-  --color-ink-500: #5d6675;
-  --color-ink-400: #868e9c;
-  --color-ink-300: #c3c8d1;
-  --color-ink-200: #e2e5ea;
-  --color-ink-100: #eff1f4;
-  --color-canvas: #f4f5f7;
+  /* --- Neutrals (navy-tinted grey) ---------------------------------------- */
+  --color-ink-900: #0b1a2e;
+  --color-ink-800: #1a2a40;
+  --color-ink-700: #33445b;
+  --color-ink-600: #4a5a70;
+  --color-ink-500: #5b6a7e;
+  --color-ink-400: #8693a5;
+  --color-ink-300: #c2cbd6;
+  --color-ink-200: #dfe5ec;
+  --color-ink-100: #edf1f5;
+  --color-canvas: #f3f6f9;
   --color-surface: #ffffff;
-  --color-subtle: #f9fafb;
-  --color-line: #e5e7eb;
+  --color-subtle: #f8fafc;
+  --color-line: #e2e8ef;
 
-  /* Always-dark surfaces (login hero, tooltips) — the same in both themes. */
-  --color-night-950: #07080c;
-  --color-night-900: #0b0d12;
-  --color-night-800: #12151c;
-  --color-night-700: #1b1f29;
-  --color-night-600: #2a2f3b;
-  --color-night-300: #9aa2b2;
+  /* Always-navy surfaces (sidebar, sign-in still) — the same in both themes. */
+  --color-night-950: #000c1f;
+  --color-night-900: #001331;
+  --color-night-800: #0a1f3d;
+  --color-night-700: #13294d;
+  --color-night-600: #1f3860;
+  --color-night-300: #9db0cc;
 
-  /* Console chrome (sidebar). Follows the theme. */
-  --color-console-bg: #f4f5f7;
-  --color-console-surface: #ffffff;
-  --color-console-hover: #e9ebef;
-  --color-console-border: #e2e5ea;
-  --color-console-text: #0e1116;
-  --color-console-muted: #5d6675;
+  /* Console sidebar: Turkcell navy in both themes. */
+  --color-console-bg: #001331;
+  --color-console-surface: #0a1f3d;
+  --color-console-hover: #0f2747;
+  --color-console-border: #13294d;
+  --color-console-text: #f2f6fb;
+  --color-console-muted: #9db0cc;
 
-  /* Categorical chart series — deliberately not the risk hues. */
-  --color-chart-1: #5562f2;
-  --color-chart-2: #06b6d4;
-  --color-chart-3: #a855f7;
-  --color-chart-4: #64748b;
-  --color-chart-5: #0ea5a4;
-  --color-chart-6: #a5adfb;
-  --color-chart-grid: #e8eaee;
+  /* Categorical chart series — navy/blue/cyan family, never the risk hues. */
+  --color-chart-1: #003c8f;
+  --color-chart-2: #1a6fd1;
+  --color-chart-3: #06b6d4;
+  --color-chart-4: #8ab8ee;
+  --color-chart-5: #64748b;
+  --color-chart-6: #ffc900;
+  --color-chart-grid: #e6ebf1;
 
   /* --- Type ---------------------------------------------------------------- */
   --font-sans:
@@ -152,10 +163,10 @@
   --shadow-card: 0 1px 2px rgba(16, 20, 28, 0.05);
   --shadow-raised: 0 1px 2px rgba(16, 20, 28, 0.06), 0 8px 24px -12px rgba(16, 20, 28, 0.16);
   --shadow-nav: 0 -1px 0 var(--color-line), 0 -8px 24px -16px rgba(16, 20, 28, 0.2);
-  --shadow-fab: 0 6px 18px -6px rgba(64, 73, 222, 0.55);
+  --shadow-fab: 0 6px 18px -6px rgba(255, 201, 0, 0.6);
   --shadow-overlay: 0 24px 64px -16px rgba(8, 10, 16, 0.32), 0 2px 6px rgba(8, 10, 16, 0.08);
   --shadow-hairline: inset 0 0 0 1px var(--color-line);
-  --shadow-glow: 0 0 0 1px rgba(85, 98, 242, 0.24), 0 8px 28px -8px rgba(85, 98, 242, 0.45);
+  --shadow-glow: 0 0 0 1px rgba(255, 201, 0, 0.35), 0 8px 28px -8px rgba(255, 201, 0, 0.45);
 
   /* --- Motion -------------------------------------------------------------- */
   --animate-shimmer: shimmer 1.6s linear infinite;
@@ -177,17 +188,21 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --color-brand-950: #f2f3ff;
-  --color-brand-900: #e4e7fe;
-  --color-brand-800: #cbd0fd;
-  --color-brand-700: #a5adfb;
-  --color-brand-600: #5562f2;
-  --color-brand-500: #6c78ff;
-  --color-brand-400: #8f98fa;
-  --color-brand-300: #3f479e;
-  --color-brand-200: #2b3172;
-  --color-brand-100: #1d2150;
-  --color-brand-50: #151836;
+  --color-brand-950: #f1f6fd;
+  --color-brand-900: #e2edfb;
+  --color-brand-800: #c2daf7;
+  --color-brand-700: #8ab8ee;
+  --color-brand-600: #2f7be0;
+  --color-brand-500: #4d93e3;
+  --color-brand-400: #6aa6ea;
+  --color-brand-300: #1f4f8f;
+  --color-brand-200: #173d70;
+  --color-brand-100: #102c52;
+  --color-brand-50: #0b2140;
+
+  --color-tc-700: #ffd633;
+  --color-tc-100: #2e2604;
+  --color-tc-50: #221c03;
 
   --color-aqua-700: #67e8f9;
   --color-aqua-600: #22d3ee;
@@ -198,51 +213,49 @@
   --color-success-700: #4fdc9f;
   --color-success-600: #34c98a;
   --color-success-500: #22b07a;
-  --color-success-100: #0f2a20;
+  --color-success-100: #0c2a24;
 
-  --color-warning-700: #f6c459;
-  --color-warning-600: #eeb032;
-  --color-warning-500: #e8a10c;
-  --color-warning-100: #2b2210;
+  --color-warning-700: #ffb35c;
+  --color-warning-600: #f59a33;
+  --color-warning-500: #e8850f;
+  --color-warning-100: #2c1d0c;
 
-  --color-danger-700: #ff9a66;
-  --color-danger-600: #ff7d42;
-  --color-danger-500: #f46a2a;
-  --color-danger-100: #33190e;
+  --color-danger-700: #ff9a6e;
+  --color-danger-600: #ff7d4a;
+  --color-danger-500: #f2652e;
+  --color-danger-100: #33180f;
 
-  --color-critical-700: #ff8aa8;
-  --color-critical-600: #ff5f86;
-  --color-critical-500: #ee3562;
+  --color-critical-700: #ff8a9d;
+  --color-critical-600: #ff5c76;
+  --color-critical-500: #ef3552;
   --color-critical-100: #361019;
 
-  --color-ink-900: #eceef3;
-  --color-ink-800: #d6dae2;
-  --color-ink-700: #b5bcc9;
-  --color-ink-600: #9aa2b2;
-  --color-ink-500: #8a93a5;
-  --color-ink-400: #687183;
-  --color-ink-300: #3d4454;
-  --color-ink-200: #272c38;
-  --color-ink-100: #1a1e27;
-  --color-canvas: #0b0d12;
-  --color-surface: #12151c;
-  --color-subtle: #161a22;
-  --color-line: #232834;
+  --color-ink-900: #eaf0f7;
+  --color-ink-800: #d3dce8;
+  --color-ink-700: #b2bfd0;
+  --color-ink-600: #97a5b9;
+  --color-ink-500: #8594a9;
+  --color-ink-400: #63738a;
+  --color-ink-300: #33445c;
+  --color-ink-200: #1f2f46;
+  --color-ink-100: #142338;
+  --color-canvas: #050f1f;
+  --color-surface: #0a1829;
+  --color-subtle: #0e1d31;
+  --color-line: #1a2b43;
 
-  --color-console-bg: #0b0d12;
-  --color-console-surface: #12151c;
-  --color-console-hover: #1a1e27;
-  --color-console-border: #1f2430;
-  --color-console-text: #eceef3;
-  --color-console-muted: #8a93a5;
+  --color-console-bg: #020b19;
+  --color-console-surface: #0a1829;
+  --color-console-hover: #0e1f36;
+  --color-console-border: #12223a;
 
-  --color-chart-1: #7c87f7;
-  --color-chart-2: #22d3ee;
-  --color-chart-3: #c084fc;
-  --color-chart-4: #94a3b8;
-  --color-chart-5: #2dd4bf;
-  --color-chart-6: #3f479e;
-  --color-chart-grid: #232834;
+  --color-chart-1: #4d93e3;
+  --color-chart-2: #8ab8ee;
+  --color-chart-3: #22d3ee;
+  --color-chart-4: #1f4f8f;
+  --color-chart-5: #94a3b8;
+  --color-chart-6: #ffc900;
+  --color-chart-grid: #1a2b43;
 
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -12px rgba(0, 0, 0, 0.6);
@@ -371,7 +384,7 @@
 
   .on-console :focus-visible,
   .on-night :focus-visible {
-    outline-color: var(--color-aqua-400);
+    outline-color: var(--color-tc-500);
   }
 
   .tabular {
@@ -396,35 +409,39 @@
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-brand-500) 28%, transparent);
+  background: var(--color-tc-500);
+  color: var(--color-night-900);
 }
 
 /* ==========================================================================
    Surfaces
    ========================================================================== */
 
-/* Accent wash used on the few places that carry the brand (customer hero card). */
+/* Turkcell navy wash for hero cards. */
 @utility gradient-brand {
-  background-image: linear-gradient(135deg, #2a31a8 0%, #4049de 55%, #6a5cf0 100%);
+  background-color: var(--color-night-900);
+  background-image:
+    radial-gradient(120% 140% at 100% 0%, rgba(26, 111, 209, 0.55) 0%, transparent 55%),
+    radial-gradient(80% 120% at 0% 100%, rgba(255, 201, 0, 0.12) 0%, transparent 60%);
 }
 
-/* Primary call-to-action fill. */
+/* Primary call-to-action fill: Turkcell yellow. */
 @utility gradient-action {
-  background-image: linear-gradient(180deg, #5d69f4 0%, #4049de 100%);
+  background-color: var(--color-tc-500);
 }
 
 @utility gradient-header {
   background-color: var(--color-night-900);
   background-image:
-    radial-gradient(120% 140% at 100% 0%, rgba(85, 98, 242, 0.42) 0%, transparent 55%),
-    radial-gradient(90% 120% at 0% 100%, rgba(6, 182, 212, 0.16) 0%, transparent 60%);
+    radial-gradient(120% 140% at 100% 0%, rgba(26, 111, 209, 0.5) 0%, transparent 55%),
+    radial-gradient(90% 120% at 0% 100%, rgba(255, 201, 0, 0.1) 0%, transparent 60%);
 }
 
 @utility gradient-splash {
-  background-color: var(--color-night-950);
+  background-color: var(--color-night-900);
   background-image:
-    radial-gradient(70% 55% at 85% 10%, rgba(85, 98, 242, 0.35) 0%, transparent 70%),
-    radial-gradient(60% 50% at 10% 90%, rgba(6, 182, 212, 0.14) 0%, transparent 70%);
+    radial-gradient(70% 55% at 85% 5%, rgba(26, 111, 209, 0.5) 0%, transparent 70%),
+    radial-gradient(60% 50% at 5% 95%, rgba(255, 201, 0, 0.12) 0%, transparent 70%);
 }
 
 @utility gradient-console {
@@ -460,15 +477,15 @@
 }
 
 @utility text-gradient-brand {
-  background-image: linear-gradient(90deg, #a5adfb 0%, #67e8f9 100%);
+  background-image: linear-gradient(90deg, #ffc900 0%, #ffe680 100%);
   background-clip: text;
   color: transparent;
 }
 
 @utility hero-mesh {
   background-image:
-    radial-gradient(60% 90% at 90% 0%, rgba(124, 135, 247, 0.35) 0%, transparent 62%),
-    radial-gradient(50% 80% at 0% 100%, rgba(34, 211, 238, 0.14) 0%, transparent 65%);
+    radial-gradient(60% 90% at 90% 0%, rgba(26, 111, 209, 0.45) 0%, transparent 62%),
+    radial-gradient(50% 80% at 0% 100%, rgba(255, 201, 0, 0.14) 0%, transparent 65%);
 }
 
 /* Faint grid on the dark hero. */

@@ -8,7 +8,7 @@ export function LogoMark({ className }: { className?: string }) {
       <path
         d="M16 5.5l8.5 3.4v6.6c0 5.2-3.6 9.5-8.5 11-4.9-1.5-8.5-5.8-8.5-11V8.9z"
         fill="none"
-        stroke="#7c87f7"
+        stroke="#ffc900"
         strokeWidth="2.2"
         strokeLinejoin="round"
       />
@@ -40,7 +40,7 @@ export function LogoWordmark({
           tone === 'white' ? 'text-white' : 'text-ink-900',
         )}
       >
-        Fraud<span className={tone === 'white' ? 'text-brand-300' : 'text-brand-600'}>Cell</span>
+        Fraud<span className={tone === 'white' ? 'text-tc-500' : 'text-brand-600'}>Cell</span>
       </span>
     </span>
   );
