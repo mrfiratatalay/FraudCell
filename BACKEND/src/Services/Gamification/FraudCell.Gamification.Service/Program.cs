@@ -2,6 +2,7 @@ using FraudCell.BuildingBlocks.Api;
 using FraudCell.BuildingBlocks.Correlation;
 using FraudCell.BuildingBlocks.Messaging.Outbox;
 using FraudCell.BuildingBlocks.Messaging.RabbitMq;
+using FraudCell.BuildingBlocks.Security;
 using FraudCell.BuildingBlocks.Time;
 using FraudCell.Gamification.Service.Common;
 using FraudCell.Gamification.Service.Features.Badges;
@@ -10,11 +11,9 @@ using FraudCell.Gamification.Service.Features.Performance;
 using FraudCell.Gamification.Service.Features.Profiles;
 using FraudCell.Gamification.Service.Messaging;
 using FraudCell.Gamification.Service.Persistence;
-using FraudCell.Gamification.Service.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -33,7 +32,6 @@ builder.Services.AddSingleton(new ServiceIdentity("gamification-service"));
 builder.Services.AddSingleton(JsonDefaults.Create());
 builder.Services.ConfigureHttpJsonOptions(options => JsonDefaults.ApplyTo(options.SerializerOptions));
 
-builder.Services.Configure<JwtValidationOptions>(builder.Configuration.GetSection(JwtValidationOptions.SectionName));
 builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection(RabbitMqOptions.SectionName));
 builder.Services.Configure<OutboxOptions>(builder.Configuration.GetSection(OutboxOptions.SectionName));
 
@@ -46,7 +44,6 @@ builder.Services.AddScoped<OutboxWriter>();
 builder.Services.AddScoped<CrossCuttingEventPublisher>();
 builder.Services.AddScoped<PointRuleEngine>();
 
-builder.Services.AddSingleton<RsaPublicKeyProvider>();
 builder.Services.AddSingleton<RabbitMqConnectionProvider>();
 builder.Services.AddSingleton<RabbitMqEventPublisher>();
 builder.Services.AddHostedService<OutboxPublisherService>();
@@ -55,31 +52,7 @@ builder.Services.AddHostedService<CaseSlaBreachedConsumer>();
 builder.Services.AddHostedService<CustomerFeedbackSubmittedConsumer>();
 builder.Services.AddHostedService<StaffProfileUpdatedConsumer>();
 
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer();
-
-builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
-    .Configure<RsaPublicKeyProvider, Microsoft.Extensions.Options.IOptions<JwtValidationOptions>>((jwtBearerOptions, keyProvider, jwtOptionsAccessor) =>
-    {
-        var jwtOptions = jwtOptionsAccessor.Value;
-        jwtBearerOptions.MapInboundClaims = false;
-
-        jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = jwtOptions.Issuer,
-            ValidateAudience = true,
-            ValidAudience = jwtOptions.Audience,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new RsaSecurityKey(keyProvider.Rsa),
-            ValidAlgorithms = [SecurityAlgorithms.RsaSha256],
-            RoleClaimType = "role",
-            NameClaimType = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub,
-            ClockSkew = TimeSpan.FromSeconds(30),
-        };
-    });
+builder.Services.AddFraudCellJwtBearer(builder.Configuration);
 
 builder.Services.AddAuthorization();
 

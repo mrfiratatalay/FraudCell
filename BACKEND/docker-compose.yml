@@ -166,21 +166,17 @@ services:
       dockerfile: src/Services/Transaction/FraudCell.Transaction.Service/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      Jwt__MetadataAddress: http://identity-service:8080/.well-known/openid-configuration
       ConnectionStrings__TransactionDb: Host=postgres-transaction;Port=5432;Database=fraudcell_transaction;Username=transaction_app;Password=${TRANSACTION_DB_PASSWORD};Minimum Pool Size=0;Maximum Pool Size=15
       RabbitMq__Host: rabbitmq
       RabbitMq__UserName: ${RABBITMQ_USER:-fraudcell}
       RabbitMq__Password: ${RABBITMQ_PASSWORD}
-      Jwt__PublicKeyPath: /keys/identity/public.pem
       Logging__LogLevel__Microsoft.EntityFrameworkCore.Database.Command: Warning
       Serilog__MinimumLevel__Override__Microsoft.EntityFrameworkCore.Database.Command: Warning
-    volumes:
-      - identity-keys:/keys/identity:ro
     depends_on:
       postgres-transaction:
         condition: service_healthy
       rabbitmq:
-        condition: service_healthy
-      identity-service:
         condition: service_healthy
     networks:
       - fraudcell-app
@@ -254,21 +250,17 @@ services:
       dockerfile: src/Services/Gamification/FraudCell.Gamification.Service/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      Jwt__MetadataAddress: http://identity-service:8080/.well-known/openid-configuration
       ConnectionStrings__GamificationDb: Host=postgres-gamification;Port=5432;Database=fraudcell_gamification;Username=gamification_app;Password=${GAMIFICATION_DB_PASSWORD};Minimum Pool Size=0;Maximum Pool Size=15
       RabbitMq__Host: rabbitmq
       RabbitMq__UserName: ${RABBITMQ_USER:-fraudcell}
       RabbitMq__Password: ${RABBITMQ_PASSWORD}
-      Jwt__PublicKeyPath: /keys/identity/public.pem
       Logging__LogLevel__Microsoft.EntityFrameworkCore.Database.Command: Warning
       Serilog__MinimumLevel__Override__Microsoft.EntityFrameworkCore.Database.Command: Warning
-    volumes:
-      - identity-keys:/keys/identity:ro
     depends_on:
       postgres-gamification:
         condition: service_healthy
       rabbitmq:
-        condition: service_healthy
-      identity-service:
         condition: service_healthy
     networks:
       - fraudcell-app
@@ -286,7 +278,7 @@ services:
       dockerfile: BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
-      Jwt__PublicKeyPath: /keys/identity/public.pem
+      Jwt__MetadataAddress: http://identity-service:8080/.well-known/openid-configuration
       RabbitMq__Host: rabbitmq
       RabbitMq__UserName: ${RABBITMQ_USER:-fraudcell}
       RabbitMq__Password: ${RABBITMQ_PASSWORD}
@@ -296,14 +288,12 @@ services:
       ReverseProxy__Clusters__ai__Destinations__ai-service__Address: http://ai-service:8000/
       Logging__LogLevel__Yarp: Warning
       Serilog__MinimumLevel__Override__Yarp: Warning
-    volumes:
-      - identity-keys:/keys/identity:ro
-    # Only Identity must be healthy: it creates the JWT signing key the gateway
-    # reads. The other services may still be starting or even down; the gateway
-    # comes up anyway and returns 502/503 for their routes until they are back.
+    # The gateway waits for no downstream service: it downloads Identity's JWKS
+    # on the first authenticated request and returns 502/503 for the routes of
+    # any service that is still starting or down.
     depends_on:
       identity-service:
-        condition: service_healthy
+        condition: service_started
       transaction-service:
         condition: service_started
       gamification-service:
@@ -336,6 +326,8 @@ services:
       - ../scripts/demo.py:/demo/demo.py:ro
     depends_on:
       edge-gateway:
+        condition: service_healthy
+      identity-service:
         condition: service_healthy
       transaction-service:
         condition: service_healthy
