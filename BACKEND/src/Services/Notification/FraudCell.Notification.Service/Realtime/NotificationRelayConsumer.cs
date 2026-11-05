@@ -2,7 +2,7 @@ using FraudCell.BuildingBlocks.Messaging;
 using FraudCell.BuildingBlocks.Messaging.RabbitMq;
 using Microsoft.Extensions.Options;
 
-namespace FraudCell.Edge.Gateway.Realtime;
+namespace FraudCell.Notification.Service.Realtime;
 
 public sealed record NotificationRequestedPayload(
     string TargetUserId,
@@ -20,7 +20,7 @@ public sealed class NotificationRelayConsumer(
     ILogger<NotificationRelayConsumer> logger)
     : RabbitMqConsumerHostedService(connectionProvider, options, logger)
 {
-    protected override string QueueName => "edge.user-notifications";
+    protected override string QueueName => "notification.user-notifications";
 
     protected override IReadOnlyCollection<string> RoutingKeys => ["user.notification.requested.v1"];
 

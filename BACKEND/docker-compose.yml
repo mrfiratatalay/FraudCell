@@ -269,6 +269,28 @@ services:
     mem_limit: 384m
     mem_reservation: 128m
 
+  # Pushes user notifications from RabbitMQ to browsers over Server-Sent
+  # Events. Owns no database; it only forwards live alerts.
+  notification-service:
+    <<: *application-security
+    build:
+      context: .
+      dockerfile: src/Services/Notification/FraudCell.Notification.Service/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      Jwt__MetadataAddress: http://identity-service:8080/.well-known/openid-configuration
+      RabbitMq__Host: rabbitmq
+      RabbitMq__UserName: ${RABBITMQ_USER:-fraudcell}
+      RabbitMq__Password: ${RABBITMQ_PASSWORD}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - fraudcell-app
+    cpus: 0.25
+    mem_limit: 192m
+    mem_reservation: 64m
+
   # Tek giris noktasi. Frontend SPA'i da wwwroot'tan servis eder, bu yuzden
   # ayri bir frontend/nginx container'i yoktur.
   edge-gateway:
@@ -286,6 +308,7 @@ services:
       ReverseProxy__Clusters__transaction__Destinations__transaction-service__Address: http://transaction-service:8080/
       ReverseProxy__Clusters__gamification__Destinations__gamification-service__Address: http://gamification-service:8080/
       ReverseProxy__Clusters__ai__Destinations__ai-service__Address: http://ai-service:8000/
+      ReverseProxy__Clusters__notification__Destinations__notification-service__Address: http://notification-service:8080/
       Logging__LogLevel__Yarp: Warning
       Serilog__MinimumLevel__Override__Yarp: Warning
     # The gateway waits for no downstream service: it downloads Identity's JWKS
@@ -299,6 +322,8 @@ services:
       gamification-service:
         condition: service_started
       ai-service:
+        condition: service_started
+      notification-service:
         condition: service_started
       rabbitmq:
         condition: service_healthy

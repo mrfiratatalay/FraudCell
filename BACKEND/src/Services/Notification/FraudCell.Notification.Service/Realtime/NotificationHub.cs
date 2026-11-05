@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Threading.Channels;
 
-namespace FraudCell.Edge.Gateway.Realtime;
+namespace FraudCell.Notification.Service.Realtime;
 
 public sealed record RealtimeNotificationData(
     string NotificationType,

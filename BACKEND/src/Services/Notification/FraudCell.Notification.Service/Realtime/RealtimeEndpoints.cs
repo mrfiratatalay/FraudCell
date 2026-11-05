@@ -3,7 +3,7 @@ using System.Text.Json;
 using FraudCell.BuildingBlocks.Api;
 using FraudCell.BuildingBlocks.Correlation;
 
-namespace FraudCell.Edge.Gateway.Realtime;
+namespace FraudCell.Notification.Service.Realtime;
 
 public sealed record StreamTicketResponse(string Ticket, DateTimeOffset ExpiresAt);
 

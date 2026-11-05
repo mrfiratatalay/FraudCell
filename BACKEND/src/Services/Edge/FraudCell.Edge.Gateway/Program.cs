@@ -6,7 +6,6 @@ using FraudCell.BuildingBlocks.Messaging.Outbox;
 using FraudCell.BuildingBlocks.Messaging.RabbitMq;
 using FraudCell.BuildingBlocks.Security;
 using FraudCell.BuildingBlocks.Time;
-using FraudCell.Edge.Gateway.Realtime;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
@@ -28,9 +27,6 @@ builder.Services.ConfigureHttpJsonOptions(options => JsonDefaults.ApplyTo(option
 builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection(RabbitMqOptions.SectionName));
 builder.Services.AddSingleton<RabbitMqConnectionProvider>();
 builder.Services.AddSingleton<RabbitMqEventPublisher>();
-builder.Services.AddSingleton<NotificationHub>();
-builder.Services.AddSingleton<StreamTicketStore>();
-builder.Services.AddHostedService<NotificationRelayConsumer>();
 
 builder.Services.AddCors(options =>
 {
@@ -84,7 +80,6 @@ app.UseAuthorization();
 
 app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = _ => false });
-app.MapRealtimeEndpoints();
 
 app.MapReverseProxy();
 app.MapFallbackToFile("index.html");

@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using FraudCell.BuildingBlocks.Time;
 
-namespace FraudCell.Edge.Gateway.Realtime;
+namespace FraudCell.Notification.Service.Realtime;
 
 public sealed record StreamTicket(string Value, DateTimeOffset ExpiresAt);
 
