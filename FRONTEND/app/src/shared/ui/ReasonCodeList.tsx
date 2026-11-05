@@ -32,33 +32,16 @@ export function ReasonCodeList({
   const sorted = [...reasons].sort((a, b) => ORDER[a.impact] - ORDER[b.impact]);
 
   return (
-    <ul className={cn('space-y-2.5', className)}>
+    <ul className={cn('divide-y divide-line overflow-hidden rounded-lg ring-1 ring-line', className)}>
       {sorted.map((reason) => {
         const spec = IMPACT[reason.impact];
         return (
-          <li key={reason.code} className="rounded-tile bg-canvas px-3.5 py-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex min-w-0 items-center gap-2.5">
-                <span className={cn('size-2 shrink-0 rounded-full', spec.dot)} aria-hidden />
-                <span className="min-w-0 truncate text-sm font-medium text-ink-800">
-                  {reason.label}
-                </span>
-              </div>
-              <span
-                className={cn(
-                  'shrink-0 rounded-pill px-2 py-0.5 text-micro font-semibold',
-                  spec.chip,
-                )}
-              >
-                {spec.label}
-              </span>
-            </div>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-ink-100">
-              <div
-                className={cn('h-full rounded-full', spec.dot)}
-                style={{ width: `${spec.weight}%` }}
-              />
-            </div>
+          <li key={reason.code} className="flex items-center justify-between gap-3 bg-surface px-3.5 py-2.5">
+            <span className="flex min-w-0 items-center gap-2.5">
+              <span className={cn('size-1.5 shrink-0 rounded-full', spec.dot)} aria-hidden />
+              <span className="min-w-0 truncate text-sm text-ink-800">{reason.label}</span>
+            </span>
+            <span className={cn('shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-medium', spec.chip)}>{spec.label}</span>
           </li>
         );
       })}
