@@ -33,7 +33,7 @@ public static class SubmitFeedbackEndpoint
     {
         if (request.Rating is < 1 or > 5)
         {
-            throw AppException.Validation("Puan 1 ile 5 arasinda olmalidir.", new Dictionary<string, object?> { ["field"] = "rating" });
+            throw AppException.Validation("Puan 1 ile 5 arasında olmalıdır.", new Dictionary<string, object?> { ["field"] = "rating" });
         }
 
         if (request.Comment is { Length: > MaxCommentLength })
@@ -51,13 +51,13 @@ public static class SubmitFeedbackEndpoint
 
         if (riskCase.Status != CaseStatus.KAPANDI)
         {
-            throw AppException.DomainRule(ErrorCodes.FeedbackNotAllowed, "Geri bildirim yalnizca kapanmis vakalarda verilebilir.");
+            throw AppException.DomainRule(ErrorCodes.FeedbackNotAllowed, "Geri bildirim yalnızca kapanmış vakalarda verilebilir.");
         }
 
         var alreadySubmitted = await db.CustomerFeedbacks.AnyAsync(f => f.CaseId == caseId, cancellationToken);
         if (alreadySubmitted)
         {
-            throw new AppException(System.Net.HttpStatusCode.Conflict, ErrorCodes.FeedbackAlreadySubmitted, "Bu vaka icin zaten geri bildirim verilmis.");
+            throw new AppException(System.Net.HttpStatusCode.Conflict, ErrorCodes.FeedbackAlreadySubmitted, "Bu vaka için zaten geri bildirim verilmiş.");
         }
 
         var now = clock.UtcNow;
@@ -97,7 +97,7 @@ public static class SubmitFeedbackEndpoint
                 throw;
             }
 
-            throw new AppException(System.Net.HttpStatusCode.Conflict, ErrorCodes.FeedbackAlreadySubmitted, "Bu vaka icin zaten geri bildirim verilmis.");
+            throw new AppException(System.Net.HttpStatusCode.Conflict, ErrorCodes.FeedbackAlreadySubmitted, "Bu vaka için zaten geri bildirim verilmiş.");
         }
 
         return Results.Created($"/api/v1/cases/{caseId}/feedback/{feedback.Id}",

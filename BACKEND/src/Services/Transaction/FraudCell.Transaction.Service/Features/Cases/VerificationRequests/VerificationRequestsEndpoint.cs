@@ -47,7 +47,7 @@ public static class VerificationRequestsEndpoint
         var alreadyPending = await db.CustomerVerifications.AnyAsync(v => v.CaseId == caseId && v.Status == VerificationStatus.PENDING, cancellationToken);
         if (alreadyPending)
         {
-            throw new AppException(System.Net.HttpStatusCode.Conflict, ErrorCodes.CustomerVerificationAlreadyPending, "Bu vaka icin zaten bekleyen bir dogrulama var.");
+            throw new AppException(System.Net.HttpStatusCode.Conflict, ErrorCodes.CustomerVerificationAlreadyPending, "Bu vaka için zaten bekleyen bir doğrulama var.");
         }
 
         var now = clock.UtcNow;
@@ -69,7 +69,7 @@ public static class VerificationRequestsEndpoint
         };
 
         db.CustomerVerifications.Add(verification);
-        transitions.Record(riskCase, previousStatus, userId, role, TransitionSource.ANALYST, "Musteri dogrulamasi istendi.", null, versionBefore);
+        transitions.Record(riskCase, previousStatus, userId, role, TransitionSource.ANALYST, "Müşteri doğrulaması istendi.", null, versionBefore);
 
         outboxWriter.Enqueue(TransactionEventTypes.CaseCustomerVerificationRequested, caseId, new
         {
@@ -80,7 +80,7 @@ public static class VerificationRequestsEndpoint
         });
 
         crossCutting.PublishNotification(riskCase.CustomerId, "CUSTOMER_VERIFICATION_REQUESTED",
-            "Islem dogrulamasi gerekiyor", "Supheli gorulen islem icin dogrulamaniz gerekiyor.", "CASE", caseId);
+            "İşlem doğrulaması gerekiyor", "Şüpheli görülen işlem için doğrulamanız gerekiyor.", "CASE", caseId);
 
         await db.SaveChangesAsync(cancellationToken);
 

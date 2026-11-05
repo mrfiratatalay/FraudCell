@@ -25,7 +25,7 @@ router = APIRouter(prefix="/internal/v1", tags=["Internal"])
 def _require_internal_token(authorization: str | None) -> None:
     expected = f"Internal {settings.internal_api_token}"
     if authorization != expected:
-        raise HTTPException(status_code=401, detail="Internal token gecersiz.")
+        raise HTTPException(status_code=401, detail="Internal token geçersiz.")
 
 
 @router.get("/models/health")

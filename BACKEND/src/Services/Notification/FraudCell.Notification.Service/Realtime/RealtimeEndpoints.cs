@@ -27,7 +27,7 @@ public static class RealtimeEndpoints
     private static IResult IssueTicket(HttpContext context, StreamTicketStore tickets, CorrelationContext correlation)
     {
         var userId = context.User.FindFirstValue("sub")
-            ?? throw AppException.Unauthorized(ErrorCodes.AccessTokenInvalid, "Token gecersiz.");
+            ?? throw AppException.Unauthorized(ErrorCodes.AccessTokenInvalid, "Token geçersiz.");
         var ticket = tickets.Issue(userId);
         return ApiResults.Ok(new StreamTicketResponse(ticket.Value, ticket.ExpiresAt), correlation);
     }
@@ -42,7 +42,7 @@ public static class RealtimeEndpoints
     {
         if (!tickets.TryConsume(ticket, out var userId))
         {
-            throw AppException.Unauthorized(ErrorCodes.AccessTokenInvalid, "Stream ticket gecersiz veya suresi dolmus.");
+            throw AppException.Unauthorized(ErrorCodes.AccessTokenInvalid, "Stream ticket geçersiz veya süresi dolmuş.");
         }
 
         context.Response.StatusCode = StatusCodes.Status200OK;

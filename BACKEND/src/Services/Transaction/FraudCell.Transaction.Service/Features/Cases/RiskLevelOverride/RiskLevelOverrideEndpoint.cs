@@ -44,7 +44,7 @@ public static class RiskLevelOverrideEndpoint
 
         if (riskCase.EffectiveRiskLevel == request.RiskLevel)
         {
-            throw AppException.Validation("Yeni risk seviyesi mevcut degerden farkli olmalidir.");
+            throw AppException.Validation("Yeni risk seviyesi mevcut değerden farklı olmalıdır.");
         }
 
         var transaction = await db.Transactions.SingleAsync(t => t.Id == riskCase.TransactionId, cancellationToken);

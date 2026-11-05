@@ -61,7 +61,7 @@ public sealed class AssignmentService(TransactionServiceDbContext db)
             .SingleOrDefaultAsync(p => p.AnalystId == analystId, cancellationToken);
         if (eligible is null || !eligible.IsActive || !eligible.AssignmentEnabled)
         {
-            throw AppException.DomainRule(ErrorCodes.AnalystNotAssignable, "Analist aktif degil ya da atamaya kapali.");
+            throw AppException.DomainRule(ErrorCodes.AnalystNotAssignable, "Analist aktif değil ya da atamaya kapalı.");
         }
 
         await db.Database.ExecuteSqlAsync(

@@ -52,7 +52,7 @@ public static class StaffLoginEndpoint
     {
         if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
         {
-            throw AppException.Validation("E-posta ve sifre zorunludur.");
+            throw AppException.Validation("E-posta ve şifre zorunludur.");
         }
 
         var ip = RefreshCookie.GetClientIp(httpContext);
@@ -63,7 +63,7 @@ public static class StaffLoginEndpoint
             // Kullanici yoklugu ile yanlis sifre arasinda ayrim yapmayiz (enumeration onlemi).
             auditWriter.Record(null, null, AuditActions.LoginFailed, AuditResult.Failure, "user", null, ip);
             await db.SaveChangesAsync(cancellationToken);
-            throw AppException.Unauthorized(ErrorCodes.InvalidCredentials, "E-posta veya sifre hatali.");
+            throw AppException.Unauthorized(ErrorCodes.InvalidCredentials, "E-posta veya şifre hatalı.");
         }
 
         if (await userManager.IsLockedOutAsync(user))
@@ -77,7 +77,7 @@ public static class StaffLoginEndpoint
             throw new AppException(
                 (System.Net.HttpStatusCode)423,
                 ErrorCodes.AccountLocked,
-                "Hesap gecici olarak kilitlenmistir.",
+                "Hesap geçici olarak kilitlenmiştir.",
                 new Dictionary<string, object?> { ["lockedUntil"] = lockoutEnd?.UtcDateTime, ["remainingSeconds"] = remaining });
         }
 
@@ -94,7 +94,7 @@ public static class StaffLoginEndpoint
             auditWriter.Record(user.Id, null, AuditActions.LoginFailed, AuditResult.Failure, "user", user.Id, ip);
             await db.SaveChangesAsync(cancellationToken);
 
-            throw AppException.Unauthorized(ErrorCodes.InvalidCredentials, "E-posta veya sifre hatali.");
+            throw AppException.Unauthorized(ErrorCodes.InvalidCredentials, "E-posta veya şifre hatalı.");
         }
 
         await userManager.ResetAccessFailedCountAsync(user);

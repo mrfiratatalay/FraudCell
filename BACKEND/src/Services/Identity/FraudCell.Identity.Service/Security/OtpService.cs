@@ -78,7 +78,7 @@ public sealed partial class OtpService(
         LogChallengeIssued(logger, gsmNumber[^4..], purpose, challenge.ExpiresAt);
 
         var demoHint = environment.IsDevelopment() && _options.UseFixedDemoCode
-            ? $"Demo ortaminda OTP: {_options.FixedDemoCode}"
+            ? $"Demo ortamında OTP: {_options.FixedDemoCode}"
             : null;
 
         return new OtpChallengeResult(challenge.Id, challenge.ExpiresAt, demoHint);

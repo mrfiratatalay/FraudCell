@@ -35,10 +35,10 @@ public class AppException : Exception
     /// Ownership ihlallerinde de bunu kullaniriz: kaynagin varligini sizdirmamak
     /// icin 403 yerine 404 doneriz (dokuman §7).
     /// </summary>
-    public static AppException NotFound(string message = "Kayit bulunamadi.")
+    public static AppException NotFound(string message = "Kayıt bulunamadı.")
         => new(HttpStatusCode.NotFound, ErrorCodes.NotFound, message);
 
-    public static AppException Forbidden(string message = "Bu islem icin yetkiniz yok.")
+    public static AppException Forbidden(string message = "Bu işlem için yetkiniz yok.")
         => new(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, message);
 
     public static AppException Unauthorized(string code, string message, IReadOnlyDictionary<string, object?>? details = null)
@@ -55,7 +55,7 @@ public class AppException : Exception
         => new(HttpStatusCode.ServiceUnavailable, ErrorCodes.ServiceTemporarilyUnavailable, message);
 
     /// <summary>Kritik state-changing endpoint'te <c>If-Match</c> header'i eksik (dokuman §15.1).</summary>
-    public static AppException PreconditionRequired(string message = "Bu islem icin If-Match header'i zorunludur.")
+    public static AppException PreconditionRequired(string message = "Bu işlem için If-Match header'ı zorunludur.")
         => new((HttpStatusCode)428, ErrorCodes.PreconditionRequired, message);
 
     /// <summary>
@@ -66,9 +66,9 @@ public class AppException : Exception
         => new(
             HttpStatusCode.PreconditionFailed,
             ErrorCodes.ResourceVersionMismatch,
-            "Kaynak baska bir kullanici veya islem tarafindan guncellendi.",
+            "Kaynak başka bir kullanıcı veya işlem tarafından güncellendi.",
             new Dictionary<string, object?> { ["expectedVersion"] = expectedVersion, ["currentVersion"] = currentVersion });
 
-    public static AppException ConcurrencyConflict(string message = "Ayni kaynak uzerinde eszamanli bir islem zaten uygulandi.")
+    public static AppException ConcurrencyConflict(string message = "Aynı kaynak üzerinde eşzamanlı bir işlem zaten uygulandı.")
         => new(HttpStatusCode.Conflict, ErrorCodes.ConcurrencyConflict, message);
 }

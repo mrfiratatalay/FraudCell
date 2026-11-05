@@ -182,12 +182,12 @@ test('four roles take one case from transaction to rating', async ({ browser }, 
     await analystPage.getByRole('button', { name: 'Blokla' }).click();
     await expect(analystPage.getByText('Bloklandı', { exact: true }).first()).toBeVisible();
     // Case §6.4: the badge arrives over SSE and shows as a toast.
-    await expect(analystPage.getByText('Yeni rozet kazandiniz').first()).toBeVisible({ timeout: 30_000 });
+    await expect(analystPage.getByText('Yeni rozet kazandınız').first()).toBeVisible({ timeout: 30_000 });
     await shot(analystPage, 'analyst-badge-toast');
 
     await clickNav(analystPage, 'Profilim');
     await expect(analystPage.getByRole('heading', { name: 'Profilim' })).toBeVisible();
-    await expect(analystPage.getByText('Ilk Yakalama').first()).toBeVisible({ timeout: 20_000 });
+    await expect(analystPage.getByText('İlk Yakalama').first()).toBeVisible({ timeout: 20_000 });
     await expect(analystPage.getByText('Çözülen vaka', { exact: true })).toBeVisible();
     await shot(analystPage, 'analyst-profile');
   });

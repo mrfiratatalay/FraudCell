@@ -48,7 +48,7 @@ public static class SubmitDecisionEndpoint
 
         if (isSupervisor && string.IsNullOrWhiteSpace(request.OverrideReason))
         {
-            throw AppException.Validation("Supervizor karari icin overrideReason zorunludur.");
+            throw AppException.Validation("Süpervizör kararı için overrideReason zorunludur.");
         }
 
         await using var dbTransaction = await db.Database.BeginTransactionAsync(cancellationToken);
@@ -140,8 +140,8 @@ public static class SubmitDecisionEndpoint
         }
 
         crossCutting.PublishNotification(riskCase.CustomerId, "CASE_DECISION_MADE",
-            request.Decision == FinalDecision.APPROVE ? "Isleminiz onaylandi" : "Isleminiz bloklandi",
-            request.Decision == FinalDecision.APPROVE ? "Isleminiz incelendi ve onaylandi." : "Isleminiz guvenlik nedeniyle bloklandi.",
+            request.Decision == FinalDecision.APPROVE ? "İşleminiz onaylandı" : "İşleminiz bloklandı",
+            request.Decision == FinalDecision.APPROVE ? "İşleminiz incelendi ve onaylandı." : "İşleminiz güvenlik nedeniyle bloklandı.",
             "CASE", caseId);
 
         await db.SaveChangesAsync(cancellationToken);

@@ -42,7 +42,7 @@ public static class RefreshTokenEndpoint
         var rawToken = RefreshCookie.Read(httpContext.Request);
         if (rawToken is null)
         {
-            throw AppException.Unauthorized(ErrorCodes.RefreshTokenInvalid, "Refresh token bulunamadi.");
+            throw AppException.Unauthorized(ErrorCodes.RefreshTokenInvalid, "Refresh token bulunamadı.");
         }
 
         var ip = RefreshCookie.GetClientIp(httpContext);
@@ -72,16 +72,16 @@ public static class RefreshTokenEndpoint
 
                 throw AppException.Unauthorized(
                     ErrorCodes.RefreshTokenReuseDetected,
-                    "Guvenlik ihlali tespit edildi; tum oturumlar sonlandirildi. Lutfen tekrar giris yapin.");
+                    "Güvenlik ihlali tespit edildi; tum oturumlar sonlandırıldı. Lütfen tekrar giriş yapın.");
             }
 
             case RefreshOutcome.Invalid:
                 RefreshCookie.Clear(httpContext.Response);
-                throw AppException.Unauthorized(ErrorCodes.RefreshTokenInvalid, "Refresh token gecersiz.");
+                throw AppException.Unauthorized(ErrorCodes.RefreshTokenInvalid, "Refresh token geçersiz.");
 
             case RefreshOutcome.Expired:
                 RefreshCookie.Clear(httpContext.Response);
-                throw AppException.Unauthorized(ErrorCodes.RefreshTokenExpired, "Refresh token suresi dolmus.");
+                throw AppException.Unauthorized(ErrorCodes.RefreshTokenExpired, "Refresh token süresi dolmuş.");
 
             case RefreshOutcome.Success:
             default:
@@ -89,7 +89,7 @@ public static class RefreshTokenEndpoint
         }
 
         var refreshedUser = await userManager.FindByIdAsync(result.UserId!)
-            ?? throw AppException.Unauthorized(ErrorCodes.RefreshTokenInvalid, "Kullanici bulunamadi.");
+            ?? throw AppException.Unauthorized(ErrorCodes.RefreshTokenInvalid, "Kullanıcı bulunamadı.");
 
         var roles = await userManager.GetRolesAsync(refreshedUser);
         var role = roles.FirstOrDefault() ?? throw new InvalidOperationException($"User {refreshedUser.Id} has no role.");

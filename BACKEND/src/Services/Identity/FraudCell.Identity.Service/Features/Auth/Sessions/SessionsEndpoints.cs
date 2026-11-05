@@ -84,5 +84,5 @@ public static class SessionsEndpoints
     }
 
     private static string RequireUserId(HttpContext httpContext)
-        => httpContext.User.FindFirstValue("sub") ?? throw AppException.Unauthorized(ErrorCodes.AccessTokenInvalid, "Token gecersiz.");
+        => httpContext.User.FindFirstValue("sub") ?? throw AppException.Unauthorized(ErrorCodes.AccessTokenInvalid, "Token geçersiz.");
 }

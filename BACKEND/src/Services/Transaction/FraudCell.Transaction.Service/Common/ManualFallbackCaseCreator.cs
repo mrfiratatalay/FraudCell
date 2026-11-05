@@ -49,6 +49,6 @@ public sealed class ManualFallbackCaseCreator(TransactionServiceDbContext db, Ou
         });
 
         crossCutting.PublishNotification(fraudTransaction.CustomerId, "AI_ASSESSMENT_PENDING_MANUAL_REVIEW",
-            "Islem manuel incelemede", "Isleminiz manuel inceleme kuyruguna alindi.", "TRANSACTION", fraudTransaction.Id);
+            "İşlem manuel incelemede", "İşleminiz manuel inceleme kuyruğuna alındı.", "TRANSACTION", fraudTransaction.Id);
     }
 }

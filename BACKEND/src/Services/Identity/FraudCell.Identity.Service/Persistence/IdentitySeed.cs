@@ -19,18 +19,18 @@ public static class IdentitySeed
 {
     private static readonly (string Code, string DisplayName)[] RoleSeed =
     [
-        (RoleNames.Customer, "Musteri"),
+        (RoleNames.Customer, "Müşteri"),
         (RoleNames.Analyst, "Fraud Analisti"),
-        (RoleNames.Supervisor, "Supervizor"),
+        (RoleNames.Supervisor, "Süpervizör"),
         (RoleNames.Admin, "Admin"),
     ];
 
     private static readonly (AnalystSpecialty Code, string DisplayName)[] SpecialtySeed =
     [
-        (AnalystSpecialty.CALINTI_KART, "Calinti Kart"),
-        (AnalystSpecialty.HESAP_ELE_GECIRME, "Hesap Ele Gecirme"),
+        (AnalystSpecialty.CALINTI_KART, "Çalıntı Kart"),
+        (AnalystSpecialty.HESAP_ELE_GECIRME, "Hesap Ele Geçirme"),
         (AnalystSpecialty.PARA_AKLAMA, "Para Aklama"),
-        (AnalystSpecialty.SUPHELI_DAVRANIS, "Supheli Davranis"),
+        (AnalystSpecialty.SUPHELI_DAVRANIS, "Şüpheli Davranış"),
     ];
 
     private static readonly (OperationRegion Code, string DisplayName)[] RegionSeed =
@@ -61,8 +61,12 @@ public static class IdentitySeed
 
         foreach (var (code, displayName) in SpecialtySeed)
         {
-            var exists = await db.Specialties.AnyAsync(s => s.Code == code);
-            if (!exists)
+            var existing = await db.Specialties.SingleOrDefaultAsync(s => s.Code == code);
+            if (existing is not null)
+            {
+                existing.DisplayName = displayName;
+            }
+            else
             {
                 db.Specialties.Add(new Specialty
                 {
@@ -76,8 +80,12 @@ public static class IdentitySeed
 
         foreach (var (code, displayName) in RegionSeed)
         {
-            var exists = await db.Regions.AnyAsync(r => r.Code == code);
-            if (!exists)
+            var existing = await db.Regions.SingleOrDefaultAsync(r => r.Code == code);
+            if (existing is not null)
+            {
+                existing.DisplayName = displayName;
+            }
+            else
             {
                 db.Regions.Add(new Region
                 {

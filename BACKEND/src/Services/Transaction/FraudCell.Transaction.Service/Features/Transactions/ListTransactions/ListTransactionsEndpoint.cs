@@ -60,7 +60,7 @@ public static class ListTransactionsEndpoint
         {
             if (!Enum.TryParse<AssessmentStatus>(assessmentStatus, out var parsedStatus))
             {
-                throw AppException.Validation("Gecersiz assessmentStatus.", new Dictionary<string, object?> { ["field"] = "assessmentStatus" });
+                throw AppException.Validation("Geçersiz assessmentStatus.", new Dictionary<string, object?> { ["field"] = "assessmentStatus" });
             }
 
             query = query.Where(t => t.AssessmentStatus == parsedStatus);
@@ -70,7 +70,7 @@ public static class ListTransactionsEndpoint
         {
             if (!Enum.TryParse<RiskLevel>(riskLevel, out var parsedLevel))
             {
-                throw AppException.Validation("Gecersiz riskLevel.", new Dictionary<string, object?> { ["field"] = "riskLevel" });
+                throw AppException.Validation("Geçersiz riskLevel.", new Dictionary<string, object?> { ["field"] = "riskLevel" });
             }
 
             query = query.Where(t => t.EffectiveRiskLevel == parsedLevel);

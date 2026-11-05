@@ -96,7 +96,7 @@ public static class ReassignmentEndpoint
             assignedAt = now,
         });
 
-        crossCutting.PublishNotification(request.NewAnalystId, "CASE_ASSIGNED", "Yeni vaka atandi", "Size yeni bir risk vakasi atandi.", "CASE", caseId);
+        crossCutting.PublishNotification(request.NewAnalystId, "CASE_ASSIGNED", "Yeni vaka atandı", "Size yeni bir risk vakası atandı.", "CASE", caseId);
 
         await db.SaveChangesAsync(cancellationToken);
         await dbTransaction.CommitAsync(cancellationToken);

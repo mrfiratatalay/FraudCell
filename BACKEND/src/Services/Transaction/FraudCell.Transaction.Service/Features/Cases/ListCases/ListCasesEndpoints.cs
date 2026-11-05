@@ -47,7 +47,7 @@ public static class ListCasesEndpoints
         {
             if (!Enum.TryParse<CaseStatus>(status, out var parsedStatus))
             {
-                throw AppException.Validation("Gecersiz status.");
+                throw AppException.Validation("Geçersiz status.");
             }
 
             query = query.Where(c => c.Status == parsedStatus);
@@ -57,7 +57,7 @@ public static class ListCasesEndpoints
         {
             if (!Enum.TryParse<RiskLevel>(riskLevel, out var parsedLevel))
             {
-                throw AppException.Validation("Gecersiz riskLevel.");
+                throw AppException.Validation("Geçersiz riskLevel.");
             }
 
             query = query.Where(c => c.EffectiveRiskLevel == parsedLevel);
@@ -86,7 +86,7 @@ public static class ListCasesEndpoints
         {
             if (!Enum.TryParse<CaseStatus>(status, out var parsedStatus))
             {
-                throw AppException.Validation("Gecersiz status.");
+                throw AppException.Validation("Geçersiz status.");
             }
 
             query = query.Where(c => c.Status == parsedStatus);
@@ -119,7 +119,7 @@ public static class ListCasesEndpoints
             "ALL" => [AssignmentStatus.QUEUED, AssignmentStatus.MANUAL_QUEUE],
             nameof(AssignmentStatus.QUEUED) => [AssignmentStatus.QUEUED],
             nameof(AssignmentStatus.MANUAL_QUEUE) => [AssignmentStatus.MANUAL_QUEUE],
-            _ => throw AppException.Validation("queueType ALL, QUEUED veya MANUAL_QUEUE olmalidir."),
+            _ => throw AppException.Validation("queueType ALL, QUEUED veya MANUAL_QUEUE olmalıdır."),
         };
 
         var cases = await db.RiskCases.AsNoTracking()

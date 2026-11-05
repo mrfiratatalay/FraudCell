@@ -47,27 +47,27 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
 
         var awarded = new List<(string RuleCode, int Points, string Description)>
         {
-            (RuleCodes.CaseDecision, 10, "Vaka karari verildi."),
+            (RuleCodes.CaseDecision, 10, "Vaka kararı verildi."),
         };
 
         if (isFast)
         {
-            awarded.Add((RuleCodes.FastDecision, 5, "Karar 15 dakikadan kisa surede verildi."));
+            awarded.Add((RuleCodes.FastDecision, 5, "Karar 15 dakikadan kısa sürede verildi."));
         }
 
         if (isConfirmedFraud)
         {
-            awarded.Add((RuleCodes.ConfirmedFraud, 15, "Dolandiricilik musteri tarafindan teyit edildi."));
+            awarded.Add((RuleCodes.ConfirmedFraud, 15, "Dolandırıcılık müşteri tarafından teyit edildi."));
         }
 
         if (isWrongBlock)
         {
-            awarded.Add((RuleCodes.FalsePositive, -8, "Musterinin onayladigi mesru islem bloklandi."));
+            awarded.Add((RuleCodes.FalsePositive, -8, "Müşterinin onayladığı meşru işlem bloklandı."));
         }
 
         if (isCritical && slaCompliant)
         {
-            awarded.Add((RuleCodes.CriticalWithinSla, 15, "Kritik vaka SLA icinde cozuldu."));
+            awarded.Add((RuleCodes.CriticalWithinSla, 15, "Kritik vaka SLA içinde çözüldü."));
         }
 
         var totalAwarded = 0;
@@ -127,7 +127,7 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
             awardedAt = now,
         });
 
-        crossCutting.PublishNotification(analystId, "POINTS_AWARDED", "Puan kazandiniz", $"Bu vaka icin +{totalAwarded} puan kazandiniz.", "CASE", caseId);
+        crossCutting.PublishNotification(analystId, "POINTS_AWARDED", "Puan kazandınız", $"Bu vaka için +{totalAwarded} puan kazandınız.", "CASE", caseId);
 
         if (summary.Level != previousLevel)
         {
@@ -149,7 +149,7 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
             CaseId = caseId,
             RuleCode = RuleCodes.SlaBreach,
             Points = penalty,
-            Description = "SLA suresi asildi.",
+            Description = "SLA süresi aşıldı.",
             OccurredAt = breachedAt,
             CreatedAt = now,
         });
@@ -384,6 +384,6 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
         summary.Version++;
 
         outboxWriter.Enqueue(GamificationEventTypes.BadgeEarned, analystId, new { analystId, badgeCode, displayName = badge.DisplayName, earnedAt = now });
-        crossCutting.PublishNotification(analystId, "BADGE_EARNED", "Yeni rozet kazandiniz", $"{badge.DisplayName} rozetini kazandiniz.", "BADGE", badge.Code);
+        crossCutting.PublishNotification(analystId, "BADGE_EARNED", "Yeni rozet kazandınız", $"{badge.DisplayName} rozetini kazandınız.", "BADGE", badge.Code);
     }
 }
