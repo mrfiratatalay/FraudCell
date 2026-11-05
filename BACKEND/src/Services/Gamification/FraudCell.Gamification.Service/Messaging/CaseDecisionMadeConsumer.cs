@@ -13,7 +13,8 @@ namespace FraudCell.Gamification.Service.Messaging;
 
 public sealed record CaseDecisionMadePayload(
     string CaseId, string TransactionId, string? AnalystId, string Decision, string? FraudType,
-    string? RiskLevel, decimal Amount, DateTimeOffset DecidedAt, DateTimeOffset CreatedAt, bool SlaCompliant);
+    string? RiskLevel, decimal Amount, DateTimeOffset DecidedAt, DateTimeOffset CreatedAt, bool SlaCompliant,
+    string? CustomerVerification = null);
 
 /// <summary>
 /// <c>case.decision.made</c> tuketicisi (dokuman §17 puan kurallari). Bu servis
@@ -53,7 +54,13 @@ public sealed class CaseDecisionMadeConsumer(
         {
             var decision = new CaseDecision(
                 envelope.EventId, payload.AnalystId, payload.CaseId, payload.FraudType, payload.RiskLevel,
-                payload.SlaCompliant, payload.DecidedAt, payload.CreatedAt, payload.Decision == "BLOCK");
+                payload.SlaCompliant, payload.DecidedAt, payload.CreatedAt, payload.Decision == "BLOCK",
+                payload.CustomerVerification switch
+                {
+                    "MINE" => CustomerVerdict.Mine,
+                    "NOT_MINE" => CustomerVerdict.NotMine,
+                    _ => CustomerVerdict.None,
+                });
             await engine.ApplyCaseDecisionAsync(decision, now, cancellationToken);
         }
 
