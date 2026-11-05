@@ -10,6 +10,9 @@ namespace FraudCell.Transaction.Service.Domain;
 /// </summary>
 public sealed class RiskCase
 {
+    /// <summary>Dokuman §27: a decided case closes 48 hours later (configurable via <c>CaseClosure:Delay</c>).</summary>
+    public static readonly TimeSpan DefaultClosureDelay = TimeSpan.FromHours(48);
+
     public required string Id { get; set; }
 
     public required string TransactionId { get; set; }
@@ -191,7 +194,7 @@ public sealed class RiskCase
     }
 
     /// <summary>Dokuman §26 INCELENIYOR -> ONAYLANDI.</summary>
-    public void Approve(string decidedBy, string? note, DateTimeOffset now)
+    public void Approve(string decidedBy, string? note, DateTimeOffset now, TimeSpan? closureDelay = null)
     {
         RequireInReview();
 
@@ -202,12 +205,12 @@ public sealed class RiskCase
         SlaStoppedAt = now;
         Status = CaseStatus.ONAYLANDI;
         AssignmentStatus = AssignmentStatus.COMPLETED;
-        ClosureDueAt = now.AddHours(48);
+        ClosureDueAt = now + (closureDelay ?? DefaultClosureDelay);
         Touch(now);
     }
 
     /// <summary>Dokuman §27 INCELENIYOR -> BLOKLANDI. Karar notu zorunludur.</summary>
-    public void Block(string decidedBy, string note, DateTimeOffset now)
+    public void Block(string decidedBy, string note, DateTimeOffset now, TimeSpan? closureDelay = null)
     {
         RequireInReview();
 
@@ -223,7 +226,7 @@ public sealed class RiskCase
         SlaStoppedAt = now;
         Status = CaseStatus.BLOKLANDI;
         AssignmentStatus = AssignmentStatus.COMPLETED;
-        ClosureDueAt = now.AddHours(48);
+        ClosureDueAt = now + (closureDelay ?? DefaultClosureDelay);
         Touch(now);
     }
 

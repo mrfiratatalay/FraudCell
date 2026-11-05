@@ -47,6 +47,7 @@ builder.Services.ConfigureHttpJsonOptions(options => JsonDefaults.ApplyTo(option
 builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection(RabbitMqOptions.SectionName));
 builder.Services.Configure<OutboxOptions>(builder.Configuration.GetSection(OutboxOptions.SectionName));
 builder.Services.Configure<AssessmentOptions>(builder.Configuration.GetSection(AssessmentOptions.SectionName));
+builder.Services.Configure<CaseClosureOptions>(builder.Configuration.GetSection(CaseClosureOptions.SectionName));
 
 builder.Services.AddDbContext<TransactionServiceDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("TransactionDb")));

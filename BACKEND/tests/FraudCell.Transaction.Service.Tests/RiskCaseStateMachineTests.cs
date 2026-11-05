@@ -26,6 +26,22 @@ public sealed class RiskCaseStateMachineTests
     }
 
     [Fact]
+    public void Decided_case_closes_48_hours_later_unless_configured_otherwise()
+    {
+        var byDefault = NewCase();
+        byDefault.Assign("analyst-1", Now);
+        byDefault.StartReview("analyst-1", isSupervisorOverride: false, Now);
+        byDefault.Block("analyst-1", "Doğrulanmış yüksek risk.", Now);
+        byDefault.ClosureDueAt.ShouldBe(Now.AddHours(48));
+
+        var configured = NewCase();
+        configured.Assign("analyst-1", Now);
+        configured.StartReview("analyst-1", isSupervisorOverride: false, Now);
+        configured.Approve("analyst-1", null, Now, TimeSpan.FromSeconds(5));
+        configured.ClosureDueAt.ShouldBe(Now.AddSeconds(5));
+    }
+
+    [Fact]
     public void Block_without_a_note_is_rejected()
     {
         var riskCase = NewCase();

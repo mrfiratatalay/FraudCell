@@ -14,13 +14,13 @@ namespace FraudCell.Transaction.Service.BackgroundJobs;
 /// KAPANDI yapar. <c>FOR UPDATE SKIP LOCKED</c> ile birden fazla instance'in
 /// ayni vakayi ikinci kez kapatmasi engellenir.
 /// </summary>
-public sealed partial class CaseClosureWorker(IServiceScopeFactory scopeFactory, IClock clock, ILogger<CaseClosureWorker> logger) : BackgroundService
+public sealed partial class CaseClosureWorker(
+    IServiceScopeFactory scopeFactory, IClock clock, Microsoft.Extensions.Options.IOptions<CaseClosureOptions> options,
+    ILogger<CaseClosureWorker> logger) : BackgroundService
 {
-    private static readonly TimeSpan PollInterval = TimeSpan.FromMinutes(5);
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var timer = new PeriodicTimer(PollInterval);
+        using var timer = new PeriodicTimer(options.Value.PollInterval);
 
         do
         {
