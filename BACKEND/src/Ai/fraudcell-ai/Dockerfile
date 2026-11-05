@@ -1,45 +1,54 @@
 # Build with BACKEND/ as the Docker build context.
 FROM ghcr.io/astral-sh/uv:0.11.31 AS uv
 
-FROM python:3.13.14-slim-bookworm AS base
+# ---- Dependencies ----
+# Runtime dependencies only, in /app/.venv. The app itself is not installed:
+# it runs from /app, which is on sys.path for `python -m app.run`.
+FROM python:3.13.14-slim-bookworm AS deps
 WORKDIR /app
 
-COPY --from=uv /uv /uvx /bin/
+COPY --from=uv /uv /bin/
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
     UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
-    PATH="/app/.venv/bin:$PATH"
+    UV_PROJECT_ENVIRONMENT=/app/.venv
 
 COPY src/Ai/fraudcell-ai/pyproject.toml src/Ai/fraudcell-ai/uv.lock ./
+RUN uv sync --frozen --no-dev --no-install-project
 
 # ---- Train ----
-# The model is trained while the image is built, so a fresh clone needs no
-# pre-built artefacts. Training is deterministic (fixed seed) and the
-# training-only dependencies (pandas) never reach the runtime image.
-FROM base AS train
+# The model is trained while the image is built, from the committed data in
+# data/. Training is deterministic (fixed seed); pandas, which only training
+# needs, is added to this stage's copy of the venv and never reaches runtime.
+FROM deps AS train
 RUN uv sync --frozen --no-dev --group training --no-install-project
 
 COPY src/Ai/fraudcell-ai/app ./app
 COPY src/Ai/fraudcell-ai/train.py ./
 COPY src/Ai/fraudcell-ai/data ./data
-RUN python train.py
+RUN /app/.venv/bin/python train.py
 
 # ---- Runtime ----
-FROM base AS runtime
+# No uv, no build tools, no chown -R (which rewrote the whole venv in a second
+# layer): files stay root-owned and read-only for the service user.
+FROM python:3.13.14-slim-bookworm AS runtime
+WORKDIR /app
 
-ENV AI_HTTP_HOST=0.0.0.0 \
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/app/.venv/bin:$PATH" \
+    AI_HTTP_HOST=0.0.0.0 \
     AI_HTTP_PORT=8000
 
-RUN uv sync --frozen --no-dev --no-install-project
+RUN groupadd --system fraudcell \
+    && useradd --system --gid fraudcell --home-dir /app --shell /usr/sbin/nologin fraudcell
 
+COPY --from=deps /app/.venv ./.venv
+COPY src/Ai/fraudcell-ai/alembic.ini ./
+COPY src/Ai/fraudcell-ai/migrations ./migrations
 COPY src/Ai/fraudcell-ai/app ./app
 COPY --from=train /app/models ./models
-RUN uv sync --frozen --no-dev \
-    && groupadd --system fraudcell \
-    && useradd --system --gid fraudcell --home-dir /app --shell /usr/sbin/nologin fraudcell \
-    && chown -R fraudcell:fraudcell /app
 
 EXPOSE 8000
 USER fraudcell

@@ -87,6 +87,8 @@ jobs:
       - run: cp .env.example .env
       - name: docker compose up (builds every image, trains the AI model)
         run: docker compose up -d --build
+      - name: Image sizes
+        run: docker image ls --format '{{.Repository}}:{{.Tag}} {{.Size}}' | grep fraudcell
       - name: Demo steps 2-6 (transaction, AI, assignment, block, leaderboard)
         run: python3 ../scripts/demo.py smoke
       - name: Demo step 7 (stop ai-service)
