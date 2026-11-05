@@ -501,7 +501,8 @@ export interface AssignmentQueueItemResponse {
 
 export interface AssignmentQueueQuery {
   /** Yalnızca QUEUED veya MANUAL_QUEUE kabul edilir. */
-  queueType?: 'QUEUED' | 'MANUAL_QUEUE';
+  /** Varsayılan ALL: BELIRSIZ (manuel) ve kapasite bekleyen vakalar birlikte. */
+  queueType?: 'ALL' | 'QUEUED' | 'MANUAL_QUEUE';
   limit?: number;
 }
 

@@ -108,16 +108,22 @@ public static class ListCasesEndpoints
 
     private static async Task<IResult> ListAssignmentQueueAsync(
         TransactionServiceDbContext db, CorrelationContext correlation, CancellationToken cancellationToken,
-        string queueType = "QUEUED", int limit = 20)
+        string queueType = "ALL", int limit = 20)
     {
         limit = Math.Clamp(limit, 1, 100);
-        if (!Enum.TryParse<AssignmentStatus>(queueType, out var parsedQueue) || parsedQueue is not (AssignmentStatus.QUEUED or AssignmentStatus.MANUAL_QUEUE))
+
+        // Case §7: the waiting queue holds both BELIRSIZ cases (AI down → MANUAL_QUEUE)
+        // and cases waiting for analyst capacity (QUEUED); ALL shows them together.
+        AssignmentStatus[] statuses = queueType switch
         {
-            throw AppException.Validation("queueType QUEUED veya MANUAL_QUEUE olmalidir.");
-        }
+            "ALL" => [AssignmentStatus.QUEUED, AssignmentStatus.MANUAL_QUEUE],
+            nameof(AssignmentStatus.QUEUED) => [AssignmentStatus.QUEUED],
+            nameof(AssignmentStatus.MANUAL_QUEUE) => [AssignmentStatus.MANUAL_QUEUE],
+            _ => throw AppException.Validation("queueType ALL, QUEUED veya MANUAL_QUEUE olmalidir."),
+        };
 
         var cases = await db.RiskCases.AsNoTracking()
-            .Where(c => c.AssignmentStatus == parsedQueue)
+            .Where(c => statuses.Contains(c.AssignmentStatus))
             .OrderBy(c => c.SlaDeadlineAt)
             .Take(limit)
             .Join(db.Transactions, c => c.TransactionId, t => t.Id, (c, t) => new AssignmentQueueItemResponse(

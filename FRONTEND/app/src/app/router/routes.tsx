@@ -346,8 +346,8 @@ const supervisorQueueRoute = createRoute({
   getParentRoute: () => supervisorRoute,
   path: '/queue',
   validateSearch: z
-    .object({ queueType: z.enum(['QUEUED', 'MANUAL_QUEUE']).default('QUEUED') })
-    .catch({ queueType: 'QUEUED' }),
+    .object({ queueType: z.enum(['ALL', 'QUEUED', 'MANUAL_QUEUE']).default('ALL') })
+    .catch({ queueType: 'ALL' }),
   component: SupervisorQueueRoutePage,
 });
 

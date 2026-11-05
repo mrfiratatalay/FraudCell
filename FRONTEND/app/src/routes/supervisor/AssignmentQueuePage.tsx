@@ -20,13 +20,14 @@ export function AssignmentQueuePage({ queueType }: { queueType: QueueType }) {
 
   return (
     <div>
-      <PageHeader title="Atama kuyruğu" description="Analist bekleyen vakalar." />
+      <PageHeader title="Atama kuyruğu" description="BELIRSIZ ve analist kapasitesi bekleyen vakalar. Manuel atama için vakayı açın." />
 
       <div className="mb-5">
         <Tabs
           items={[
-            { value: 'QUEUED', label: 'Otomatik', count: queueType === 'QUEUED' ? items.length : undefined },
-            { value: 'MANUAL_QUEUE', label: 'Manuel', count: queueType === 'MANUAL_QUEUE' ? items.length : undefined },
+            { value: 'ALL', label: 'Tümü', count: queueType === 'ALL' ? items.length : undefined },
+            { value: 'QUEUED', label: 'Kapasite bekleyen', count: queueType === 'QUEUED' ? items.length : undefined },
+            { value: 'MANUAL_QUEUE', label: 'Belirsiz / manuel', count: queueType === 'MANUAL_QUEUE' ? items.length : undefined },
           ]}
           value={queueType}
           onValueChange={(value) =>

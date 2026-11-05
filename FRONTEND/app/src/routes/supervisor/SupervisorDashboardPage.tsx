@@ -114,7 +114,7 @@ export function SupervisorDashboardPage() {
           <div className="flex flex-wrap items-center gap-2">
             <Link
               to="/supervisor/queue"
-              search={{ queueType: 'QUEUED' }}
+              search={{ queueType: 'ALL' }}
               className="inline-flex items-center gap-2 rounded-pill border border-brand-100 bg-white px-4 py-2.5 text-sm font-semibold text-brand-800 shadow-card transition-colors hover:bg-brand-50"
             >
               <ListChecks className="size-4" /> Atama kuyruğu

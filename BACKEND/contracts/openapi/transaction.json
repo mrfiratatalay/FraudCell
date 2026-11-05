@@ -629,7 +629,7 @@
                                                                                             "in":  "query",
                                                                                             "schema":  {
                                                                                                            "type":  "string",
-                                                                                                           "default":  "QUEUED"
+                                                                                                           "default":  "ALL"
                                                                                                        }
                                                                                         },
                                                                                         {
