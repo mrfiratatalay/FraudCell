@@ -96,6 +96,9 @@ jobs:
         run: docker compose up -d --wait --no-deps ai-service
       - name: Resilience (stop each container in turn, RabbitMQ included)
         run: python3 ../scripts/demo.py resilience
+      # Last: the brute-force checks use up this runner's login budget for a minute.
+      - name: Security checks the jury will try (case §10)
+        run: python3 ../scripts/security.py
       - name: Service logs
         if: failure()
         run: docker compose logs --no-color --tail=300
