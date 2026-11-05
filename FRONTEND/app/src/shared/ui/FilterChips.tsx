@@ -1,4 +1,3 @@
-import { X } from 'lucide-react';
 import { cn } from '@/shared/lib/cn';
 
 export interface ChipOption<T extends string> {
@@ -27,7 +26,7 @@ export function FilterChips<T extends string>({
   className?: string;
 }) {
   return (
-    <div className={cn('flex flex-wrap items-center gap-2', className)} role="group">
+    <div className={cn('scroll-slim -mx-1 flex items-center gap-1 overflow-x-auto px-1 pb-0.5', className)} role="group">
       <Chip active={value === undefined} onClick={() => onChange(undefined)}>
         {allLabel}
       </Chip>
@@ -40,7 +39,6 @@ export function FilterChips<T extends string>({
             onClick={() => onChange(active ? undefined : option.value)}
           >
             {option.label}
-            {active && <X className="size-3.5" aria-hidden />}
           </Chip>
         );
       })}
@@ -63,10 +61,10 @@ function Chip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        'inline-flex items-center gap-1 rounded-pill border px-3.5 py-1.5 text-sm font-medium transition-colors',
+        'inline-flex h-8 shrink-0 items-center gap-1 rounded-md px-3 text-[13px] font-medium whitespace-nowrap transition-colors',
         active
-          ? 'border-brand-600 bg-brand-600 text-white'
-          : 'border-ink-200 bg-surface text-ink-600 hover:border-brand-300 hover:text-brand-700',
+          ? 'bg-ink-900 text-surface'
+          : 'text-ink-600 hover:bg-ink-100 hover:text-ink-900',
       )}
     >
       {children}

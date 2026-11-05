@@ -47,3 +47,4 @@ export { Sheet, ConfirmDialog, type SheetProps } from './Sheet';
 export { Tabs, TabPanel, type TabItem } from './Tabs';
 export { ToastProvider, useToast } from './Toast';
 export { ThemeToggle } from './ThemeToggle';
+export { RiskScore, RiskMeter } from './RiskScore';
