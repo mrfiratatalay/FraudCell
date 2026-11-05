@@ -90,96 +90,66 @@ export function AuthFlow({
   );
 }
 
-/* --------------------------------------------------------- product still -- */
+/* ------------------------------------------------------------ brand panel -- */
 
-const STEPS = [
-  { time: '03:12:04', title: 'İşlem alındı', detail: 'Transfer · ₺50.000 · New York, US' },
-  { time: '03:12:04', title: 'AI skoru 0,94', detail: 'Çalıntı kart · karar: inceleme' },
-  { time: '03:12:05', title: 'Vaka açıldı', detail: 'Öncelik kritik · SLA 15 dk' },
-  { time: '03:12:05', title: 'Analiste atandı', detail: 'Uzmanlık ve bölge eşleşti' },
+const PILLARS = [
+  { title: 'Saniyeler içinde', detail: 'Her işlem yapay zekâ ile skorlanır' },
+  { title: 'SLA ile takip', detail: 'Riskli vaka doğru analiste düşer' },
+  { title: 'Açıklanabilir', detail: 'Her kararın gerekçesi görünür' },
 ];
 
-const SIGNALS = ['İlk kez görülen cihaz', 'Normal tutarın 10 katı', 'Alışılmadık konum', 'Gece saatinde işlem'];
-
+/** Quiet brand side: one emblem, one sentence, three facts. Nothing pretends to be live data. */
 function ProductStill() {
   return (
-    <aside
-      aria-hidden
-      className="on-night relative hidden overflow-hidden gradient-splash text-white lg:flex lg:flex-col lg:justify-center lg:px-14 xl:px-20"
-    >
-      <div className="brand-grid absolute inset-0 [mask-image:radial-gradient(70%_60%_at_60%_40%,black,transparent)]" />
+    <aside aria-hidden className="on-night relative hidden overflow-hidden bg-night-900 text-white lg:flex lg:flex-col">
+      {/* light */}
+      <div className="absolute -top-40 -right-40 size-[38rem] rounded-full bg-[radial-gradient(closest-side,rgba(26,111,209,.55),transparent)]" />
+      <div className="absolute -bottom-48 -left-32 size-[34rem] rounded-full bg-[radial-gradient(closest-side,rgba(255,201,0,.16),transparent)]" />
 
-      <div className="relative mx-auto w-full max-w-[520px]">
-        <p className="text-[13px] font-medium text-tc-500">Gerçek zamanlı dolandırıcılık tespiti</p>
-        <h2 className="mt-3 text-[2.25rem] leading-[1.1] font-semibold tracking-[-0.035em] xl:text-[2.6rem]">
-          Şüpheli işlem, müşteriye ulaşmadan durur.
-        </h2>
-        <p className="mt-4 max-w-md text-[15px] leading-relaxed text-night-300">
-          Her işlem saniyeler içinde skorlanır; riskli olanlar SLA sayacıyla doğru analiste düşer.
-        </p>
-
-        <div className="relative mt-10">
-          {/* Case card */}
-          <div className="relative z-10 rounded-xl border border-white/10 bg-night-800/95 p-5 shadow-[0_30px_80px_-20px_rgba(0,0,0,.8)] backdrop-blur">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <span className="font-mono text-[13px] text-night-300">TRX-2026-000142</span>
-                <span className="inline-flex h-5 items-center rounded px-1.5 text-[11px] font-medium text-[#ff8aa8] ring-1 ring-[#ff8aa8]/30 ring-inset bg-[#361019]">
-                  Kritik
-                </span>
-              </div>
-              <span className="inline-flex items-center gap-1.5 font-mono text-[12px] text-[#f6c459]">
-                <span className="size-1.5 rounded-full bg-[#f6c459]" />
-                SLA 14:32
-              </span>
-            </div>
-
-            <div className="mt-4 flex items-end justify-between gap-4">
-              <div>
-                <p className="text-[1.75rem] leading-none font-semibold tracking-[-0.03em] tabular">₺50.000,00</p>
-                <p className="mt-2 text-[13px] text-night-300">Yurt dışı transfer · Çalıntı kart şüphesi</p>
-              </div>
-              <div className="text-right">
-                <p className="text-[11px] text-night-300">Risk skoru</p>
-                <p className="font-mono text-2xl font-medium text-[#ff8aa8]">0,94</p>
-              </div>
-            </div>
-
-            <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/8">
-              <div className="h-full w-[94%] rounded-full bg-gradient-to-r from-[#e8a10c] via-[#f46a2a] to-[#ee3562]" />
-            </div>
-
-            <ul className="mt-4 flex flex-wrap gap-1.5">
-              {SIGNALS.map((signal) => (
-                <li key={signal} className="rounded-md bg-white/6 px-2 py-1 text-[12px] text-white/80 ring-1 ring-white/8">
-                  {signal}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Pipeline */}
-          <ol className="relative mt-4 ml-5 rounded-xl border border-white/8 bg-night-900/70 p-5 backdrop-blur">
-            {STEPS.map((step, index) => (
-              <li key={step.title} className="relative flex gap-4 pb-4 last:pb-0">
-                {index < STEPS.length - 1 && <span className="absolute top-4 left-[5px] h-full w-px bg-white/10" />}
-                <span
-                  className={cn(
-                    'relative mt-1.5 size-[11px] shrink-0 rounded-full border-2',
-                    index === STEPS.length - 1 ? 'border-tc-500 bg-tc-500/25' : 'border-white/25 bg-night-900',
-                  )}
-                />
-                <div className="flex min-w-0 flex-1 items-baseline justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-medium text-white">{step.title}</p>
-                    <p className="text-[12px] text-night-300">{step.detail}</p>
-                  </div>
-                  <span className="shrink-0 font-mono text-[11px] text-white/40">{step.time}</span>
-                </div>
-              </li>
-            ))}
-          </ol>
+      {/* emblem */}
+      <div className="relative flex flex-1 items-center justify-center">
+        <div className="relative">
+          <span className="absolute inset-0 -m-16 rounded-full border border-white/[0.06]" />
+          <span className="absolute inset-0 -m-32 rounded-full border border-white/[0.04]" />
+          <svg viewBox="0 0 120 132" className="relative h-56 w-auto drop-shadow-[0_0_40px_rgba(255,201,0,.18)] xl:h-64">
+            <defs>
+              <linearGradient id="shield-fill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#0f2a52" />
+                <stop offset="1" stopColor="#061632" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M60 6 110 25v35c0 33-21 57-50 66C31 117 10 93 10 60V25L60 6Z"
+              fill="url(#shield-fill)"
+              stroke="#ffc900"
+              strokeWidth="2.5"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M30 68h16l7-17 11 32 7-15h19"
+              fill="none"
+              stroke="#fff"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </div>
+      </div>
+
+      {/* statement */}
+      <div className="relative px-14 pb-14 xl:px-20 xl:pb-16">
+        <h2 className="max-w-lg text-[2.25rem] leading-[1.1] font-semibold tracking-[-0.035em] xl:text-[2.5rem]">
+          Şüpheli işlem, müşteriye <span className="text-tc-500">ulaşmadan</span> durur.
+        </h2>
+        <dl className="mt-10 grid grid-cols-3 gap-6 border-t border-white/10 pt-6">
+          {PILLARS.map((pillar) => (
+            <div key={pillar.title}>
+              <dt className="text-sm font-medium text-white">{pillar.title}</dt>
+              <dd className="mt-1 text-[13px] leading-snug text-night-300">{pillar.detail}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </aside>
   );
