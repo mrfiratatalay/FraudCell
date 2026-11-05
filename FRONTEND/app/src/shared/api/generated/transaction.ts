@@ -758,10 +758,13 @@ export interface components {
             amount: number;
             assessment: components["schemas"]["AssessmentResponse"];
             caseId: null | string;
+            caseStatus: null | string;
             controlStatus: string;
             /** Format: date-time */
             createdAt: string;
             currency: string;
+            /** Format: int32 */
+            feedbackRating: null | number;
             location: components["schemas"]["LocationResponse"];
             /** Format: date-time */
             occurredAt: string;

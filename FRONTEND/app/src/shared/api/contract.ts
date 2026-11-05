@@ -361,6 +361,10 @@ export interface TransactionDetailResponse {
   controlStatus: ControlStatus;
   /** Bu işlemden bir risk vakası doğduysa dolu. */
   caseId: string | null;
+  /** Vakanın durumu; vaka yoksa null. */
+  caseStatus: CaseStatus | null;
+  /** Müşterinin bu vakaya verdiği 1–5 yıldız; henüz vermediyse null. */
+  feedbackRating: number | null;
   createdAt: string;
   version: number;
 }
