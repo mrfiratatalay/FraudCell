@@ -313,9 +313,6 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
       Jwt__MetadataAddress: http://identity-service:8080/.well-known/openid-configuration
-      RabbitMq__Host: rabbitmq
-      RabbitMq__UserName: ${RABBITMQ_USER:-fraudcell}
-      RabbitMq__Password: ${RABBITMQ_PASSWORD}
       ReverseProxy__Clusters__identity__Destinations__identity-service__Address: http://identity-service:8080/
       ReverseProxy__Clusters__transaction__Destinations__transaction-service__Address: http://transaction-service:8080/
       ReverseProxy__Clusters__gamification__Destinations__gamification-service__Address: http://gamification-service:8080/
@@ -340,8 +337,6 @@ services:
         condition: service_started
       web:
         condition: service_started
-      rabbitmq:
-        condition: service_healthy
     networks:
       - fraudcell-app
     ports:

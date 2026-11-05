@@ -2,10 +2,7 @@ using System.Text.Json;
 using System.Threading.RateLimiting;
 using FraudCell.BuildingBlocks.Api;
 using FraudCell.BuildingBlocks.Correlation;
-using FraudCell.BuildingBlocks.Messaging.Outbox;
-using FraudCell.BuildingBlocks.Messaging.RabbitMq;
 using FraudCell.BuildingBlocks.Security;
-using FraudCell.BuildingBlocks.Time;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
@@ -20,13 +17,8 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .WriteTo.Console(new Serilog.Formatting.Json.JsonFormatter()));
 
 builder.Services.AddScoped<CorrelationContext>();
-builder.Services.AddSingleton<IClock, SystemClock>();
-builder.Services.AddSingleton(new ServiceIdentity("edge-gateway"));
 builder.Services.AddSingleton(JsonDefaults.Create());
 builder.Services.ConfigureHttpJsonOptions(options => JsonDefaults.ApplyTo(options.SerializerOptions));
-builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection(RabbitMqOptions.SectionName));
-builder.Services.AddSingleton<RabbitMqConnectionProvider>();
-builder.Services.AddSingleton<RabbitMqEventPublisher>();
 
 builder.Services.AddCors(options =>
 {
@@ -73,7 +65,6 @@ app.UseCors("FrontendDev");
 app.UseAuthentication();
 app.UseInvalidBearerTokenGuard(jsonOptions);
 app.UseRateLimiter();
-app.UseAuthorizationDeniedAudit();
 app.UseAuthorization();
 
 app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
@@ -133,66 +124,5 @@ internal static class GatewayMiddlewareExtensions
             }
 
             await next(context);
-        });
-
-    /// <summary>
-    /// Downstream servislerin RBAC sonucu dondurdugu 403 cevaplarini merkezi audit
-    /// event'ine cevirir. Gateway domain DB tutmadigi icin event publisher-confirm
-    /// ile dogrudan broker'a verilir; broker hatasi asil 403 cevabini bozmaz.
-    /// </summary>
-    public static IApplicationBuilder UseAuthorizationDeniedAudit(this IApplicationBuilder app)
-        => app.Use(async (context, next) =>
-        {
-            await next(context);
-
-            if (context.Response.StatusCode != StatusCodes.Status403Forbidden)
-            {
-                return;
-            }
-
-            var publisher = context.RequestServices.GetRequiredService<RabbitMqEventPublisher>();
-            var clock = context.RequestServices.GetRequiredService<IClock>();
-            var logger = context.RequestServices.GetRequiredService<ILoggerFactory>()
-                .CreateLogger("AuthorizationDeniedAudit");
-            var occurredAt = clock.UtcNow;
-            var actorId = context.User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value;
-            var actorRole = context.User.FindFirst("role")?.Value;
-            var resourceId = context.Request.Path.Value ?? "/";
-
-            var payload = JsonSerializer.Serialize(new
-            {
-                actorId,
-                actorRole,
-                action = "AUTHORIZATION_DENIED",
-                sourceService = "edge-gateway",
-                resourceType = "http_endpoint",
-                resourceId,
-                ipAddress = context.Connection.RemoteIpAddress?.ToString(),
-                result = "FAILURE",
-                occurredAt,
-                details = new { method = context.Request.Method },
-            }, JsonDefaults.Events);
-
-            var message = new OutboxMessage
-            {
-                Id = Ulid.NewUlid().ToString(),
-                EventType = "audit.entry.requested",
-                EventVersion = 1,
-                RoutingKey = "audit.entry.requested.v1",
-                SubjectId = actorId ?? resourceId,
-                CorrelationId = context.TraceIdentifier,
-                Producer = "edge-gateway",
-                OccurredAt = occurredAt,
-                Payload = payload,
-            };
-
-            try
-            {
-                await publisher.PublishAsync(message, context.RequestAborted);
-            }
-            catch (Exception exception)
-            {
-                logger.LogWarning(exception, "Authorization denied audit event could not be published.");
-            }
         });
 }

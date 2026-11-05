@@ -64,6 +64,7 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 
 app.UseMiddleware<CorrelationMiddleware>();
+app.UseAuthorizationDeniedAudit();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();

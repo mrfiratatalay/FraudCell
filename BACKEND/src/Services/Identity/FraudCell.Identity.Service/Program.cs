@@ -1,3 +1,4 @@
+using FraudCell.BuildingBlocks.Security;
 using FraudCell.BuildingBlocks.Api;
 using FraudCell.BuildingBlocks.Correlation;
 using FraudCell.BuildingBlocks.Messaging.Outbox;
@@ -146,6 +147,7 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 
 app.UseMiddleware<CorrelationMiddleware>();
+app.UseAuthorizationDeniedAudit();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
