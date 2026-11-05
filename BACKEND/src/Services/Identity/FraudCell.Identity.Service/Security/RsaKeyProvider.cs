@@ -1,7 +1,9 @@
 using System.Security.Cryptography;
+using System.Text;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FraudCell.Identity.Service.Security;
 
@@ -20,7 +22,7 @@ public sealed class JwtSigningOptions
     /// <summary>PEM formatinda RSA private key dosya yolu. Repository'ye girmez (dokuman §20/SEC-011).</summary>
     public string? PrivateKeyPath { get; set; }
 
-    /// <summary>PEM formatinda RSA public key dosya yolu; Gateway ve diger servisler bunu okur.</summary>
+    /// <summary>Optional PEM copy of the public key for operators; services read keys from /.well-known/jwks.json.</summary>
     public string? PublicKeyPath { get; set; }
 }
 
@@ -36,13 +38,36 @@ public sealed class JwtSigningOptions
 public sealed partial class RsaKeyProvider
 {
     private readonly Lazy<RSA> _rsa;
+    private readonly Lazy<(RsaSecurityKey Key, PublicJwk Jwk)> _signingKey;
 
     public RsaKeyProvider(IOptions<JwtSigningOptions> options, IHostEnvironment environment, ILogger<RsaKeyProvider> logger)
     {
         _rsa = new Lazy<RSA>(() => LoadOrGenerate(options.Value, environment, logger));
+        _signingKey = new Lazy<(RsaSecurityKey, PublicJwk)>(() => CreateSigningKey(_rsa.Value));
     }
 
     public RSA Rsa => _rsa.Value;
+
+    /// <summary>Signing key whose kid is the RFC 7638 thumbprint of the public key.</summary>
+    public RsaSecurityKey SigningKey => _signingKey.Value.Key;
+
+    /// <summary>Public half of <see cref="SigningKey"/>, served at /.well-known/jwks.json.</summary>
+    public PublicJwk PublicJwk => _signingKey.Value.Jwk;
+
+    private static (RsaSecurityKey, PublicJwk) CreateSigningKey(RSA rsa)
+    {
+        var parameters = rsa.ExportParameters(includePrivateParameters: false);
+        var modulus = Base64UrlEncoder.Encode(parameters.Modulus);
+        var exponent = Base64UrlEncoder.Encode(parameters.Exponent);
+
+        // RFC 7638: SHA-256 over the required members in lexicographic order.
+        var thumbprintInput = $$"""{"e":"{{exponent}}","kty":"RSA","n":"{{modulus}}"}""";
+        var keyId = Base64UrlEncoder.Encode(SHA256.HashData(Encoding.UTF8.GetBytes(thumbprintInput)));
+
+        return (
+            new RsaSecurityKey(rsa) { KeyId = keyId },
+            new PublicJwk("RSA", "sig", SecurityAlgorithms.RsaSha256, keyId, modulus, exponent));
+    }
 
     private static RSA LoadOrGenerate(JwtSigningOptions options, IHostEnvironment environment, ILogger logger)
     {

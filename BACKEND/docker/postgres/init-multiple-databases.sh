@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# Tek PostgreSQL instance uzerinde servis basina AYRI database + AYRI login rolu.
-# Bu script yalnizca PGDATA bos oldugunda (ilk `docker compose up`) calisir.
+# Creates the database + login role of every service whose password is set.
+# docker-compose.yml runs one instance per service and passes only that
+# service's password; compose.infra.yml (native development) runs a single
+# instance and passes all four. Runs only when PGDATA is empty (first start).
 #
 # Izolasyon PostgreSQL seviyesinde zorlanir:
 #   - Her database'in sahibi kendi servis rolüdür.
@@ -37,10 +39,10 @@ GRANT ALL ON DATABASE :"database_name" TO :"role_name";
 SQL
 }
 
-create_role_and_database identity_app fraudcell_identity "$IDENTITY_DB_PASSWORD"
-create_role_and_database transaction_app fraudcell_transaction "$TRANSACTION_DB_PASSWORD"
-create_role_and_database gamification_app fraudcell_gamification "$GAMIFICATION_DB_PASSWORD"
-create_role_and_database ai_app fraudcell_ai "$AI_DB_PASSWORD"
+if [[ -n "${IDENTITY_DB_PASSWORD:-}" ]]; then create_role_and_database identity_app fraudcell_identity "$IDENTITY_DB_PASSWORD"; fi
+if [[ -n "${TRANSACTION_DB_PASSWORD:-}" ]]; then create_role_and_database transaction_app fraudcell_transaction "$TRANSACTION_DB_PASSWORD"; fi
+if [[ -n "${GAMIFICATION_DB_PASSWORD:-}" ]]; then create_role_and_database gamification_app fraudcell_gamification "$GAMIFICATION_DB_PASSWORD"; fi
+if [[ -n "${AI_DB_PASSWORD:-}" ]]; then create_role_and_database ai_app fraudcell_ai "$AI_DB_PASSWORD"; fi
 
 # Bakim database'i de uygulama rollerine kapatilir; yalnizca superuser kullanir.
 psql --set=ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname postgres <<'SQL'

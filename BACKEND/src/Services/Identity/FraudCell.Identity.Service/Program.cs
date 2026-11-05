@@ -1,3 +1,4 @@
+using FraudCell.BuildingBlocks.Security;
 using FraudCell.BuildingBlocks.Api;
 using FraudCell.BuildingBlocks.Correlation;
 using FraudCell.BuildingBlocks.Messaging.Outbox;
@@ -127,7 +128,7 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
             ValidAudience = jwtOptions.Audience,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new RsaSecurityKey(keyProvider.Rsa),
+            IssuerSigningKey = keyProvider.SigningKey,
             ValidAlgorithms = [SecurityAlgorithms.RsaSha256],
             RoleClaimType = "role",
             NameClaimType = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub,
@@ -146,6 +147,7 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 
 app.UseMiddleware<CorrelationMiddleware>();
+app.UseAuthorizationDeniedAudit();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
@@ -159,6 +161,7 @@ if (app.Environment.IsDevelopment())
 
 app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
+app.MapJwks();
 
 app.MapRequestOtpChallenge();
 app.MapVerifyOtpChallenge();

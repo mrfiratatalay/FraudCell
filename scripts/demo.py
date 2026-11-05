@@ -6,6 +6,7 @@ plain python container. Everything goes through the public gateway API.
     python3 scripts/demo.py seed      # create the demo staff accounts (idempotent)
     python3 scripts/demo.py smoke     # case 11.3 steps 2-6, exits 1 on any failure
     python3 scripts/demo.py ai-down   # step 7: run while ai-service is stopped
+    python3 scripts/demo.py resilience  # stop each container in turn (needs docker)
 
 Environment: FRAUDCELL_BASE_URL (default http://127.0.0.1:8080), SEED_ADMIN_EMAIL,
 SEED_ADMIN_PASSWORD, DEMO_STAFF_PASSWORD.
@@ -16,11 +17,14 @@ from __future__ import annotations
 import json
 import os
 import random
+import subprocess
 import sys
 import time
 import urllib.error
 import urllib.request
 import uuid
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 
 BASE_URL = os.environ.get("FRAUDCELL_BASE_URL", "http://127.0.0.1:8080").rstrip("/")
@@ -38,6 +42,8 @@ DEMO_ANALYSTS = {
     "SUPHELI_DAVRANIS": ("analyst.davranis@fraudcell.local", "Davranis", "Analisti"),
 }
 SUPERVISOR_EMAIL = "supervisor@fraudcell.local"
+COMPOSE = ["docker", "compose", "-f", os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "BACKEND", "docker-compose.yml")]
+LEADERBOARD = "/api/v1/game/leaderboard?period=daily"
 
 failures: list[str] = []
 
@@ -273,8 +279,121 @@ def ai_down() -> None:
     sys.exit(1 if failures else 0)
 
 
+@contextmanager
+def outage(service: str) -> Iterator[None]:
+    """Stop one container for the duration of the block, then start it and wait until it is healthy."""
+    print(f"--- {service} stopped")
+    subprocess.run([*COMPOSE, "stop", service], check=True, capture_output=True)
+    try:
+        yield
+    finally:
+        subprocess.run([*COMPOSE, "up", "-d", "--wait", "--wait-timeout", "300", "--no-deps", service],
+                       check=True, capture_output=True)
+        print(f"--- {service} running again")
+
+
+def points_by_analyst(supervisor: str) -> dict[str, int]:
+    return {row.get("analystId"): row.get("points", 0) for row in items_of(call("GET", LEADERBOARD, supervisor)[1])}
+
+
+def block_case(analyst: str, case_id: str) -> int:
+    """Wait until the case is assigned, start the review and block it; returns the decision's HTTP status."""
+    for _ in range(30):
+        if any(item.get("caseId") == case_id for item in items_of(call("GET", "/api/v1/cases/assigned", analyst)[1])):
+            break
+        time.sleep(1)
+    _, _, headers = call("GET", f"/api/v1/cases/{case_id}", analyst)
+    call("POST", f"/api/v1/cases/{case_id}/review", analyst, headers={"If-Match": headers.get("ETag", "")})
+    _, _, headers = call("GET", f"/api/v1/cases/{case_id}", analyst)
+    status, _, _ = call("PATCH", f"/api/v1/cases/{case_id}/decision", analyst,
+                        {"decision": "BLOCK", "note": "Dayaniklilik testi: oyunlastirma kapaliyken verilen karar."},
+                        {"If-Match": headers.get("ETag", "")})
+    return status
+
+
+def resilience() -> None:
+    """Stop one container at a time; the rest must keep working and the stopped one must catch up.
+
+    ai-service is covered by the ai-down command (case step 7).
+    """
+    wait_for_gateway()
+    supervisor = staff_login(SUPERVISOR_EMAIL, STAFF_PASSWORD, retry_seconds=180)
+    customer = customer_login()
+    if not (supervisor and customer):
+        sys.exit(1)
+    # Each service downloads Identity's signing keys on its first authenticated request.
+    call("GET", LEADERBOARD, supervisor)
+    call("GET", "/api/v1/cases/assignment-queue?queueType=MANUAL_QUEUE&limit=1", supervisor)
+
+    with outage("identity-service"):
+        status, _, _ = call("GET", LEADERBOARD, supervisor)
+        check(f"signed-in staff keep working (cached signing keys) -> {status}", status == 200)
+        create_high_risk_transaction(customer)
+        status, _, _ = call("POST", "/api/v1/auth/staff/login", body={"email": SUPERVISOR_EMAIL, "password": STAFF_PASSWORD})
+        check(f"new logins fail fast with a gateway error -> {status}", status in (502, 503, 504))
+    staff_login(SUPERVISOR_EMAIL, STAFF_PASSWORD, retry_seconds=60)
+
+    points_before = points_by_analyst(supervisor)
+    with outage("gamification-service"):
+        # A new customer each time: the AI learns a customer's habits, so a
+        # repeated "unusual" transfer from the same customer stops looking risky.
+        fresh_customer = customer_login() or ""
+        transaction_id = create_high_risk_transaction(fresh_customer)
+        transaction = wait_for_assessment(fresh_customer, transaction_id) if transaction_id else {}
+        analyst_email = DEMO_ANALYSTS.get((transaction.get("assessment") or {}).get("fraudType"), (None,))[0]
+        analyst = staff_login(analyst_email, STAFF_PASSWORD) if analyst_email else None
+        analyst_id = data_of(call("GET", "/api/v1/auth/me", analyst)[1]).get("id") if analyst else None
+        status = block_case(analyst, transaction.get("caseId")) if analyst else None
+        check(f"analyst still decides cases -> {status}", status == 200, transaction)
+    for _ in range(30):
+        if points_by_analyst(supervisor).get(analyst_id, 0) > points_before.get(analyst_id, 0):
+            break
+        time.sleep(1)
+    check("points earned during the outage arrive after the restart",
+          points_by_analyst(supervisor).get(analyst_id, 0) > points_before.get(analyst_id, 0))
+
+    with outage("transaction-service"):
+        status, _, _ = call("GET", LEADERBOARD, supervisor)
+        check(f"leaderboard still works -> {status}", status == 200)
+        staff_login(SUPERVISOR_EMAIL, STAFF_PASSWORD)
+        status, _, _ = call("GET", "/api/v1/cases/assignment-queue?queueType=MANUAL_QUEUE&limit=1", supervisor)
+        check(f"case API fails fast with a gateway error -> {status}", status in (502, 503, 504))
+    create_high_risk_transaction(customer)
+
+    with outage("notification-service"):
+        fresh_customer = customer_login() or ""
+        transaction_id = create_high_risk_transaction(fresh_customer)
+        transaction = wait_for_assessment(fresh_customer, transaction_id) if transaction_id else {}
+        check("cases are still opened without live notifications", bool(transaction.get("caseId")), transaction)
+    status, _, _ = call("POST", "/api/v1/events/tickets", supervisor)
+    check(f"live notification stream is available again -> {status}", status == 200)
+
+    with outage("web"):
+        status, _, _ = call("GET", LEADERBOARD, supervisor)
+        check(f"the API works without the web container -> {status}", status == 200)
+    status, _, _ = call("GET", "/")
+    check(f"the web app is served again -> {status}", status == 200)
+
+    with outage("rabbitmq"):
+        transaction_id = create_high_risk_transaction(customer)
+        transaction = wait_for_assessment(customer, transaction_id, seconds=20) if transaction_id else {}
+        check("without the broker the transaction waits for manual review (TIMED_OUT)",
+              (transaction.get("assessment") or {}).get("status") in ("TIMED_OUT", "FAILED"), transaction)
+    scored = False
+    deadline = time.monotonic() + 120
+    while not scored and time.monotonic() < deadline:
+        transaction_id = create_high_risk_transaction(customer)
+        assessment = (wait_for_assessment(customer, transaction_id) if transaction_id else {}).get("assessment") or {}
+        scored = assessment.get("status") == "COMPLETED"
+        if not scored:
+            time.sleep(5)
+    check("after the broker is back, the AI scores new transactions again", scored)
+
+    sys.exit(1 if failures else 0)
+
+
 if __name__ == "__main__":
-    commands = {"seed": seed, "smoke": smoke, "ai-down": ai_down}
+    commands = {"seed": seed, "smoke": smoke, "ai-down": ai_down, "resilience": resilience}
     if len(sys.argv) != 2 or sys.argv[1] not in commands:
         sys.exit(f"usage: {sys.argv[0]} {{{'|'.join(commands)}}}")
     commands[sys.argv[1]]()
