@@ -117,10 +117,12 @@ services:
       - fraudcell-app
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-      interval: 20s
+      interval: 10s
       timeout: 10s
       retries: 10
-      start_period: 30s
+      # A restart first replays the message store and metadata log, which can
+      # take minutes on a slow disk; failed checks in that window don't count.
+      start_period: 180s
     cpus: 0.50
     mem_limit: 384m
     mem_reservation: 160m
