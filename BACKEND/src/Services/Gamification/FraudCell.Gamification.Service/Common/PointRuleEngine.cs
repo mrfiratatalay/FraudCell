@@ -127,7 +127,7 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
             outboxWriter.Enqueue(GamificationEventTypes.AnalystLevelChanged, analystId, new { analystId, previousLevel = previousLevel.ToString(), newLevel = summary.Level.ToString() });
         }
 
-        await EvaluateBadgesAsync(analystId, sourceEventId, isFast, isCritical && slaCompliant, fraudType, isBlockDecision, now, cancellationToken);
+        await EvaluateBadgesAsync(analystId, sourceEventId, decidedAt, isFast, isCritical && slaCompliant, fraudType, isBlockDecision, now, cancellationToken);
     }
 
     public async Task ApplySlaBreachPenaltyAsync(string sourceEventId, string analystId, string caseId, DateTimeOffset breachedAt, DateTimeOffset now, CancellationToken cancellationToken)
@@ -206,7 +206,8 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
 
     private async Task<AnalystScoreSummary> GetOrCreateSummaryAsync(string analystId, DateTimeOffset now, CancellationToken cancellationToken)
     {
-        var summary = await db.ScoreSummaries.SingleOrDefaultAsync(s => s.AnalystId == analystId, cancellationToken);
+        // FindAsync also sees rows added earlier in this unit of work.
+        var summary = await db.ScoreSummaries.FindAsync([analystId], cancellationToken);
         if (summary is null)
         {
             summary = new AnalystScoreSummary { AnalystId = analystId, UpdatedAt = now };
@@ -218,7 +219,7 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
 
     private async Task<AnalystPerformanceSummary> GetOrCreatePerformanceAsync(string analystId, DateTimeOffset now, CancellationToken cancellationToken)
     {
-        var performance = await db.PerformanceSummaries.SingleOrDefaultAsync(p => p.AnalystId == analystId, cancellationToken);
+        var performance = await db.PerformanceSummaries.FindAsync([analystId], cancellationToken);
         if (performance is null)
         {
             performance = new AnalystPerformanceSummary { AnalystId = analystId, UpdatedAt = now };
@@ -234,7 +235,7 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
         var statDate = DateOnly.FromDateTime(decidedAt.UtcDateTime);
         var weekStart = StartOfIsoWeek(statDate);
 
-        var daily = await db.DailyStats.SingleOrDefaultAsync(d => d.AnalystId == analystId && d.StatDate == statDate, cancellationToken);
+        var daily = await db.DailyStats.FindAsync([analystId, statDate], cancellationToken);
         if (daily is null)
         {
             daily = new AnalystDailyStat { AnalystId = analystId, StatDate = statDate, UpdatedAt = now };
@@ -243,7 +244,7 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
 
         ApplyStatIncrement(daily, totalAwarded, isFast, isConfirmedFraud, decisionSeconds, now);
 
-        var weekly = await db.WeeklyStats.SingleOrDefaultAsync(w => w.AnalystId == analystId && w.WeekStartDate == weekStart, cancellationToken);
+        var weekly = await db.WeeklyStats.FindAsync([analystId, weekStart], cancellationToken);
         if (weekly is null)
         {
             weekly = new AnalystWeeklyStat { AnalystId = analystId, WeekStartDate = weekStart, UpdatedAt = now };
@@ -301,7 +302,7 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
 
     private async Task UpdateFraudTypeStatAsync(string analystId, string fraudType, bool isConfirmedFraud, DateTimeOffset now, CancellationToken cancellationToken)
     {
-        var stat = await db.FraudTypeStats.SingleOrDefaultAsync(s => s.AnalystId == analystId && s.FraudType == fraudType, cancellationToken);
+        var stat = await db.FraudTypeStats.FindAsync([analystId, fraudType], cancellationToken);
         if (stat is null)
         {
             stat = new AnalystFraudTypeStat { AnalystId = analystId, FraudType = fraudType, UpdatedAt = now };
@@ -316,59 +317,57 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
         stat.Version++;
     }
 
+    /// <summary>
+    /// Case §6.2 badges. Runs before the decision is saved, so every count below
+    /// includes this decision (tracked rows), not only what is in the database.
+    /// </summary>
     private async Task EvaluateBadgesAsync(
-        string analystId, string sourceEventId, bool isFast, bool isCriticalWithinSla, string? fraudType, bool isConfirmedFraud, DateTimeOffset now, CancellationToken cancellationToken)
+        string analystId, string sourceEventId, DateTimeOffset decidedAt, bool isFast, bool isCriticalWithinSla, string? fraudType, bool isConfirmedFraud,
+        DateTimeOffset now, CancellationToken cancellationToken)
     {
         if (isConfirmedFraud)
         {
-            await TryAwardBadgeAsync(analystId, BadgeCodes.FirstCatch, sourceEventId, now,
-                async ct => await db.PointLedger.CountAsync(p => p.AnalystId == analystId && p.RuleCode == RuleCodes.ConfirmedFraud, ct) == 1,
-                cancellationToken);
+            await TryAwardBadgeAsync(analystId, BadgeCodes.FirstCatch, sourceEventId, now, cancellationToken);
         }
 
-        if (isFast)
+        if (isFast && await CountRuleAsync(analystId, RuleCodes.FastDecision, cancellationToken) >= SharpEyeThreshold)
         {
-            var fastCount = await db.PointLedger.CountAsync(p => p.AnalystId == analystId && p.RuleCode == RuleCodes.FastDecision, cancellationToken);
-            if (fastCount >= SharpEyeThreshold)
-            {
-                await TryAwardBadgeAsync(analystId, BadgeCodes.SharpEye, sourceEventId, now, _ => Task.FromResult(true), cancellationToken);
-            }
+            await TryAwardBadgeAsync(analystId, BadgeCodes.SharpEye, sourceEventId, now, cancellationToken);
         }
 
-        var performance = await db.PerformanceSummaries.AsNoTracking().SingleOrDefaultAsync(p => p.AnalystId == analystId, cancellationToken);
+        var performance = await GetOrCreatePerformanceAsync(analystId, now, cancellationToken);
         if (performance is { TotalDecisions: >= ZeroErrorThreshold, FalsePositiveCount: 0 })
         {
-            await TryAwardBadgeAsync(analystId, BadgeCodes.ZeroError, sourceEventId, now, _ => Task.FromResult(true), cancellationToken);
+            await TryAwardBadgeAsync(analystId, BadgeCodes.ZeroError, sourceEventId, now, cancellationToken);
         }
 
-        var today = DateOnly.FromDateTime(now.UtcDateTime);
-        var todayStat = await db.DailyStats.AsNoTracking().SingleOrDefaultAsync(d => d.AnalystId == analystId && d.StatDate == today, cancellationToken);
-        if (todayStat is { DecisionCount: >= MarathonDailyThreshold })
+        var daily = await db.DailyStats.FindAsync([analystId, DateOnly.FromDateTime(decidedAt.UtcDateTime)], cancellationToken);
+        if (daily is { DecisionCount: >= MarathonDailyThreshold })
         {
-            await TryAwardBadgeAsync(analystId, BadgeCodes.Marathon, sourceEventId, now, _ => Task.FromResult(true), cancellationToken);
+            await TryAwardBadgeAsync(analystId, BadgeCodes.Marathon, sourceEventId, now, cancellationToken);
         }
 
-        if (isCriticalWithinSla)
+        if (isCriticalWithinSla && await CountRuleAsync(analystId, RuleCodes.CriticalWithinSla, cancellationToken) >= CrisisManagerThreshold)
         {
-            var criticalCount = await db.PointLedger.CountAsync(p => p.AnalystId == analystId && p.RuleCode == RuleCodes.CriticalWithinSla, cancellationToken);
-            if (criticalCount >= CrisisManagerThreshold)
-            {
-                await TryAwardBadgeAsync(analystId, BadgeCodes.CrisisManager, sourceEventId, now, _ => Task.FromResult(true), cancellationToken);
-            }
+            await TryAwardBadgeAsync(analystId, BadgeCodes.CrisisManager, sourceEventId, now, cancellationToken);
         }
 
         if (fraudType is not null && fraudType != "TEMIZ" && isConfirmedFraud)
         {
-            var typeStat = await db.FraudTypeStats.AsNoTracking().SingleOrDefaultAsync(s => s.AnalystId == analystId && s.FraudType == fraudType, cancellationToken);
+            var typeStat = await db.FraudTypeStats.FindAsync([analystId, fraudType], cancellationToken);
             if (typeStat is not null && typeStat.ConfirmedFraudCount >= SpecialistHunterThreshold)
             {
-                await TryAwardBadgeAsync(analystId, BadgeCodes.SpecialistHunter, sourceEventId, now, _ => Task.FromResult(true), cancellationToken);
+                await TryAwardBadgeAsync(analystId, BadgeCodes.SpecialistHunter, sourceEventId, now, cancellationToken);
             }
         }
     }
 
-    private async Task TryAwardBadgeAsync(
-        string analystId, string badgeCode, string sourceEventId, DateTimeOffset now, Func<CancellationToken, Task<bool>> condition, CancellationToken cancellationToken)
+    /// <summary>Ledger rows for a rule, saved ones plus the ones this decision just added.</summary>
+    private async Task<int> CountRuleAsync(string analystId, string ruleCode, CancellationToken cancellationToken) =>
+        await db.PointLedger.CountAsync(p => p.AnalystId == analystId && p.RuleCode == ruleCode, cancellationToken)
+        + db.PointLedger.Local.Count(p => p.AnalystId == analystId && p.RuleCode == ruleCode && db.Entry(p).State == EntityState.Added);
+
+    private async Task TryAwardBadgeAsync(string analystId, string badgeCode, string sourceEventId, DateTimeOffset now, CancellationToken cancellationToken)
     {
         var badge = await db.BadgeDefinitions.SingleOrDefaultAsync(b => b.Code == badgeCode, cancellationToken);
         if (badge is null)
@@ -378,11 +377,6 @@ public sealed class PointRuleEngine(GamificationServiceDbContext db, OutboxWrite
 
         var alreadyEarned = await db.EarnedBadges.AnyAsync(b => b.AnalystId == analystId && b.BadgeId == badge.Id, cancellationToken);
         if (alreadyEarned)
-        {
-            return;
-        }
-
-        if (!await condition(cancellationToken))
         {
             return;
         }
