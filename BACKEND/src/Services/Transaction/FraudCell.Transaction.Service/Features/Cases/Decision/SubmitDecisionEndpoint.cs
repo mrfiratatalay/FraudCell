@@ -111,6 +111,13 @@ public static class SubmitDecisionEndpoint
         crossCutting.PublishAudit(userId, role, decisionAction, "SUCCESS", "risk_case", caseId, httpContext.GetClientIp(),
             new { previousStatus = previousStatus.ToString(), newStatus = riskCase.Status.ToString() });
 
+        // Gamification scores a block against the customer's verification answer (case §4.5, §6.1).
+        var customerVerification = await db.CustomerVerifications.AsNoTracking()
+            .Where(v => v.CaseId == caseId && v.Status == VerificationStatus.ANSWERED)
+            .OrderByDescending(v => v.RespondedAt)
+            .Select(v => v.Response)
+            .FirstOrDefaultAsync(cancellationToken);
+
         outboxWriter.Enqueue(TransactionEventTypes.CaseDecisionMade, caseId, new
         {
             caseId,
@@ -123,6 +130,7 @@ public static class SubmitDecisionEndpoint
             decidedAt = now,
             createdAt = riskCase.CreatedAt,
             slaCompliant = riskCase.SlaBreachedAt is null,
+            customerVerification = customerVerification?.ToString(),
         });
 
         if (request.Decision == FinalDecision.APPROVE)
