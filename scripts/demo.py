@@ -173,8 +173,8 @@ def seed() -> None:
 
     accounts = [(email, first, last, "ANALYST", [specialty])
                 for specialty, (email, first, last) in DEMO_ANALYSTS.items()]
-    # Supervisors do not need a specialty, but the API still requires one (checklist 3.1-b).
-    accounts.append((SUPERVISOR_EMAIL, "Demo", "Supervizor", "SUPERVISOR", ["SUPHELI_DAVRANIS"]))
+    # Only analysts need a specialty (case §3.1, §5.3); the supervisor is created without one.
+    accounts.append((SUPERVISOR_EMAIL, "Demo", "Supervizor", "SUPERVISOR", []))
 
     for email, first, last, role, specialties in accounts:
         status, payload, _ = call("POST", "/api/v1/staff", admin, {
@@ -235,25 +235,46 @@ def smoke() -> None:
                               headers={"If-Match": headers.get("ETag", "")})
     check("analyst starts the review", status == 200, payload)
 
+    _, payload, _ = call("GET", "/api/v1/auth/me", analyst)
+    analyst_id = data_of(payload).get("id") or data_of(payload).get("userId")
+    points_before = points_by_analyst(supervisor).get(analyst_id, 0)
+
+    # Case §4.5: the customer's "not mine" answer is what confirms the fraud (§6.1).
+    _, _, headers = call("GET", f"/api/v1/cases/{case_id}", analyst)
+    status, payload, _ = call("POST", f"/api/v1/cases/{case_id}/verification-requests", analyst,
+                              {"message": "Bu islemi siz mi yaptiniz?"}, {"If-Match": headers.get("ETag", "")})
+    check("analyst asks the customer to verify the transaction", status == 201, payload)
+    _, payload, _ = call("GET", "/api/v1/customer/verifications/pending", customer)
+    verification = next((v for v in items_of(payload) if v.get("caseId") == case_id), {})
+    status, payload, _ = call("POST", f"/api/v1/cases/{case_id}/verification-responses", customer,
+                              {"verificationId": verification.get("verificationId"), "response": "NOT_MINE"})
+    check("customer answers 'not mine'", status == 200, payload)
+
     _, _, headers = call("GET", f"/api/v1/cases/{case_id}", analyst)
     status, payload, _ = call("PATCH", f"/api/v1/cases/{case_id}/decision", analyst,
                               {"decision": "BLOCK", "note": "Yurt disi, yeni cihaz, gece: musteri profiline uymuyor."},
                               {"If-Match": headers.get("ETag", "")})
     check("analyst blocks the transaction with a decision note", status == 200, payload)
 
-    analyst_id = None
-    leaderboard: list[dict] = []
+    # Case §4.2: a transition outside the state machine returns 422.
+    _, _, headers = call("GET", f"/api/v1/cases/{case_id}", analyst)
+    status, payload, _ = call("PATCH", f"/api/v1/cases/{case_id}/decision", analyst,
+                              {"decision": "APPROVE", "note": "Ikinci karar denemesi."}, {"If-Match": headers.get("ETag", "")})
+    check("a second decision on the blocked case is rejected with 422", status == 422, payload)
+
+    # Case §6.1: decision +10, under 15 minutes +5, customer-confirmed block +15,
+    # KRITIK (the "not mine" answer raises it) within SLA +15.
+    expected = points_before + 45
+    points = points_before
     for _ in range(20):
-        _, payload, _ = call("GET", "/api/v1/auth/me", analyst)
-        analyst_id = data_of(payload).get("id") or data_of(payload).get("userId")
-        _, payload, _ = call("GET", "/api/v1/game/leaderboard?period=daily", supervisor)
-        leaderboard = items_of(payload)
-        if any(row.get("analystId") == analyst_id and row.get("points", 0) > 0 for row in leaderboard):
+        points = points_by_analyst(supervisor).get(analyst_id, 0)
+        if points >= expected:
             break
         time.sleep(1)
-    row = next((r for r in leaderboard if r.get("analystId") == analyst_id), None)
-    print("        leaderboard row:", json.dumps(row, ensure_ascii=False))
-    check("points reach the daily leaderboard", bool(row and row.get("points", 0) > 0), leaderboard)
+    check(f"the confirmed block adds 45 points on the daily leaderboard ({points_before} -> {points})", points == expected)
+    _, payload, _ = call("GET", f"/api/v1/game/profiles/{analyst_id}/badges", analyst)
+    check("the confirmed catch earns the First Catch badge",
+          any(badge.get("code") == "FIRST_CATCH" for badge in items_of(payload)), payload)
 
     sys.exit(1 if failures else 0)
 

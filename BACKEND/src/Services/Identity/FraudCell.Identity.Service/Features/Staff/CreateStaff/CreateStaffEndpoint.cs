@@ -59,9 +59,10 @@ public static class CreateStaffEndpoint
                 new Dictionary<string, object?> { ["field"] = "role" });
         }
 
-        if (request.Specialties.Count == 0)
+        // Only analysts are matched to cases by specialty (case §5.3); supervisors and admins may have none.
+        if (request.Role == RoleNames.Analyst && request.Specialties.Count == 0)
         {
-            throw AppException.Validation("En az bir uzmanlik alani atanmalidir.");
+            throw AppException.Validation("Analist icin en az bir uzmanlik alani atanmalidir.");
         }
 
         if (request.Regions.Count == 0)

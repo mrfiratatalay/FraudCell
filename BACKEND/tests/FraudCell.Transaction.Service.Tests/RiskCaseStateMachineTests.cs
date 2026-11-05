@@ -65,6 +65,59 @@ public sealed class RiskCaseStateMachineTests
         riskCase.Status.ShouldBe(CaseStatus.INCELENIYOR);
     }
 
+    // Case §4.2 lists only ONAYLANDI -> KAPANDI, but §4.6 lets the customer rate only
+    // a KAPANDI case and §11.1 rates a blocked transaction too, so BLOKLANDI closes the same way.
+    [Theory]
+    [InlineData(FinalDecision.APPROVE)]
+    [InlineData(FinalDecision.BLOCK)]
+    public void Decided_case_closes_48_hours_after_the_decision(FinalDecision decision)
+    {
+        var riskCase = NewCase();
+        riskCase.Assign("analyst-1", Now);
+        riskCase.StartReview("analyst-1", isSupervisorOverride: false, Now.AddMinutes(1));
+        Decide(riskCase, decision, Now.AddMinutes(2));
+
+        riskCase.ClosureDueAt.ShouldBe(Now.AddMinutes(2).AddHours(48));
+        riskCase.Close(Now.AddMinutes(2).AddHours(48));
+
+        riskCase.Status.ShouldBe(CaseStatus.KAPANDI);
+        riskCase.ClosedAt.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void Case_under_review_cannot_be_closed()
+    {
+        var riskCase = NewCase();
+        riskCase.Assign("analyst-1", Now);
+        riskCase.StartReview("analyst-1", isSupervisorOverride: false, Now.AddMinutes(1));
+
+        Should.Throw<AppException>(() => riskCase.Close(Now.AddMinutes(2))).Code.ShouldBe(ErrorCodes.InvalidCaseTransition);
+    }
+
+    [Fact]
+    public void Decided_case_cannot_be_decided_again()
+    {
+        var riskCase = NewCase();
+        riskCase.Assign("analyst-1", Now);
+        riskCase.StartReview("analyst-1", isSupervisorOverride: false, Now.AddMinutes(1));
+        riskCase.Block("analyst-1", "Musteri islemi reddetti.", Now.AddMinutes(2));
+
+        Should.Throw<AppException>(() => riskCase.Approve("analyst-1", null, Now.AddMinutes(3))).Code.ShouldBe(ErrorCodes.CaseAlreadyDecided);
+        riskCase.Status.ShouldBe(CaseStatus.BLOKLANDI);
+    }
+
+    private static void Decide(RiskCase riskCase, FinalDecision decision, DateTimeOffset at)
+    {
+        if (decision == FinalDecision.APPROVE)
+        {
+            riskCase.Approve("analyst-1", null, at);
+        }
+        else
+        {
+            riskCase.Block("analyst-1", "Musteri islemi reddetti.", at);
+        }
+    }
+
     private static RiskCase NewCase() => new()
     {
         Id = "case-1",

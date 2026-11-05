@@ -26,10 +26,10 @@ yapılan uçtan uca çalıştırmayı gösterir (iki kurulum engeli geçici olar
 | Bölüm | ✅ | ⚠️ | ❌ | 🐛 |
 |---|---:|---:|---:|---:|
 | 2. Mimari | 7 | 4 | 0 | 0 |
-| 3. Identity | 14 | 4 | 0 | 2 |
-| 4. Transaction | 16 | 3 | 1 | 0 |
-| 5. AI | 7 | 2 | 2 | 3 |
-| 6. Gamification | 9 | 3 | 0 | 1 |
+| 3. Identity | 15 | 4 | 0 | 1 |
+| 4. Transaction | 17 | 2 | 1 | 0 |
+| 5. AI | 8 | 1 | 2 | 3 |
+| 6. Gamification | 12 | 1 | 0 | 0 |
 | 7. Süpervizör paneli | 1 | 4 | 0 | 1 |
 | 8. API tasarımı | 2 | 2 | 0 | 0 |
 | 9. Event akışı | 2 | 1 | 0 | 0 |
@@ -38,7 +38,7 @@ yapılan uçtan uca çalıştırmayı gösterir (iki kurulum engeli geçici olar
 | 12. Değerlendirme ve bonus | 3 | 3 | 0 | 1 |
 | 13. Diskalifiye koşulları | 4 | 1 | 0 | 0 |
 | 14. Teslimat | 3 | 4 | 2 | 0 |
-| **Toplam (129 satır)** | **75** | **39** | **5** | **10** |
+| **Toplam (129 satır)** | **81** | **35** | **5** | **8** |
 
 Bazı satırlar aynı kök nedene bağlıdır. Örneğin `docker compose up` sorunu 2.2-d, 11.3-1 ve 13.2-b'de
 ayrı ayrı görünür.
@@ -46,7 +46,7 @@ ayrı ayrı görünür.
 **En kritik dört açık:**
 
 1. Analistin AI kararını değiştirmesi AI servisine ulaşmıyor. Bu yüzden doğruluk metrikleri her zaman boş (4.3-c, 5.4).
-2. "+15 doğrulanmış dolandırıcılık" puanı her blok kararına veriliyor. Demoda puan yanlış görünüyor (6.1-c).
+2. ~~"+15 doğrulanmış dolandırıcılık" puanı her blok kararına veriliyor (6.1-c).~~ Part 3'te düzeltildi.
 3. AI servisinin endpoint'leri token olmadan erişilebilir (10-b).
 4. Veritabanları tek PostgreSQL container'ında; jüri bunu "ortak veritabanı" sayabilir (2.2-a).
 
@@ -85,7 +85,7 @@ ayrı ayrı görünür.
 | # | Gereksinim | Durum | Kanıt | Plan |
 |---|---|:---:|---|---|
 | 3.1-a | Müşteri kaydı: GSM + OTP (sabit 1234); ad, soyad, GSM, e-posta (opsiyonel) | ✅ | [OtpService.cs] (sabit kod, 5 dk geçerlilik, 5 deneme), [VerifyOtpChallengeEndpoint.cs]. canlı | |
-| 3.1-b | Personel hesabını admin oluşturur; e-posta + şifre; uzmanlık/bölge çoklu seçilir | 🐛 | Uzmanlık ve bölge **her rol için** zorunlu; süpervizör ve admin oluştururken de uzmanlık isteniyor ([CreateStaffEndpoint.cs#L62-L70]). | Part 3 |
+| 3.1-b | Personel hesabını admin oluşturur; e-posta + şifre; uzmanlık/bölge çoklu seçilir | ✅ | Uzmanlık yalnızca analist için zorunlu; süpervizör ve admin uzmanlıksız oluşturulabiliyor ([CreateStaffEndpoint.cs]). `demo.py seed` süpervizörü uzmanlıksız açıyor, CI'da her PR'da koşuyor. | |
 | 3.1-c | Şifre politikası (min 8, 1 büyük harf, 1 rakam, 1 özel karakter); ihlal edilen kural net mesajla dönülür | ⚠️ | Kurallar doğru ([Identity/Program.cs#L68-L73]). Hata `violations` kodlarıyla dönüyor ([CreateStaffEndpoint.cs#L91-L98]) ama mesajlar ASP.NET Identity'nin İngilizce varsayılanları. | Part 4 |
 | 3.1-d | bcrypt veya argon2 ile hash | ✅ | Argon2id ([Argon2idPasswordHasher.cs], kayıt [Identity/Program.cs#L88]) | |
 | 3.1-e | 5 başarısız girişte 15 dk kilit; kilitli hesapta kalan süre döner | ✅ | [Identity/Program.cs#L75-L78]; kilitli hesap 423 `ACCOUNT_LOCKED` ve `remainingSeconds` döner ([StaffLoginEndpoint.cs#L69-L82]). Otomatik test yok. | Part 4 |
@@ -114,9 +114,9 @@ ayrı ayrı görünür.
 | 4.1-c | AI erişilemezse işlem yine kaydedilir (BELIRSIZ, İNCELEME), manuel kuyruğa düşer | ✅ | Watchdog 2 sn sonra `TIMED_OUT` yapıp `MANUAL_QUEUE`'ya alıyor ([AssessmentWatchdogWorker.cs]); risk `BELIRSIZ` gösteriliyor ([Transaction.cs#L145]). canlı | |
 | 4.1-d | Sistem genelinde benzersiz, okunabilir işlem numarası (TRX-2026-000123) | ✅ | [TransactionNumberGenerator.cs#L46] `TRX-{yıl}-{000000}`, atomik sayaç | |
 | 4.2-a | State machine: YENI → ATANDI → INCELENIYOR ⇄ MUSTERI_DOGRULAMA → ONAYLANDI/BLOKLANDI; ONAYLANDI → KAPANDI (48 saat) | ✅ | [RiskCase.cs]: her geçiş ayrı metot, genel bir `Status` setter'ı yok; kapanış [CaseClosureWorker.cs]. Test: [RiskCaseStateMachineTests.cs] | |
-| 4.2-b | Kural dışı geçiş 422 döner | ✅ | Domain kuralı 422 `INVALID_CASE_TRANSITION` olarak dönüyor. Endpoint seviyesinde test yok. | Part 3 |
+| 4.2-b | Kural dışı geçiş 422 döner | ✅ | Domain kuralı 422 `INVALID_CASE_TRANSITION` / `CASE_ALREADY_DECIDED` olarak dönüyor. Endpoint seviyesinde: `demo.py smoke` bloklanmış vakaya ikinci kararın 422 döndüğünü kontrol ediyor. | |
 | 4.2-c | BLOKLANDI kararında not zorunlu | ✅ | [RiskCase.cs] `Block` | |
-| 4.2-d | BLOKLANDI vakanın kapanışı | ⚠️ | Case tablosunda yalnızca ONAYLANDI → KAPANDI var; kod BLOKLANDI'yı da 48 saat sonra kapatıyor ([CaseClosureWorker.cs]). Müşteri geri bildirimi KAPANDI şartına bağlı olduğu için bu yorum geri bildirimi de etkiliyor; karar belgelenmemiş. | Part 3 |
+| 4.2-d | BLOKLANDI vakanın kapanışı | ✅ | Karar: BLOKLANDI da 48 saat sonra KAPANDI olur. Müşteri yalnızca KAPANDI vakayı puanlayabildiği (§4.6) ve bloklanan işlemi de puanladığı (§11.1) için. Gerekçe [RiskCase.cs] `Close` yorumunda; test [RiskCaseStateMachineTests.cs]. | |
 | 4.3-a | Türler: CALINTI_KART, HESAP_ELE_GECIRME, PARA_AKLAMA, SUPHELI_DAVRANIS, TEMIZ | ✅ | [Transaction/Domain/Enums.cs#L13-L20] | |
 | 4.3-b | Tür AI tarafından atanır; analist veya süpervizör değiştirebilir | ✅ | [FraudTypeOverrideEndpoint.cs#L27] | |
 | 4.3-c | Tür değişikliği AI Service'e bildirilir (doğruluk metriği için) | ❌ | Event yayınlanıyor ([FraudTypeOverrideEndpoint.cs#L81-L89]) ama AI servisinde bu event'in consumer'ı yok ([ai/app/main.py#L48-L52]). `prediction_feedback` tablosuna hiçbir yerden yazılmıyor. | Part 5 |
@@ -143,7 +143,7 @@ ayrı ayrı görünür.
 | 5.2-b | Tür analist ekranında görsel olarak gösterilir | ✅ | Vaka detayında risk göstergesi ve tür etiketi ([CaseDetailPage.tsx]) | |
 | 5.3-a | Skorlamaya dayalı otomatik atama: uzmanlık × 0.5 + boşluk × 0.3 + performans × 0.2 | ✅ | [assignment.py#L18-L22], [assignment.py#L79-L81] | |
 | 5.3-b | Kapasite analist başına 10 aktif vaka; kapasite yoksa vaka kuyruğa alınır | ✅ | AI öneriyor; Transaction kapasiteyi `FOR UPDATE` kilidiyle kesinleştiriyor ([AssignmentService.cs]). Kapasite yoksa `QUEUED` ([AiAssessmentCompletedConsumer.cs#L220-L224]). | Part 2 |
-| 5.3-c | Performans: analistin doğru karar oranı | ⚠️ | Her karar baştan doğru sayılıyor; yalnızca müşteri blok kararına 1–2 yıldız verirse yanlışa dönüyor ([PointRuleEngine.cs#L269], [PointRuleEngine.cs#L156-L193]). "Doğru karar" tanımı yok. | Part 3 |
+| 5.3-c | Performans: analistin doğru karar oranı | ✅ | Ground truth müşterinin doğrulama cevabı (§4.5): "ben yaptım" denen işlemi bloklamak ve "ben yapmadım" denen işlemi onaylamak yanlış karar; cevap yoksa karar doğru sayılıyor ([PointRuleEngine.cs], [PointRuleEngineTests.cs]). | |
 | 5.3-d | Süpervizör her zaman manuel atama yapabilir | ✅ | [ManualAssignmentEndpoint.cs] | |
 | 5.4-a | Tür değiştirilirse "yanlış sınıflandırma" olarak kaydedilir | ❌ | 4.3-c: override AI'a ulaşmıyor. | Part 5 |
 | 5.4-b | Süpervizör panelinde AI doğruluk oranı (doğru / toplam × 100) | 🐛 | Endpoint ve kart var ([metrics_router.py], [SupervisorDashboardPage.tsx#L200-L210]) ama `prediction_feedback` hiç dolmadığı için her zaman boş. | Part 5 |
@@ -154,14 +154,14 @@ ayrı ayrı görünür.
 | # | Gereksinim | Durum | Kanıt | Plan |
 |---|---|:---:|---|---|
 | 6.0 | Olay tabanlı çalışır, doğrudan çağrı yok | ✅ | Puanı yalnızca consumer'lar yazıyor ([CaseDecisionMadeConsumer.cs]); dışarıya açık "puan ekle" endpoint'i yok | |
-| 6.1-a | Her karar +10 | ✅ | [PointRuleEngine.cs#L34-L37] | Part 3 |
-| 6.1-b | 15 dakikadan kısa karar +5 | ✅ | [PointRuleEngine.cs#L39-L42] | Part 3 |
-| 6.1-c | Gerçek dolandırıcılık yakalandı (müşteri teyitli BLOK) +15 | 🐛 | +15 **her** BLOK kararında veriliyor, müşteri teyidi aranmıyor ([PointRuleEngine.cs#L44-L47]). canlı: tek bir blok kararı 30 puan getirdi; beklenen 15. | Part 3 |
-| 6.1-d | KRITIK vaka SLA içinde +15 | ✅ | [PointRuleEngine.cs#L49-L52] | Part 3 |
-| 6.1-e | SLA aşımı −5 | ✅ | [CaseSlaBreachedConsumer.cs] → [PointRuleEngine.cs#L121-L150] | Part 3 |
-| 6.1-f | Yanlış blok (meşru işlem bloklandı) −8 | ⚠️ | Yalnızca müşteri blok kararına 1–2 yıldız verirse uygulanıyor ([CustomerFeedbackSubmittedConsumer.cs#L54]); memnuniyet puanı yanlış pozitifin kanıtı değil. Kod, hiç yazılmamış `11-GAMIFICATION-DESIGN.md` dokümanına atıf yapıyor. | Part 3 |
-| 6.2 | Rozetler: İlk Yakalama, Keskin Göz, Sıfır Hata, Maratoncu, Kriz Yöneticisi, Uzman Avcı | ⚠️ | Altısı da tanımlı ([PointRuleEngine.cs#L307-L356]). Koşullar henüz kaydedilmemiş satırları veritabanından sayıyor; "İlk Yakalama" ilk yakalamada değil ikincide verilebilir (off-by-one şüphesi). "İlk Yakalama" da teyit yerine her BLOK'a bağlı. | Part 3 |
-| 6.3 | Seviyeler: Bronz 0–499, Gümüş 500–1.499, Altın 1.500–2.999, Platin 3.000+ | ✅ | [Gamification/Domain/Enums.cs#L31-L40] | |
+| 6.1-a | Her karar +10 | ✅ | [PointRuleEngine.cs]; test [PointRuleEngineTests.cs] | |
+| 6.1-b | 15 dakikadan kısa karar +5 | ✅ | [PointRuleEngine.cs]; test [PointRuleEngineTests.cs] | |
+| 6.1-c | Gerçek dolandırıcılık yakalandı (müşteri teyitli BLOK) +15 | ✅ | Yalnızca müşteri "ben yapmadım" dediyse veriliyor; cevap `case.decision.made` ile geliyor ([SubmitDecisionEndpoint.cs], [PointRuleEngine.cs]). Teyitsiz tek blok 15 puan. Test [PointRuleEngineTests.cs]; `demo.py smoke` teyitli blokta tam +45 puanı kontrol ediyor. | |
+| 6.1-d | KRITIK vaka SLA içinde +15 | ✅ | [PointRuleEngine.cs]; test [PointRuleEngineTests.cs] | |
+| 6.1-e | SLA aşımı −5 | ✅ | [CaseSlaBreachedConsumer.cs] → [PointRuleEngine.cs]. Ceza artık günlük/haftalık liderlik puanından da düşüyor. Test [PointRuleEngineTests.cs] | |
+| 6.1-f | Yanlış blok (meşru işlem bloklandı) −8 | ✅ | Müşteri "ben yaptım" dediği işlem bloklanırsa karar anında −8 ve yanlış pozitif sayılıyor. 1–5 yıldız memnuniyet puanı (§4.6) artık puan değiştirmiyor ([CustomerFeedbackSubmittedConsumer.cs]). Test [PointRuleEngineTests.cs] | |
+| 6.2 | Rozetler: İlk Yakalama, Keskin Göz, Sıfır Hata, Maratoncu, Kriz Yöneticisi, Uzman Avcı | ✅ | Eşikler artık mevcut kararı da sayıyor (önceden kaydedilmemiş satırlar sayılmadığı için her rozet bir karar geç geliyordu). İlk Yakalama ve Uzman Avcı müşteri teyitli bloğa bağlı. Test [PointRuleEngineTests.cs] | |
+| 6.3 | Seviyeler: Bronz 0–499, Gümüş 500–1.499, Altın 1.500–2.999, Platin 3.000+ | ✅ | [Gamification/Domain/Enums.cs#L31-L40]; test [LevelThresholdsTests.cs] | |
 | 6.4-a | Günlük ve haftalık liderlik tablosu, ilk 10, puana göre | ✅ | [LeaderboardEndpoint.cs] | |
 | 6.4-b | Liderlik tablosu gerçek zamanlı ya da sayfa yenilemede güncel | ✅ | SSE ve sorgu yenileme ([useRealtime.ts]) | |
 | 6.4-c | Profil: toplam puan, seviye, rozetler, günlük/haftalık sıra, çözülen vaka, ortalama puan | ⚠️ | [ProfilesEndpoints.cs], [AnalystPointsPage.tsx]; alanların tamamı doğrulanmadı. | Part 6 |
@@ -303,7 +303,6 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 [VerifyOtpChallengeEndpoint.cs]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Features/Auth/CustomerOtp/VerifyOtpChallengeEndpoint.cs
 [CreateStaffEndpoint.cs]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Features/Staff/CreateStaff/CreateStaffEndpoint.cs
 [CreateStaffEndpoint.cs#L37]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Features/Staff/CreateStaff/CreateStaffEndpoint.cs#L37
-[CreateStaffEndpoint.cs#L62-L70]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Features/Staff/CreateStaff/CreateStaffEndpoint.cs#L62-L70
 [CreateStaffEndpoint.cs#L91-L98]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Features/Staff/CreateStaff/CreateStaffEndpoint.cs#L91-L98
 [Argon2idPasswordHasher.cs]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Security/Argon2idPasswordHasher.cs
 [StaffLoginEndpoint.cs#L69-L82]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Features/Auth/StaffLogin/StaffLoginEndpoint.cs#L69-L82
@@ -346,17 +345,13 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 [AiAssessmentCompletedConsumer.cs#L220-L224]: ../BACKEND/src/Services/Transaction/FraudCell.Transaction.Service/Messaging/AiAssessmentCompletedConsumer.cs#L220-L224
 [RiskCaseStateMachineTests.cs]: ../BACKEND/tests/FraudCell.Transaction.Service.Tests/RiskCaseStateMachineTests.cs
 
-[PointRuleEngine.cs#L34-L37]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Common/PointRuleEngine.cs#L34-L37
-[PointRuleEngine.cs#L39-L42]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Common/PointRuleEngine.cs#L39-L42
-[PointRuleEngine.cs#L44-L47]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Common/PointRuleEngine.cs#L44-L47
-[PointRuleEngine.cs#L49-L52]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Common/PointRuleEngine.cs#L49-L52
-[PointRuleEngine.cs#L121-L150]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Common/PointRuleEngine.cs#L121-L150
-[PointRuleEngine.cs#L156-L193]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Common/PointRuleEngine.cs#L156-L193
-[PointRuleEngine.cs#L269]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Common/PointRuleEngine.cs#L269
-[PointRuleEngine.cs#L307-L356]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Common/PointRuleEngine.cs#L307-L356
 [CaseDecisionMadeConsumer.cs]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Messaging/CaseDecisionMadeConsumer.cs
 [CaseSlaBreachedConsumer.cs]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Messaging/CaseSlaBreachedConsumer.cs
-[CustomerFeedbackSubmittedConsumer.cs#L54]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Messaging/CustomerFeedbackSubmittedConsumer.cs#L54
+[PointRuleEngine.cs]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Common/PointRuleEngine.cs
+[PointRuleEngineTests.cs]: ../BACKEND/tests/FraudCell.Gamification.Service.Tests/PointRuleEngineTests.cs
+[LevelThresholdsTests.cs]: ../BACKEND/tests/FraudCell.Gamification.Service.Tests/LevelThresholdsTests.cs
+[SubmitDecisionEndpoint.cs]: ../BACKEND/src/Services/Transaction/FraudCell.Transaction.Service/Features/Cases/Decision/SubmitDecisionEndpoint.cs
+[CustomerFeedbackSubmittedConsumer.cs]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Messaging/CustomerFeedbackSubmittedConsumer.cs
 [Gamification/Domain/Enums.cs#L31-L40]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Domain/Enums.cs#L31-L40
 [LeaderboardEndpoint.cs]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Features/Leaderboard/LeaderboardEndpoint.cs
 [LeaderboardEndpoint.cs#L23]: ../BACKEND/src/Services/Gamification/FraudCell.Gamification.Service/Features/Leaderboard/LeaderboardEndpoint.cs#L23

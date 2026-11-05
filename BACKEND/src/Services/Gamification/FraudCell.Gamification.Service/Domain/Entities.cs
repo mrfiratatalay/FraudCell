@@ -131,6 +131,8 @@ public interface IPeriodStat
 
     int ConfirmedFraudCount { get; set; }
 
+    int FalsePositiveCount { get; set; }
+
     double? AverageDecisionSeconds { get; set; }
 
     DateTimeOffset UpdatedAt { get; set; }

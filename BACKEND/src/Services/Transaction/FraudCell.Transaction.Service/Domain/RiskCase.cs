@@ -227,7 +227,11 @@ public sealed class RiskCase
         Touch(now);
     }
 
-    /// <summary>Dokuman §29/§30: 48 saat sonra sistem tarafindan kapatilir.</summary>
+    /// <summary>
+    /// Closed by the system 48 hours after the decision. Case §4.2 lists only
+    /// ONAYLANDI -> KAPANDI; BLOKLANDI closes too because the customer may rate
+    /// only a KAPANDI case (§4.6) and also rates blocked transactions (§11.1).
+    /// </summary>
     public void Close(DateTimeOffset now)
     {
         if (Status is not (CaseStatus.ONAYLANDI or CaseStatus.BLOKLANDI))
