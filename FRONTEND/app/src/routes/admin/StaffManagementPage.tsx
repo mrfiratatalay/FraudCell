@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
-import { CircleUserRound, Pencil, Plus, ShieldCheck, UserCheck, Users } from 'lucide-react';
+import { Pencil, Plus } from 'lucide-react';
 import {
   createStaff,
   getStaffReferences,
@@ -24,8 +24,7 @@ import {
   PageHeader,
   PasswordField,
   Sheet,
-  SkeletonCards,
-  StatTile,
+  KpiStrip,
   ToneBadge,
   useToast,
 } from '@/shared/ui';
@@ -214,8 +213,8 @@ export function StaffManagementPage() {
   return (
     <div>
       <PageHeader
-        title="Ekip ve yetki merkezi"
-        description="Personel rollerini, uzmanlıklarını ve operasyona katılım durumunu tek yerden yönet."
+        title="Personel"
+        description="Roller, uzmanlıklar, bölgeler ve atamaya açıklık. Düzenlemek için satıra tıkla."
         actions={
           <Button leadingIcon={<Plus className="size-4" />} onClick={openCreate}>
             Personel ekle
@@ -223,15 +222,16 @@ export function StaffManagementPage() {
         }
       />
 
-      {staff.isPending ? (
-        <div className="mb-5"><SkeletonCards count={4} /></div>
-      ) : !staff.isError ? (
-        <section className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Personel özeti">
-          <StatTile label="Toplam personel" value={staffItems.length} hint="Kayıtlı ekip üyesi" icon={<Users className="size-5" />} />
-          <StatTile label="Aktif hesap" value={activeCount} hint="Sisteme erişebilir" icon={<UserCheck className="size-5" />} />
-          <StatTile label="Analist" value={analystCount} hint="İnceleme ekibi" icon={<CircleUserRound className="size-5" />} />
-          <StatTile label="Atamaya açık" value={assignableCount} hint="Aktif analist kapasitesi" icon={<ShieldCheck className="size-5" />} />
-        </section>
+      {!staff.isError ? (
+        <KpiStrip
+          className="mb-5"
+          items={[
+            { label: 'Toplam personel', value: staff.isPending ? '—' : staffItems.length },
+            { label: 'Aktif hesap', value: staff.isPending ? '—' : activeCount },
+            { label: 'Analist', value: staff.isPending ? '—' : analystCount },
+            { label: 'Atamaya açık', value: staff.isPending ? '—' : assignableCount, hint: 'Aktif ve atamaya açık analist' },
+          ]}
+        />
       ) : null}
 
       {staff.isError ? (

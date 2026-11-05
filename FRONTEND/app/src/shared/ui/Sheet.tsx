@@ -45,7 +45,7 @@ export function Sheet({
         <Dialog.Content
           className={cn(
             'fixed inset-x-0 bottom-0 z-50 max-h-[88vh] overflow-y-auto',
-            'rounded-t-sheet bg-surface p-5 shadow-raised safe-bottom',
+            'rounded-t-sheet border border-line bg-surface p-5 shadow-overlay safe-bottom sm:p-6',
             'data-[state=open]:animate-slide-up',
             // Masaüstünde tam genişlik yerine ortalanmış dar panel.
             'sm:inset-x-auto sm:top-1/2 sm:left-1/2 sm:bottom-auto sm:w-full sm:max-w-lg',
@@ -60,7 +60,7 @@ export function Sheet({
 
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <Dialog.Title className="text-[17px] font-semibold text-ink-900">
+              <Dialog.Title className="text-h2 text-ink-900">
                 {title}
               </Dialog.Title>
               {description && (
@@ -128,10 +128,10 @@ export function ConfirmDialog({
             onClick={onConfirm}
             disabled={loading}
             className={cn(
-              'inline-flex h-12 flex-1 items-center justify-center rounded-pill px-6',
-              'text-[15px] font-semibold text-white transition-[filter]',
-              'disabled:pointer-events-none disabled:bg-none disabled:bg-ink-100 disabled:text-ink-400',
-              destructive ? 'bg-danger-500 hover:bg-danger-700' : 'gradient-brand hover:brightness-105',
+              'inline-flex h-10 flex-1 items-center justify-center rounded-control px-4',
+              'text-sm font-semibold transition-colors',
+              'disabled:pointer-events-none disabled:bg-ink-100 disabled:text-ink-400',
+              destructive ? 'bg-critical-600 text-white hover:bg-critical-700' : 'bg-tc-500 text-night-900 hover:bg-tc-400',
             )}
           >
             {loading ? 'Gönderiliyor…' : confirmLabel}
@@ -141,8 +141,8 @@ export function ConfirmDialog({
             onClick={() => onOpenChange(false)}
             disabled={loading}
             className={cn(
-              'inline-flex h-12 flex-1 items-center justify-center rounded-pill px-6',
-              'border border-ink-200 text-[15px] font-semibold text-ink-700',
+              'inline-flex h-10 flex-1 items-center justify-center rounded-control px-4',
+              'border border-line text-sm font-medium text-ink-700',
               'transition-colors hover:bg-ink-100 disabled:pointer-events-none',
             )}
           >

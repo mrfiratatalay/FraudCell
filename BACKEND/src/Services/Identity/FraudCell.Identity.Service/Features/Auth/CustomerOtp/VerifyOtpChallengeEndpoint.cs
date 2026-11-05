@@ -61,11 +61,11 @@ public static class VerifyOtpChallengeEndpoint
         {
             var (code, message) = outcome switch
             {
-                OtpVerifyOutcome.Expired => (ErrorCodes.OtpChallengeExpired, "OTP kodunun suresi dolmus."),
-                OtpVerifyOutcome.Locked => (ErrorCodes.OtpChallengeLocked, "Maksimum deneme sayisi asildi. Yeni bir kod isteyin."),
-                OtpVerifyOutcome.AlreadyVerified => (ErrorCodes.OtpAlreadyVerified, "Bu OTP kodu zaten kullanilmis."),
-                OtpVerifyOutcome.NotFound => (ErrorCodes.OtpChallengeNotFound, "Aktif bir OTP istegi bulunamadi."),
-                _ => (ErrorCodes.OtpCodeInvalid, "OTP kodu hatali."),
+                OtpVerifyOutcome.Expired => (ErrorCodes.OtpChallengeExpired, "OTP kodunun süresi dolmuş."),
+                OtpVerifyOutcome.Locked => (ErrorCodes.OtpChallengeLocked, "Maksimum deneme sayısı aşıldı. Yeni bir kod isteyin."),
+                OtpVerifyOutcome.AlreadyVerified => (ErrorCodes.OtpAlreadyVerified, "Bu OTP kodu zaten kullanılmış."),
+                OtpVerifyOutcome.NotFound => (ErrorCodes.OtpChallengeNotFound, "Aktif bir OTP isteği bulunamadı."),
+                _ => (ErrorCodes.OtpCodeInvalid, "OTP kodu hatalı."),
             };
 
             auditWriter.Record(null, null, AuditActions.LoginFailed, AuditResult.Failure, "otp_challenge", request.ChallengeId, ip);
@@ -88,7 +88,7 @@ public static class VerifyOtpChallengeEndpoint
 
             if (request.Customer is null || string.IsNullOrWhiteSpace(request.Customer.FirstName) || string.IsNullOrWhiteSpace(request.Customer.LastName))
             {
-                throw AppException.Validation("Kayit icin musteri ad/soyad bilgisi zorunludur.");
+                throw AppException.Validation("Kayıt için müşteri ad/soyad bilgisi zorunludur.");
             }
 
             var now = clock.UtcNow;
@@ -103,7 +103,7 @@ public static class VerifyOtpChallengeEndpoint
             var createResult = await userManager.CreateAsync(user);
             if (!createResult.Succeeded)
             {
-                throw AppException.Validation("Kayit olusturulamadi.",
+                throw AppException.Validation("Kayıt oluşturulamadı.",
                     new Dictionary<string, object?> { ["errors"] = createResult.Errors.Select(e => e.Description).ToArray() });
             }
 
@@ -125,7 +125,7 @@ public static class VerifyOtpChallengeEndpoint
             // Musteri henuz kayitli degil; enumeration onlemi icin genel OTP hatasi donulur.
             auditWriter.Record(null, null, AuditActions.LoginFailed, AuditResult.Failure, "user", null, ip);
             await db.SaveChangesAsync(cancellationToken);
-            throw AppException.Unauthorized(ErrorCodes.OtpCodeInvalid, "OTP kodu hatali.");
+            throw AppException.Unauthorized(ErrorCodes.OtpCodeInvalid, "OTP kodu hatalı.");
         }
 
         if (!user.IsActive)

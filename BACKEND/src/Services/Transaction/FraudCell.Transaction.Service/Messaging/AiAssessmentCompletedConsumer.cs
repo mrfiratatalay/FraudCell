@@ -139,7 +139,7 @@ public sealed class AiAssessmentCompletedConsumer(
         fraudTransaction.ApplyAssessment(assessment.RiskScore, riskLevel, decision, assessment.FraudType, now);
 
         crossCutting.PublishNotification(fraudTransaction.CustomerId, "AI_ASSESSMENT_COMPLETED",
-            "Islem degerlendirmesi tamamlandi", "Islem degerlendirmesi tamamlandi.", "TRANSACTION", fraudTransaction.Id);
+            "İşlem değerlendirmesi tamamlandı", "İşlem değerlendirmesi tamamlandı.", "TRANSACTION", fraudTransaction.Id);
 
         if (decision == ScreeningDecision.ONAY)
         {
@@ -180,7 +180,7 @@ public sealed class AiAssessmentCompletedConsumer(
 
             outboxWriter.Enqueue(TransactionEventTypes.TransactionTemporarilyBlocked, fraudTransaction.Id, new { transactionId = fraudTransaction.Id, blockedAt = now });
             crossCutting.PublishNotification(fraudTransaction.CustomerId, "SUSPICIOUS_TRANSACTION_DETECTED",
-                "Supheli islem tespit edildi", "Isleminiz guvenlik nedeniyle gecici olarak durduruldu.", "TRANSACTION", fraudTransaction.Id);
+                "Şüpheli işlem tespit edildi", "İşleminiz güvenlik nedeniyle geçici olarak durduruldu.", "TRANSACTION", fraudTransaction.Id);
         }
 
         db.RiskCases.Add(riskCase);
@@ -215,7 +215,7 @@ public sealed class AiAssessmentCompletedConsumer(
                 assignedAt = now,
             });
 
-            crossCutting.PublishNotification(assignedAnalystId, "CASE_ASSIGNED", "Yeni vaka atandi", "Size yeni bir risk vakasi atandi.", "CASE", riskCase.Id);
+            crossCutting.PublishNotification(assignedAnalystId, "CASE_ASSIGNED", "Yeni vaka atandı", "Size yeni bir risk vakası atandı.", "CASE", riskCase.Id);
         }
         else
         {

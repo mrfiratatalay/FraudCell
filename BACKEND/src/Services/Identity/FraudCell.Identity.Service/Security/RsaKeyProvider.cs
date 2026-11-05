@@ -83,7 +83,7 @@ public sealed partial class RsaKeyProvider
         {
             throw new InvalidOperationException(
                 $"RSA private key not found at '{options.PrivateKeyPath}'. " +
-                "Production/demo ortaminda anahtar onceden 'scripts/generate-dev-keys' ile uretilmis olmalidir.");
+                "Production/demo ortamında anahtar önceden 'scripts/generate-dev-keys' ile üretilmiş olmalıdır.");
         }
 
         LogGeneratingEphemeralKey(logger);

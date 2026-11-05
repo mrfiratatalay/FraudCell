@@ -42,7 +42,7 @@ public sealed partial class ExceptionHandlingMiddleware(
                 HttpStatusCode.Conflict,
                 new ApiError(
                     ErrorCodes.ConcurrencyConflict,
-                    "Kayit siz islem yaparken baskasi tarafindan degistirildi. Sayfayi yenileyip tekrar deneyin."),
+                    "Kayıt siz işlem yaparken başkası tarafından değiştirildi. Sayfayı yenileyip tekrar deneyin."),
                 correlation);
         }
         catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)

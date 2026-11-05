@@ -50,7 +50,7 @@ public static class NotesEndpoints
     {
         if (string.IsNullOrWhiteSpace(request.Text))
         {
-            throw AppException.Validation("Not bos olamaz.");
+            throw AppException.Validation("Not boş olamaz.");
         }
 
         if (request.Text.Length > MaxNoteLength)

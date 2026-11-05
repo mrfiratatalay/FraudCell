@@ -37,7 +37,8 @@ public static class SubmitDecisionEndpoint
     private static async Task<IResult> HandleAsync(
         string caseId, SubmitDecisionRequest request, HttpContext httpContext, TransactionServiceDbContext db,
         IClock clock, OutboxWriter outboxWriter, CrossCuttingEventPublisher crossCutting, CaseTransitionRecorder transitions,
-        AssignmentService assignmentService, CorrelationContext correlation, CancellationToken cancellationToken)
+        AssignmentService assignmentService, Microsoft.Extensions.Options.IOptions<CaseClosureOptions> closureOptions,
+        CorrelationContext correlation, CancellationToken cancellationToken)
     {
         var expectedVersion = ETagHelper.RequireIfMatch(httpContext.Request);
 
@@ -47,7 +48,7 @@ public static class SubmitDecisionEndpoint
 
         if (isSupervisor && string.IsNullOrWhiteSpace(request.OverrideReason))
         {
-            throw AppException.Validation("Supervizor karari icin overrideReason zorunludur.");
+            throw AppException.Validation("Süpervizör kararı için overrideReason zorunludur.");
         }
 
         await using var dbTransaction = await db.Database.BeginTransactionAsync(cancellationToken);
@@ -68,7 +69,7 @@ public static class SubmitDecisionEndpoint
 
         if (request.Decision == FinalDecision.APPROVE)
         {
-            riskCase.Approve(userId, request.Note, now);
+            riskCase.Approve(userId, request.Note, now, closureOptions.Value.Delay);
             transaction.ApproveFinal(now);
 
             var activeBlocks = await db.TemporaryBlocks.Where(b => b.TransactionId == transaction.Id && b.ReleasedAt == null).ToListAsync(cancellationToken);
@@ -85,7 +86,7 @@ public static class SubmitDecisionEndpoint
                 throw AppException.DomainRule(ErrorCodes.DecisionNoteRequired, "Blok kararinda karar notu zorunludur.");
             }
 
-            riskCase.Block(userId, request.Note, now);
+            riskCase.Block(userId, request.Note, now, closureOptions.Value.Delay);
             transaction.BlockFinal(now);
         }
 
@@ -139,8 +140,8 @@ public static class SubmitDecisionEndpoint
         }
 
         crossCutting.PublishNotification(riskCase.CustomerId, "CASE_DECISION_MADE",
-            request.Decision == FinalDecision.APPROVE ? "Isleminiz onaylandi" : "Isleminiz bloklandi",
-            request.Decision == FinalDecision.APPROVE ? "Isleminiz incelendi ve onaylandi." : "Isleminiz guvenlik nedeniyle bloklandi.",
+            request.Decision == FinalDecision.APPROVE ? "İşleminiz onaylandı" : "İşleminiz bloklandı",
+            request.Decision == FinalDecision.APPROVE ? "İşleminiz incelendi ve onaylandı." : "İşleminiz güvenlik nedeniyle bloklandı.",
             "CASE", caseId);
 
         await db.SaveChangesAsync(cancellationToken);

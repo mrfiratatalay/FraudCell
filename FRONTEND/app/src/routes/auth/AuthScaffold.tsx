@@ -1,157 +1,156 @@
 import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Activity, ArrowLeft, BrainCircuit, ShieldCheck, Zap } from 'lucide-react';
+import { cn } from '@/shared/lib/cn';
 import { LogoWordmark } from '@/shared/ui/Logo';
+import { ThemeToggle } from '@/shared/ui/ThemeToggle';
 
 /**
- * Kimlik akışı iskeleti — masaüstünde iki sütun.
+ * Sign-in layout.
  *
- * Sol: marka paneli (gradient + ürün vaadi), yalnızca lg ve üzeri görünür.
- * Sağ: form alanı. Mobilde sol panel gizlenir, üstte ince marka çubuğu kalır;
- * böylece küçük ekranda form tüm alanı alır (referans ekran 1'in ruhu).
+ * Left: the form, always. Right (lg+): a still of the product doing its job —
+ * one transaction moving from AI scoring to an analyst — so the first screen
+ * explains the system instead of selling it.
  */
 
-const HIGHLIGHTS = [
-  { icon: BrainCircuit, title: 'Akıllı skor', desc: 'Saniyeler içinde' },
-  { icon: ShieldCheck, title: 'Güvenli akış', desc: 'Uçtan uca koruma' },
-  { icon: Zap, title: 'Canlı müdahale', desc: '7/24 operasyon' },
-];
+export type AuthTab = 'customer' | 'staff';
 
-export function AuthScaffold({
-  children,
-  backTo,
-}: {
-  children: ReactNode;
-  backTo?: '/auth';
-}) {
+export function AuthScaffold({ children, tab }: { children: ReactNode; tab?: AuthTab }) {
   return (
-    <div className="min-h-dvh w-full bg-canvas xl:grid xl:h-dvh xl:grid-cols-[clamp(34rem,43.75vw,52.5rem)_minmax(0,1fr)] xl:overflow-hidden">
-      <aside className="relative hidden overflow-hidden gradient-splash xl:block">
-        <div className="hero-mesh absolute inset-0" aria-hidden />
-        <div className="brand-grid absolute inset-0 opacity-55" aria-hidden />
-        <div className="absolute -right-24 -bottom-28 size-96 rounded-full border border-white/15" aria-hidden />
-        <div className="absolute -right-8 -bottom-12 size-64 rounded-full border border-white/15" aria-hidden />
-
-        <div className="scroll-slim relative z-10 flex h-full min-h-0 flex-col overflow-y-auto p-10 text-white 2xl:p-14">
-          <div className="flex items-center justify-between gap-4">
-            <LogoWordmark tone="white" />
-            <span className="inline-flex items-center gap-2 rounded-pill border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-bold tracking-[0.14em] text-white/80 uppercase backdrop-blur-md">
-              <span className="size-1.5 rounded-full bg-tc-500 shadow-[0_0_0_4px_rgba(255,201,0,.14)]" />
-              Koruma aktif
-            </span>
-          </div>
-
-          <div className="my-auto max-w-2xl py-[clamp(2rem,5vh,3.5rem)]">
-            <p className="mb-[clamp(1rem,2.5vh,1.25rem)] text-xs font-bold tracking-[0.22em] text-aqua-300 uppercase">
-              Turkcell güvenlik ağı
-            </p>
-            <h2 className="max-w-2xl text-[clamp(2.5rem,4vw,4.5rem)] leading-[1.02] font-bold tracking-[-0.055em]">
-              Dijital işlemler, <span className="text-tc-500">akıllı koruma</span> altında.
-            </h2>
-            <p className="mt-[clamp(1rem,2.8vh,1.5rem)] max-w-xl text-[clamp(1rem,1.25vw,1.125rem)] leading-relaxed text-white/72">
-              FraudCell, işlemleri yapay zekâ ile izler; riski müşteriye ulaşmadan yakalar ve
-              operasyon ekibine tek bir canlı akış sunar.
-            </p>
-
-            <div className="mt-[clamp(1.5rem,4vh,2.25rem)] grid grid-cols-3 gap-3">
-              {HIGHLIGHTS.map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="rounded-card border border-white/12 bg-white/9 p-3.5 backdrop-blur-sm 2xl:p-4">
-                  <span className="flex size-10 items-center justify-center rounded-tile bg-white/12 text-tc-500">
-                    <Icon className="size-5" aria-hidden />
-                  </span>
-                  <p className="mt-4 text-sm font-semibold">{title}</p>
-                  <p className="mt-1 text-xs text-white/55">{desc}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-5 flex items-center gap-4 rounded-card border border-white/12 bg-brand-950/30 p-4 backdrop-blur-sm">
-              <span className="flex size-11 items-center justify-center rounded-full bg-success-500/18 text-success-100 ring-1 ring-success-500/40">
-                <Activity className="size-5" aria-hidden />
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-3 text-sm">
-                  <span className="font-semibold">Güvenlik motoru</span>
-                  <span className="text-success-100">Çevrimiçi</span>
-                </div>
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
-                  <div className="h-full w-[92%] rounded-full bg-gradient-to-r from-aqua-500 to-tc-500" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <p className="shrink-0 text-xs tracking-wide text-white/50">TURKCELL · PAYCELL EKOSİSTEMİ</p>
-        </div>
-      </aside>
-
-      <div className="relative flex min-h-dvh min-w-0 flex-col overflow-x-clip xl:min-h-0 xl:overflow-y-auto">
-        <div className="pointer-events-none absolute -top-28 -right-28 size-80 rounded-full bg-aqua-100/45 blur-3xl" aria-hidden />
-        <div className="pointer-events-none absolute -bottom-32 -left-32 size-80 rounded-full bg-tc-100/45 blur-3xl" aria-hidden />
-        <header className="sticky top-0 z-20 flex h-18 shrink-0 items-center border-b border-white/70 bg-white/70 px-4 backdrop-blur-xl sm:h-20 sm:px-8 xl:hidden">
-          {backTo ? (
-            <Link
-              to={backTo}
-              aria-label="Giriş seçeneklerine dön"
-              className="mr-3 rounded-full p-2 text-ink-500 transition-colors hover:bg-ink-100"
-            >
-              <ArrowLeft className="size-5" aria-hidden />
-            </Link>
-          ) : null}
-          <LogoWordmark />
+    <div className="min-h-dvh w-full bg-surface lg:grid lg:h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)] lg:overflow-hidden">
+      <div className="flex min-h-dvh min-w-0 flex-col px-5 py-5 sm:px-10 sm:py-8 lg:min-h-0 lg:overflow-y-auto">
+        <header className="flex items-center justify-between gap-4">
+          <Link to="/auth" aria-label="FraudCell giriş" className="rounded-lg">
+            <LogoWordmark />
+          </Link>
+          <ThemeToggle />
         </header>
 
-        {backTo ? (
-          <div className="relative z-10 hidden shrink-0 px-8 pt-8 xl:block 2xl:px-12">
-            <Link
-              to={backTo}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-500 transition-colors hover:text-brand-700"
-            >
-              <ArrowLeft className="size-4" aria-hidden />
-              Giriş seçenekleri
-            </Link>
+        <main className="flex flex-1 items-center justify-center py-10">
+          <div className="w-full max-w-[400px]">
+            {tab ? <AuthTabs active={tab} /> : null}
+            {children}
           </div>
-        ) : null}
-
-        <main className="relative z-10 flex min-h-0 flex-1 items-center justify-center px-4 py-7 sm:px-8 sm:py-10 xl:px-10 xl:py-8 2xl:px-14">
-          {children}
         </main>
+
+        <footer className="flex flex-wrap items-center justify-between gap-2 text-xs text-ink-500">
+          <span>FraudCell · Fırat Atalay &amp; Ayşe Mandıralı</span>
+          <span>CodeNight 2026 All-Star</span>
+        </footer>
       </div>
+
+      <ProductStill />
     </div>
+  );
+}
+
+function AuthTabs({ active }: { active: AuthTab }) {
+  const item = (tab: AuthTab, to: '/auth' | '/auth/staff', label: string) => (
+    <Link
+      to={to}
+      aria-current={active === tab ? 'page' : undefined}
+      className={cn(
+        'flex h-8 flex-1 items-center justify-center rounded-md text-[13px] font-medium transition-colors',
+        active === tab
+          ? 'bg-surface text-ink-900 shadow-[0_1px_2px_rgba(0,19,49,.12)] ring-1 ring-line'
+          : 'text-ink-500 hover:text-ink-900',
+      )}
+    >
+      {label}
+    </Link>
+  );
+  return (
+    <nav aria-label="Giriş türü" className="mb-8 flex gap-1 rounded-lg bg-ink-100 p-1">
+      {item('customer', '/auth', 'Müşteri')}
+      {item('staff', '/auth/staff', 'Personel')}
+    </nav>
   );
 }
 
 export function AuthFlow({
   titleId,
-  icon,
   title,
   description,
   children,
 }: {
   titleId: string;
-  icon: ReactNode;
+  /** Kept for callers; the redesigned header has no icon tile. */
+  icon?: ReactNode;
   title: ReactNode;
   description: ReactNode;
   children: ReactNode;
 }) {
   return (
-    <section
-      className="flex w-full max-w-md flex-col md:min-h-[32rem]"
-      aria-labelledby={titleId}
-    >
-      <div className="mb-5 text-center sm:mb-6">
-        <span className="mx-auto flex size-12 items-center justify-center rounded-tile bg-brand-100 text-brand-700 ring-1 ring-brand-200/60 sm:size-14">
-          {icon}
-        </span>
-        <h1 id={titleId} className="mt-3.5 text-h1 text-ink-900 sm:mt-4">
-          {title}
-        </h1>
-        <p className="mx-auto mt-1.5 min-h-5 max-w-sm text-sm leading-5 text-ink-500 sm:mt-2">
-          {description}
-        </p>
+    <section aria-labelledby={titleId} className="animate-rise">
+      <h1 id={titleId} className="text-[1.625rem] leading-tight font-semibold tracking-[-0.03em] text-ink-900">
+        {title}
+      </h1>
+      <p className="mt-2 text-sm text-ink-500">{description}</p>
+      <div className="mt-7">{children}</div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------ brand panel -- */
+
+const PILLARS = [
+  { title: 'Saniyeler içinde', detail: 'Her işlem yapay zekâ ile skorlanır' },
+  { title: 'SLA ile takip', detail: 'Riskli vaka doğru analiste düşer' },
+  { title: 'Açıklanabilir', detail: 'Her kararın gerekçesi görünür' },
+];
+
+/** Quiet brand side: one emblem, one sentence, three facts. Nothing pretends to be live data. */
+function ProductStill() {
+  return (
+    <aside aria-hidden className="on-night relative hidden overflow-hidden bg-night-900 text-white lg:flex lg:flex-col">
+      {/* light */}
+      <div className="absolute -top-40 -right-40 size-[38rem] rounded-full bg-[radial-gradient(closest-side,rgba(26,111,209,.55),transparent)]" />
+      <div className="absolute -bottom-48 -left-32 size-[34rem] rounded-full bg-[radial-gradient(closest-side,rgba(255,201,0,.16),transparent)]" />
+
+      {/* emblem */}
+      <div className="relative flex flex-1 items-center justify-center">
+        <div className="relative">
+          <span className="absolute inset-0 -m-16 rounded-full border border-white/[0.06]" />
+          <span className="absolute inset-0 -m-32 rounded-full border border-white/[0.04]" />
+          <svg viewBox="0 0 120 132" className="relative h-56 w-auto drop-shadow-[0_0_40px_rgba(255,201,0,.18)] xl:h-64">
+            <defs>
+              <linearGradient id="shield-fill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#0f2a52" />
+                <stop offset="1" stopColor="#061632" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M60 6 110 25v35c0 33-21 57-50 66C31 117 10 93 10 60V25L60 6Z"
+              fill="url(#shield-fill)"
+              stroke="#ffc900"
+              strokeWidth="2.5"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M30 68h16l7-17 11 32 7-15h19"
+              fill="none"
+              stroke="#fff"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
       </div>
 
-      {children}
-    </section>
+      {/* statement */}
+      <div className="relative px-14 pb-14 xl:px-20 xl:pb-16">
+        <h2 className="max-w-lg text-[2.25rem] leading-[1.1] font-semibold tracking-[-0.035em] xl:text-[2.5rem]">
+          Şüpheli işlem, müşteriye <span className="text-tc-500">ulaşmadan</span> durur.
+        </h2>
+        <dl className="mt-10 grid grid-cols-3 gap-6 border-t border-white/10 pt-6">
+          {PILLARS.map((pillar) => (
+            <div key={pillar.title}>
+              <dt className="text-sm font-medium text-white">{pillar.title}</dt>
+              <dd className="mt-1 text-[13px] leading-snug text-night-300">{pillar.detail}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </aside>
   );
 }

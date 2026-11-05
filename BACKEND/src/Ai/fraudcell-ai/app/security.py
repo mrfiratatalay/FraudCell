@@ -112,11 +112,11 @@ def require_roles(*roles: str) -> Callable[[Request], Awaitable[dict[str, Any]]]
         except jwt.PyJWKClientConnectionError as error:
             raise HTTPException(status_code=503, detail="Imza anahtarlari alinamadi.") from error
         except (jwt.PyJWTError, OSError, KeyError) as error:
-            raise HTTPException(status_code=401, detail="Access token gecersiz veya suresi dolmus.") from error
+            raise HTTPException(status_code=401, detail="Access token geçersiz veya süresi dolmuş.") from error
 
         if claims.get("role") not in roles:
             await record_denied(request, claims)
-            raise HTTPException(status_code=403, detail="Bu islem icin yetkiniz yok.")
+            raise HTTPException(status_code=403, detail="Bu işlem için yetkiniz yok.")
         return claims
 
     return dependency

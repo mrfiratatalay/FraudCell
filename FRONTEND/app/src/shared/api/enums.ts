@@ -204,7 +204,7 @@ export const ASSIGNMENT_STATUS_LABEL: Record<AssignmentStatus, string> = {
 };
 
 /** Süpervizörün atama kuyruğunda seçebildiği iki kuyruk. */
-export const QUEUE_TYPES = ['QUEUED', 'MANUAL_QUEUE'] as const;
+export const QUEUE_TYPES = ['ALL', 'QUEUED', 'MANUAL_QUEUE'] as const;
 export type QueueType = (typeof QUEUE_TYPES)[number];
 
 export const ASSIGNMENT_SOURCES = [

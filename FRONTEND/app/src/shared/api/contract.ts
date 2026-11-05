@@ -361,6 +361,10 @@ export interface TransactionDetailResponse {
   controlStatus: ControlStatus;
   /** Bu işlemden bir risk vakası doğduysa dolu. */
   caseId: string | null;
+  /** Vakanın durumu; vaka yoksa null. */
+  caseStatus: CaseStatus | null;
+  /** Müşterinin bu vakaya verdiği 1–5 yıldız; henüz vermediyse null. */
+  feedbackRating: number | null;
   createdAt: string;
   version: number;
 }
@@ -497,7 +501,8 @@ export interface AssignmentQueueItemResponse {
 
 export interface AssignmentQueueQuery {
   /** Yalnızca QUEUED veya MANUAL_QUEUE kabul edilir. */
-  queueType?: 'QUEUED' | 'MANUAL_QUEUE';
+  /** Varsayılan ALL: BELIRSIZ (manuel) ve kapasite bekleyen vakalar birlikte. */
+  queueType?: 'ALL' | 'QUEUED' | 'MANUAL_QUEUE';
   limit?: number;
 }
 
@@ -726,6 +731,13 @@ export type PointRuleCode = (typeof POINT_RULE_CODES)[number];
 
 export const ANALYST_LEVELS = ['BRONZ', 'GUMUS', 'ALTIN', 'PLATIN'] as const;
 export type AnalystLevel = (typeof ANALYST_LEVELS)[number];
+
+export const ANALYST_LEVEL_LABEL: Record<AnalystLevel, string> = {
+  BRONZ: 'Bronz',
+  GUMUS: 'Gümüş',
+  ALTIN: 'Altın',
+  PLATIN: 'Platin',
+};
 
 export type LeaderboardPeriod = 'daily' | 'weekly';
 

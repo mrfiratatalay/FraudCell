@@ -25,15 +25,15 @@ class _FakePrediction:
 def test_deterministic_summary_lists_signals() -> None:
     prediction = _FakePrediction(
         reason_codes=[
-            {"code": "NEW_DEVICE", "label": "Ilk kez gorulen cihaz", "impact": "HIGH"},
-            {"code": "NIGHT_TRANSACTION", "label": "Gece saatinde islem", "impact": "MEDIUM"},
+            {"code": "NEW_DEVICE", "label": "İlk kez görülen cihaz", "impact": "HIGH"},
+            {"code": "NIGHT_TRANSACTION", "label": "Gece saatinde işlem", "impact": "MEDIUM"},
         ]
     )
 
     summary = explanation.build_deterministic_summary(prediction)
 
-    assert "Ilk kez gorulen cihaz" in summary
-    assert "Gece saatinde islem" in summary
+    assert "İlk kez görülen cihaz" in summary
+    assert "Gece saatinde işlem" in summary
     assert "INCELEME" in summary
 
 

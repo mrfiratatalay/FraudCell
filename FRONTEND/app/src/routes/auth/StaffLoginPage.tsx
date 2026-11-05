@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
-import { BriefcaseBusiness, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { loginStaff } from '@/features/authentication/api';
@@ -48,15 +48,13 @@ export function StaffLoginPage({ redirectTo }: { redirectTo?: string }) {
   });
 
   return (
-    <AuthScaffold backTo="/auth">
+    <AuthScaffold tab="staff">
       <AuthFlow
         titleId="staff-login-title"
-        icon={<BriefcaseBusiness className="size-6 sm:size-7" aria-hidden />}
         title="Personel girişi"
-        description="Kurumsal e-posta adresinle güvenli şekilde devam et."
+        description="Analist, süpervizör ve yönetici hesapları için."
       >
-
-        <form onSubmit={onSubmit} className="surface-card space-y-4 p-4 sm:p-6" noValidate>
+        <form onSubmit={onSubmit} className="space-y-5" noValidate>
           {requestError ? <Banner tone="danger">{requestError}</Banner> : null}
 
           <Field
@@ -75,7 +73,7 @@ export function StaffLoginPage({ redirectTo }: { redirectTo?: string }) {
             {...register('password')}
           />
 
-          <Button type="submit" fullWidth loading={isSubmitting}>
+          <Button type="submit" size="lg" fullWidth loading={isSubmitting} className="!mt-7">
             Giriş yap
           </Button>
         </form>

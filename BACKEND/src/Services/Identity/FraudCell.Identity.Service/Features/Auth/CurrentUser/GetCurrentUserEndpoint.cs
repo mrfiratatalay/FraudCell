@@ -35,7 +35,7 @@ public static class GetCurrentUserEndpoint
         CancellationToken cancellationToken)
     {
         var userId = httpContext.User.FindFirstValue("sub")
-            ?? throw AppException.Unauthorized(ErrorCodes.AccessTokenInvalid, "Token gecersiz.");
+            ?? throw AppException.Unauthorized(ErrorCodes.AccessTokenInvalid, "Token geçersiz.");
 
         var role = httpContext.User.FindFirstValue("role") ?? string.Empty;
         var specialties = httpContext.User.FindAll("specialties").Select(c => c.Value).ToArray();
@@ -46,7 +46,7 @@ public static class GetCurrentUserEndpoint
             .Include(u => u.StaffProfile)
             .AsNoTracking()
             .SingleOrDefaultAsync(u => u.Id == userId, cancellationToken)
-            ?? throw AppException.NotFound("Kullanici bulunamadi.");
+            ?? throw AppException.NotFound("Kullanıcı bulunamadı.");
 
         httpContext.Response.Headers.CacheControl = "no-store";
 

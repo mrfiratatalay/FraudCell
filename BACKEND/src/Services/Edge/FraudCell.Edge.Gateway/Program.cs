@@ -132,7 +132,7 @@ internal static class GatewayMiddlewareExtensions
                 context.Response.ContentType = "application/json; charset=utf-8";
 
                 var payload = ApiResponse.Failure(
-                    new ApiError(ErrorCodes.AccessTokenInvalid, "Access token gecersiz veya suresi dolmus."),
+                    new ApiError(ErrorCodes.AccessTokenInvalid, "Access token geçersiz veya süresi dolmuş."),
                     context.TraceIdentifier);
 
                 await context.Response.WriteAsync(JsonSerializer.Serialize(payload, jsonOptions), context.RequestAborted);

@@ -90,7 +90,7 @@ public static class ManualAssignmentEndpoint
             assignedAt = now,
         });
 
-        crossCutting.PublishNotification(request.AnalystId, "CASE_ASSIGNED", "Yeni vaka atandi", "Size yeni bir risk vakasi atandi.", "CASE", caseId);
+        crossCutting.PublishNotification(request.AnalystId, "CASE_ASSIGNED", "Yeni vaka atandı", "Size yeni bir risk vakası atandı.", "CASE", caseId);
 
         await db.SaveChangesAsync(cancellationToken);
         await dbTransaction.CommitAsync(cancellationToken);

@@ -96,7 +96,7 @@ public sealed class SlaBreachWorker(IServiceScopeFactory scopeFactory, IClock cl
 
             if (riskCase.AssignedAnalystId is not null)
             {
-                crossCutting.PublishNotification(riskCase.AssignedAnalystId, "SLA_BREACHED", "SLA suresi asildi", "Atanmis vakanizin SLA suresi doldu.", "CASE", caseId);
+                crossCutting.PublishNotification(riskCase.AssignedAnalystId, "SLA_BREACHED", "SLA süresi aşıldı", "Atanmış vakanızın SLA süresi doldu.", "CASE", caseId);
             }
 
             await db.SaveChangesAsync(cancellationToken);

@@ -10,6 +10,9 @@ namespace FraudCell.Transaction.Service.Domain;
 /// </summary>
 public sealed class RiskCase
 {
+    /// <summary>Dokuman §27: a decided case closes 48 hours later (configurable via <c>CaseClosure:Delay</c>).</summary>
+    public static readonly TimeSpan DefaultClosureDelay = TimeSpan.FromHours(48);
+
     public required string Id { get; set; }
 
     public required string TransactionId { get; set; }
@@ -102,7 +105,7 @@ public sealed class RiskCase
     {
         if (Status != CaseStatus.YENI)
         {
-            throw AppException.DomainRule(ErrorCodes.InvalidCaseTransition, "Yalnizca YENI durumundaki vaka kuyruga alinabilir.");
+            throw AppException.DomainRule(ErrorCodes.InvalidCaseTransition, "Yalnızca YENI durumundaki vaka kuyruğa alınabilir.");
         }
 
         AssignmentStatus = manual ? AssignmentStatus.MANUAL_QUEUE : AssignmentStatus.QUEUED;
@@ -114,7 +117,7 @@ public sealed class RiskCase
     {
         if (IsFinal)
         {
-            throw AppException.DomainRule(ErrorCodes.CaseAlreadyDecided, "Final karar verilmis vakada atama degistirilemez.");
+            throw AppException.DomainRule(ErrorCodes.CaseAlreadyDecided, "Final karar verilmiş vakada atama değiştirilemez.");
         }
 
         AssignedAnalystId = newAnalystId;
@@ -171,7 +174,7 @@ public sealed class RiskCase
     {
         if (Status != CaseStatus.MUSTERI_DOGRULAMA)
         {
-            throw AppException.DomainRule(ErrorCodes.InvalidCaseTransition, "Aktif bir musteri dogrulamasi bulunmuyor.");
+            throw AppException.DomainRule(ErrorCodes.InvalidCaseTransition, "Aktif bir müşteri doğrulaması bulunmuyor.");
         }
 
         Status = CaseStatus.INCELENIYOR;
@@ -191,7 +194,7 @@ public sealed class RiskCase
     }
 
     /// <summary>Dokuman §26 INCELENIYOR -> ONAYLANDI.</summary>
-    public void Approve(string decidedBy, string? note, DateTimeOffset now)
+    public void Approve(string decidedBy, string? note, DateTimeOffset now, TimeSpan? closureDelay = null)
     {
         RequireInReview();
 
@@ -202,12 +205,12 @@ public sealed class RiskCase
         SlaStoppedAt = now;
         Status = CaseStatus.ONAYLANDI;
         AssignmentStatus = AssignmentStatus.COMPLETED;
-        ClosureDueAt = now.AddHours(48);
+        ClosureDueAt = now + (closureDelay ?? DefaultClosureDelay);
         Touch(now);
     }
 
     /// <summary>Dokuman §27 INCELENIYOR -> BLOKLANDI. Karar notu zorunludur.</summary>
-    public void Block(string decidedBy, string note, DateTimeOffset now)
+    public void Block(string decidedBy, string note, DateTimeOffset now, TimeSpan? closureDelay = null)
     {
         RequireInReview();
 
@@ -223,7 +226,7 @@ public sealed class RiskCase
         SlaStoppedAt = now;
         Status = CaseStatus.BLOKLANDI;
         AssignmentStatus = AssignmentStatus.COMPLETED;
-        ClosureDueAt = now.AddHours(48);
+        ClosureDueAt = now + (closureDelay ?? DefaultClosureDelay);
         Touch(now);
     }
 
@@ -236,7 +239,7 @@ public sealed class RiskCase
     {
         if (Status is not (CaseStatus.ONAYLANDI or CaseStatus.BLOKLANDI))
         {
-            throw AppException.DomainRule(ErrorCodes.InvalidCaseTransition, "Yalnizca ONAYLANDI/BLOKLANDI vaka kapatilabilir.");
+            throw AppException.DomainRule(ErrorCodes.InvalidCaseTransition, "Yalnızca ONAYLANDI/BLOKLANDI vaka kapatılabilir.");
         }
 
         Status = CaseStatus.KAPANDI;
@@ -272,7 +275,7 @@ public sealed class RiskCase
     {
         if (IsFinal)
         {
-            throw AppException.DomainRule(ErrorCodes.CaseAlreadyDecided, "Final karar sonrasi risk seviyesi degistirilemez.");
+            throw AppException.DomainRule(ErrorCodes.CaseAlreadyDecided, "Final karar sonrası risk seviyesi değiştirilemez.");
         }
 
         EffectiveRiskLevel = newLevel;
@@ -292,7 +295,7 @@ public sealed class RiskCase
     {
         if (IsFinal)
         {
-            throw AppException.DomainRule(ErrorCodes.CaseAlreadyDecided, "Final karar sonrasi fraud turu degistirilemez.");
+            throw AppException.DomainRule(ErrorCodes.CaseAlreadyDecided, "Final karar sonrası fraud türü değiştirilemez.");
         }
 
         EffectiveFraudType = newType;
@@ -303,7 +306,7 @@ public sealed class RiskCase
     {
         if (FinalDecision is not null)
         {
-            throw AppException.DomainRule(ErrorCodes.CaseAlreadyDecided, "Bu vaka icin zaten nihai karar verilmis.");
+            throw AppException.DomainRule(ErrorCodes.CaseAlreadyDecided, "Bu vaka için zaten nihai karar verilmiş.");
         }
 
         if (Status != CaseStatus.INCELENIYOR)

@@ -35,7 +35,7 @@ public static class UpdateStaffRoleEndpoint
 
         if (!RoleNames.StaffRoles.Contains(request.Role, StringComparer.Ordinal))
         {
-            throw AppException.Validation("Rol ANALYST, SUPERVISOR veya ADMIN olmalidir.");
+            throw AppException.Validation("Rol ANALYST, SUPERVISOR veya ADMIN olmalıdır.");
         }
 
         var user = await userManager.FindByIdAsync(staffId);

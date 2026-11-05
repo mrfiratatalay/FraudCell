@@ -3,22 +3,21 @@ import { cn } from '@/shared/lib/cn';
 /**
  * Boş/başarı/hata durumları için inline SVG illüstrasyonlar.
  *
- * Harici asset yok: hepsi marka mavisi + Turkcell sarısı tonlarında, gömülü.
- * Paycell'in yuvarlak, dolgun ikon dilini taklit eder. `currentColor` yerine
- * sabit token'lar kullanır ki koyu/açık zeminde tutarlı görünsün.
+ * No external assets. Colours are theme variables, so the drawings follow
+ * light and dark mode.
  */
 
 export type IllustrationName = 'empty' | 'secure' | 'transactions' | 'inbox' | 'search' | 'reward';
 
-const BLUE = '#0a4a94';
-const BLUE_SOFT = '#c2e0f9';
-const AQUA = '#2fc4e0';
-const YELLOW = '#ffc800';
+const BLUE = 'var(--color-brand-700)';
+const BLUE_SOFT = 'var(--color-brand-200)';
+const AQUA = 'var(--color-aqua-500)';
+const YELLOW = 'var(--color-tc-500)';
 
 function Frame({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <svg viewBox="0 0 120 120" className={cn('size-28', className)} role="img" aria-hidden>
-      <circle cx="60" cy="60" r="56" fill="#eef5fd" />
+    <svg viewBox="0 0 120 120" className={cn('size-20', className)} role="img" aria-hidden>
+      <circle cx="60" cy="60" r="56" fill="var(--color-brand-50)" />
       {children}
     </svg>
   );
@@ -58,7 +57,7 @@ export function Illustration({
       return (
         <Frame className={className}>
           <rect x="34" y="44" width="52" height="34" rx="6" fill={BLUE} />
-          <rect x="34" y="52" width="52" height="7" fill="#083b78" />
+          <rect x="34" y="52" width="52" height="7" fill="var(--color-brand-800)" />
           <rect x="40" y="66" width="18" height="5" rx="2.5" fill={BLUE_SOFT} />
           <circle cx="80" cy="40" r="12" fill={YELLOW} />
           <path d="M80 34v12M74 40h12" stroke={BLUE} strokeWidth="3" strokeLinecap="round" />
@@ -93,7 +92,7 @@ export function Illustration({
     default:
       return (
         <Frame className={className}>
-          <rect x="36" y="40" width="48" height="40" rx="6" fill="#fff" stroke={BLUE_SOFT} strokeWidth="3" />
+          <rect x="36" y="40" width="48" height="40" rx="6" fill="var(--color-surface)" stroke={BLUE_SOFT} strokeWidth="3" />
           <rect x="44" y="52" width="32" height="4" rx="2" fill={BLUE_SOFT} />
           <rect x="44" y="62" width="22" height="4" rx="2" fill={BLUE_SOFT} />
           <circle cx="82" cy="44" r="9" fill={AQUA} />

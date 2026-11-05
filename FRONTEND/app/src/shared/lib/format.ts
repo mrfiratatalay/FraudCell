@@ -127,3 +127,8 @@ export function initials(fullName: string): string {
 export function fullName(first: string | null, last: string | null): string {
   return [first, last].filter(Boolean).join(' ').trim();
 }
+
+/** Risk score 0–1 as "0,94". */
+export function formatScore(score: number): string {
+  return score.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}

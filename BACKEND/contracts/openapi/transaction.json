@@ -629,7 +629,7 @@
                                                                                             "in":  "query",
                                                                                             "schema":  {
                                                                                                            "type":  "string",
-                                                                                                           "default":  "QUEUED"
+                                                                                                           "default":  "ALL"
                                                                                                        }
                                                                                         },
                                                                                         {
@@ -4336,6 +4336,8 @@
                                                                                           "assessment",
                                                                                           "controlStatus",
                                                                                           "caseId",
+                                                                                          "caseStatus",
+                                                                                          "feedbackRating",
                                                                                           "createdAt",
                                                                                           "version"
                                                                                       ],
@@ -4378,6 +4380,19 @@
                                                                                                                         "null",
                                                                                                                         "string"
                                                                                                                     ]
+                                                                                                       },
+                                                                                            "caseStatus":  {
+                                                                                                           "type":  [
+                                                                                                                        "null",
+                                                                                                                        "string"
+                                                                                                                    ]
+                                                                                                       },
+                                                                                            "feedbackRating":  {
+                                                                                                           "type":  [
+                                                                                                                        "null",
+                                                                                                                        "integer"
+                                                                                                                    ],
+                                                                                                           "format":  "int32"
                                                                                                        },
                                                                                             "createdAt":  {
                                                                                                               "type":  "string",

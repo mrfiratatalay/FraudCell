@@ -4,13 +4,13 @@ import { cn } from '@/shared/lib/cn';
 type Tone = 'brand' | 'aqua' | 'success' | 'warning' | 'danger' | 'critical' | 'neutral';
 
 const TONES: Record<Tone, string> = {
-  brand: 'bg-brand-100 text-brand-800',
-  aqua: 'bg-aqua-50 text-aqua-700',
-  success: 'bg-success-100 text-success-700',
-  warning: 'bg-warning-100 text-warning-700',
-  danger: 'bg-danger-100 text-danger-700',
-  critical: 'bg-critical-100 text-critical-700',
-  neutral: 'bg-ink-100 text-ink-500',
+  brand: 'bg-brand-50 text-brand-700 ring-brand-500/20',
+  aqua: 'bg-aqua-50 text-aqua-700 ring-aqua-500/20',
+  success: 'bg-success-100 text-success-700 ring-success-500/20',
+  warning: 'bg-warning-100 text-warning-700 ring-warning-500/25',
+  danger: 'bg-danger-100 text-danger-700 ring-danger-500/20',
+  critical: 'bg-critical-100 text-critical-700 ring-critical-500/25',
+  neutral: 'bg-ink-100 text-ink-600 ring-ink-400/20',
 };
 
 export function Badge({
@@ -28,9 +28,9 @@ export function Badge({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-pill px-2.5 py-1',
-        'text-xs font-semibold whitespace-nowrap',
-        solid ? 'bg-success-500 text-white' : TONES[tone],
+        'inline-flex h-6 items-center gap-1 rounded-md px-2 ring-1 ring-inset',
+        'text-xs font-medium whitespace-nowrap',
+        solid ? 'bg-success-500 text-white ring-transparent' : TONES[tone],
         className,
       )}
     >
@@ -56,23 +56,13 @@ export function ToneBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-pill px-2.5 py-1',
-        'text-xs font-semibold whitespace-nowrap',
+        'inline-flex h-6 items-center gap-1.5 rounded-md px-2 ring-1 ring-inset ring-current/15',
+        'text-xs font-medium whitespace-nowrap',
         toneClass,
         className,
       )}
     >
       {children}
-    </span>
-  );
-}
-
-/** Yanıp sönen noktalı canlı durum göstergesi — SLA kritik, bağlantı vs. */
-export function PulseDot({ className }: { className?: string }) {
-  return (
-    <span className={cn('relative flex size-2', className)} aria-hidden>
-      <span className="absolute inline-flex size-full animate-ping rounded-full bg-current opacity-60" />
-      <span className="relative inline-flex size-2 rounded-full bg-current" />
     </span>
   );
 }

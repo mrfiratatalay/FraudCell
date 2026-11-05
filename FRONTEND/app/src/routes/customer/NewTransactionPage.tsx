@@ -1,14 +1,14 @@
 import { useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
-import { ArrowLeft, MapPin, Send, UserRound } from 'lucide-react';
+import { MapPin, Send, UserRound } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { createTransaction } from '@/features/transactions/api';
 import { newIdempotencyKey } from '@/shared/api/client';
 import { TRANSACTION_TYPES, TRANSACTION_TYPE_LABEL } from '@/shared/api/enums';
 import { messageFor } from '@/shared/api/errors';
-import { Banner, Button, Field } from '@/shared/ui';
+import { Banner, Button, CustomerPageHeader, Field } from '@/shared/ui';
 
 const schema = z.object({
   amount: z.string().trim().refine((value) => Number(value) > 0, 'Sıfırdan büyük bir tutar gir.'),
@@ -74,57 +74,49 @@ export function NewTransactionPage() {
   });
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-6 lg:max-w-3xl lg:px-6 lg:py-8 xl:px-8">
-      <header className="mb-6 flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => window.history.back()}
-          aria-label="Geri"
-          className="flex size-10 items-center justify-center rounded-full bg-surface text-ink-700 shadow-card"
-        >
-          <ArrowLeft className="size-5" />
-        </button>
-        <div>
-          <h1 className="text-h1 text-ink-900">Yeni işlem</h1>
-          <p className="text-body text-ink-500">İşlem AI tarafından arka planda değerlendirilecek.</p>
-        </div>
-      </header>
+    <div className="mx-auto w-full max-w-2xl px-4 py-6 sm:px-6 lg:py-10">
+      <CustomerPageHeader title="Yeni işlem" description="Gönderdiğin anda risk skorlanır; şüpheli görünürse işlem incelemeye alınır." />
 
-      <form onSubmit={onSubmit} className="surface-card space-y-4 p-5 lg:p-7" noValidate>
+      <form onSubmit={onSubmit} className="surface-panel space-y-5 p-5 sm:p-6" noValidate>
         {requestError ? <Banner tone="danger">{requestError}</Banner> : null}
+
+        <fieldset>
+          <legend className="mb-1.5 text-[13px] font-medium text-ink-700">İşlem türü</legend>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {TRANSACTION_TYPES.map((type) => (
+              <label key={type} className="cursor-pointer">
+                <input type="radio" value={type} className="peer sr-only" {...register('transactionType')} />
+                <span className="flex h-10 items-center justify-center rounded-control border border-line bg-surface text-[13px] font-medium text-ink-600 shadow-card transition-colors peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-700 peer-focus-visible:ring-3 peer-focus-visible:ring-brand-500/25 hover:border-ink-300">
+                  {TRANSACTION_TYPE_LABEL[type]}
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
         <Field
           label="Tutar (TRY)"
           type="number"
           inputMode="decimal"
           step="0.01"
           min="0.01"
+          placeholder="0,00"
+          leadingIcon={<span className="text-sm font-medium text-ink-500">₺</span>}
           error={errors.amount?.message}
           {...register('amount')}
         />
 
-        <label className="block rounded-tile border border-ink-200 bg-white px-4 py-2.5 focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-600/20">
-          <span className="block text-xs font-medium text-ink-500">İşlem türü</span>
-          <select
-            className="mt-1 w-full bg-transparent text-[17px] text-ink-900 focus:outline-none"
-            {...register('transactionType')}
-          >
-            {TRANSACTION_TYPES.map((type) => (
-              <option key={type} value={type}>{TRANSACTION_TYPE_LABEL[type]}</option>
-            ))}
-          </select>
-        </label>
-
         <Field
           label="Alıcı referansı"
           placeholder="TR00 0000 veya kullanıcı referansı"
-          leadingIcon={<UserRound className="size-5" />}
+          leadingIcon={<UserRound />}
           error={errors.recipientReference?.message}
           {...register('recipientReference')}
         />
-        <div className="grid grid-cols-[1fr_7rem] gap-3">
+        <div className="grid grid-cols-[minmax(0,1fr)_6rem] gap-3">
           <Field
             label="Şehir"
-            leadingIcon={<MapPin className="size-5" />}
+            leadingIcon={<MapPin />}
             error={errors.city?.message}
             {...register('city')}
           />
@@ -138,6 +130,7 @@ export function NewTransactionPage() {
 
         <Button
           type="submit"
+          size="lg"
           fullWidth
           loading={isSubmitting}
           leadingIcon={<Send className="size-4" />}

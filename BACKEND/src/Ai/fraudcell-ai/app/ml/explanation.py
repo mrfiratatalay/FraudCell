@@ -22,22 +22,22 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 _FRAUD_TYPE_LABELS: dict[str, str] = {
-    "CALINTI_KART": "Calinti kart kullanimi",
+    "CALINTI_KART": "Çalıntı kart kullanımı",
     "HESAP_ELE_GECIRME": "Hesap ele gecirme",
     "PARA_AKLAMA": "Para aklama",
-    "SUPHELI_DAVRANIS": "Supheli davranis",
+    "SUPHELI_DAVRANIS": "Şüpheli davranış",
     "TEMIZ": "Temiz / risk sinyali yok",
 }
 
 _SYSTEM_INSTRUCTION = (
-    "Sen bir dolandiricilik (fraud) analistine yardimci olan bir asistansin. "
-    "Sana bir islem degerlendirmesinin HAZIR sonuclari verilir: risk seviyesi, "
+    "Sen bir dolandırıcılık (fraud) analistine yardımcı olan bir asistansın. "
+    "Sana bir işlem değerlendirmesinin HAZIR sonuçları verilir: risk seviyesi, "
     "karar, fraud tipi ve tespit edilen sinyaller (reason codes). Gorevin bu "
-    "sinyalleri analiste yonelik akici, profesyonel Turkce bir gerekce metnine "
-    "cevirmek. Kurallar: (1) Yalnizca sana verilen sinyalleri ve alanlari kullan; "
+    "sinyalleri analiste yönelik akıcı, profesyonel Türkçe bir gerekçe metnine "
+    "çevirmek. Kurallar: (1) Yalnızca sana verilen sinyalleri ve alanları kullan; "
     "yeni sayi, oran veya olgu UYDURMA. (2) Risk skorunu yeniden hesaplama veya "
-    "sorgulama; verilen karari veri olarak kabul et. (3) 2-4 cumle, madde imi yok, "
-    "baslik yok, dogrudan gerekce. (4) Sinyal yoksa islemin neden nominal gorundugunu "
+    "sorgulama; verilen kararı veri olarak kabul et. (3) 2-4 cümle, madde imi yok, "
+    "başlık yok, doğrudan gerekçe. (4) Sinyal yoksa işlemin neden nominal göründüğünü "
     "kisaca acikla."
 )
 
@@ -120,11 +120,11 @@ def build_deterministic_summary(prediction: Prediction) -> str:
     if not labels:
         return (
             f"Risk seviyesi {prediction.risk_level}, karar {prediction.decision}. "
-            "Belirgin bir risk sinyali tespit edilmedi; islem nominal gorunuyor."
+            "Belirgin bir risk sinyali tespit edilmedi; işlem nominal görünüyor."
         )
 
     signal_text = ", ".join(labels)
     return (
         f"Risk seviyesi {prediction.risk_level} ({fraud_label}), karar {prediction.decision}. "
-        f"One cikan sinyaller: {signal_text}."
+        f"Öne çıkan sinyaller: {signal_text}."
     )

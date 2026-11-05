@@ -56,7 +56,7 @@ public static class GetAuditLogsEndpoint
 
         if (from is not null && to is not null && from >= to)
         {
-            throw AppException.Validation("'from' degeri 'to' degerinden kucuk olmalidir.");
+            throw AppException.Validation("'from' değeri 'to' değerinden küçük olmalıdır.");
         }
 
         var query = db.AuditLogs.AsNoTracking().OrderByDescending(e => e.OccurredAt).AsQueryable();

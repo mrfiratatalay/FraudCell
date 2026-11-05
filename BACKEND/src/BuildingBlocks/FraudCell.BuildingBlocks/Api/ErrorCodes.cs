@@ -64,6 +64,7 @@ public static class ErrorCodes
     public const string DecisionNoteRequired = "DECISION_NOTE_REQUIRED";
     public const string CustomerVerificationAlreadyPending = "CUSTOMER_VERIFICATION_ALREADY_PENDING";
     public const string AnalystCapacityExceeded = "ANALYST_CAPACITY_EXCEEDED";
+    public const string AnalystNotAssignable = "ANALYST_NOT_ASSIGNABLE";
     public const string VerificationNotPending = "VERIFICATION_NOT_PENDING";
     public const string FeedbackNotAllowed = "FEEDBACK_NOT_ALLOWED";
     public const string FeedbackAlreadySubmitted = "FEEDBACK_ALREADY_SUBMITTED";

@@ -51,7 +51,7 @@ public static class FraudTypeOverrideEndpoint
 
         if (riskCase.EffectiveFraudType == request.FraudType)
         {
-            throw AppException.Validation("Yeni fraud turu mevcut degerden farkli olmalidir.");
+            throw AppException.Validation("Yeni fraud türü mevcut değerden farklı olmalıdır.");
         }
 
         var transaction = await db.Transactions.SingleAsync(t => t.Id == riskCase.TransactionId, cancellationToken);

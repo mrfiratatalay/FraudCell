@@ -36,16 +36,16 @@ export function CustomerProfilePage() {
   const displayName = fullName(user.firstName, user.lastName) || 'FraudCell müşterisi';
 
   return (
-    <div className="mx-auto w-full max-w-[90rem] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
+    <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:py-10">
       <CustomerPageHeader
-        title="Profil ve güvenlik"
-        description="Hesap bilgilerini ve oturum açılmış cihazlarını güvenle yönet."
+        title="Profil"
+        description="Hesap bilgilerin ve hesabının açık olduğu cihazlar."
       />
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(20rem,.8fr)_minmax(0,1.55fr)] lg:items-start">
+      <div className="grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start">
         <div className="contents lg:block">
         <section
-          className="order-1 surface-elevated overflow-hidden p-5 lg:p-6"
+          className="order-1 surface-panel overflow-hidden p-5"
           aria-labelledby="profile-title"
         >
           <div className="flex items-center gap-3">
@@ -56,18 +56,15 @@ export function CustomerProfilePage() {
               </h2>
               <p className="mt-0.5 text-sm text-ink-500">{user.gsmNumber ?? user.email}</p>
             </div>
-            <ToneBadge toneClass="bg-success-100 text-success-700">
-              {ROLE_LABEL[user.role]}
-            </ToneBadge>
           </div>
-          <dl className="mt-6 grid grid-cols-2 gap-3 border-t border-ink-100 pt-5">
-            <div className="rounded-[1rem] bg-brand-50 p-3.5">
-              <dt className="text-[11px] text-ink-500">Hesap durumu</dt>
-              <dd className="mt-1 text-sm font-semibold text-success-700">Korumada</dd>
+          <dl className="mt-5 divide-y divide-line border-t border-line text-sm">
+            <div className="flex justify-between py-3">
+              <dt className="text-ink-500">Rol</dt>
+              <dd className="font-medium text-ink-900">{ROLE_LABEL[user.role]}</dd>
             </div>
-            <div className="rounded-[1rem] bg-brand-50 p-3.5">
-              <dt className="text-[11px] text-ink-500">Aktif cihaz</dt>
-              <dd className="mt-1 text-sm font-semibold tabular text-brand-900">
+            <div className="flex justify-between py-3">
+              <dt className="text-ink-500">Aktif cihaz</dt>
+              <dd className="font-medium tabular text-ink-900">
                 {sessions.isPending ? '—' : sessions.data?.length ?? 0}
               </dd>
             </div>
@@ -80,7 +77,7 @@ export function CustomerProfilePage() {
               onClick={() => {
                 void logout().then(() => navigate({ to: '/auth', replace: true }));
               }}
-              className="flex w-full items-center justify-center gap-2 rounded-[1rem] border border-danger-500/25 bg-white/80 py-3 text-sm font-semibold text-danger-600 shadow-[0_10px_24px_-22px_rgba(198,40,40,.7)] transition-colors hover:bg-danger-100"
+              className="flex h-10 w-full items-center justify-center gap-2 rounded-control border border-line bg-surface text-sm font-medium text-critical-600 shadow-card transition-colors hover:bg-critical-100"
             >
               <LogOut className="size-4" aria-hidden />
               Çıkış yap
@@ -93,9 +90,8 @@ export function CustomerProfilePage() {
           aria-labelledby="sessions-title"
         >
           <div className="mb-4">
-            <p className="text-[10px] font-bold tracking-[0.14em] text-brand-600 uppercase">Oturum güvenliği</p>
-            <h2 id="sessions-title" className="mt-1 text-h2 text-ink-800">Aktif cihazlar</h2>
-            <p className="mt-1 text-sm text-ink-500">Tanımadığın bir cihazın oturumunu tek dokunuşla kapat.</p>
+            <h2 id="sessions-title" className="text-h2 text-ink-900">Aktif cihazlar</h2>
+            <p className="mt-1 text-[13px] text-ink-500">Tanımadığın bir cihaz varsa oturumunu kapat.</p>
           </div>
           {sessions.isPending ? <SkeletonList rows={2} /> : null}
           {sessions.isError ? (
@@ -104,9 +100,9 @@ export function CustomerProfilePage() {
           {sessions.data?.length === 0 ? (
             <EmptyState icon={<Laptop />} title="Aktif cihaz bulunamadı" />
           ) : null}
-          <div className="space-y-3">
+          <div className={sessions.data?.length ? 'surface-panel divide-y divide-line overflow-hidden' : 'hidden'}>
             {sessions.data?.map((session) => (
-              <article key={session.id} className="surface-card flex items-start gap-3 p-4 sm:p-5">
+              <article key={session.id} className="flex items-start gap-3 p-4">
                 <span className="mt-0.5 text-ink-400">
                   {session.userAgent?.toLocaleLowerCase('tr-TR').includes('mobile') ? (
                     <Smartphone className="size-5" aria-hidden />
@@ -116,7 +112,7 @@ export function CustomerProfilePage() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-semibold text-ink-900">
+                    <p className="text-sm font-medium text-ink-900">
                       {session.isCurrent ? 'Bu cihaz' : 'Diğer cihaz'}
                     </p>
                     {session.isCurrent ? (

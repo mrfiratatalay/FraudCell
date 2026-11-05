@@ -42,7 +42,7 @@ public static class RequestOtpChallengeEndpoint
         if (gsmNumber is null)
         {
             throw AppException.Validation(
-                "Gecerli bir Turkcell GSM numarasi giriniz.",
+                "Geçerli bir Turkcell GSM numarası giriniz.",
                 new Dictionary<string, object?> { ["field"] = "gsmNumber" });
         }
 

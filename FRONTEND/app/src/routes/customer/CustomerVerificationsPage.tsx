@@ -6,7 +6,7 @@ import type { PendingVerificationResponse } from '@/shared/api/contract';
 import type { CustomerVerificationChoice } from '@/shared/api/enums';
 import { TRANSACTION_TYPE_LABEL } from '@/shared/api/enums';
 import { queryKeys } from '@/shared/api/query-keys';
-import { formatDateTime, formatMoney, formatRelative } from '@/shared/lib/format';
+import { formatDateTime, formatMoney } from '@/shared/lib/format';
 import {
   Button,
   ConfirmDialog,
@@ -50,49 +50,35 @@ export function CustomerVerificationsPage() {
   const items = verifications.data ?? [];
 
   return (
-    <div className="mx-auto w-full max-w-[90rem] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
+    <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:py-10">
       <CustomerPageHeader
         title="Doğrulamalar"
-        description="Güvenlik için sana ait olup olmadığını sorduğumuz işlemleri buradan yönet."
+        description="Sana ait olup olmadığını sorduğumuz işlemler. Yanıtın, incelemeyi yapan analiste anında ulaşır."
       />
 
       {verifications.isPending ? (
-        <SkeletonList rows={2} className="lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0" />
+        <SkeletonList rows={2} />
       ) : null}
       {verifications.isError ? (
         <ErrorState error={verifications.error} onRetry={() => void verifications.refetch()} />
       ) : null}
       {!verifications.isPending && !verifications.isError && items.length === 0 ? (
-        <section className="surface-elevated overflow-hidden">
+        <div className="surface-panel">
           <EmptyState
             illustration="secure"
             title="Bekleyen doğrulama yok"
-            description="Şüpheli bir işlem tespit edilirse burada onayın istenecek."
-            className="py-10 sm:py-12"
+            description="Bir işlem şüpheli görünürse sana burada &quot;Bu işlemi sen mi yaptın?&quot; diye soracağız."
           />
-          <div className="grid border-t border-ink-100 bg-brand-50/55 sm:grid-cols-3">
-            {[
-              ['01', 'Anlık tarama', 'İşlem sinyalleri risk motorunda değerlendirilir.'],
-              ['02', 'Hızlı bildirim', 'Kontrol gerektiğinde anında haberdar edilirsin.'],
-              ['03', 'Senin kararın', 'Onayın olmadan şüpheli adım tamamlanmaz.'],
-            ].map(([number, title, description]) => (
-              <div key={number} className="border-b border-ink-100 p-4 last:border-b-0 sm:border-r sm:border-b-0 sm:last:border-r-0 sm:p-5">
-                <p className="text-[10px] font-bold tracking-[0.14em] text-brand-500">{number}</p>
-                <p className="mt-2 text-sm font-semibold text-ink-800">{title}</p>
-                <p className="mt-1 text-xs leading-relaxed text-ink-500">{description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        </div>
       ) : null}
 
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,32rem),1fr))] gap-4">
         {items.map((item) => (
           <article
             key={item.verificationId}
-            className="surface-card overflow-hidden border border-warning-500/25"
+            className="surface-card overflow-hidden !border-warning-500/40"
           >
-            <div className="flex items-center gap-2 border-b border-warning-500/20 bg-warning-100 px-4 py-2.5 text-warning-700">
+            <div className="flex items-center gap-2 border-b border-warning-500/25 bg-warning-100 px-4 py-2.5 text-warning-700">
               <ShieldCheck className="size-4 shrink-0" aria-hidden />
               <p className="text-sm font-semibold">Bu işlemi sen mi yaptın?</p>
             </div>
@@ -100,12 +86,12 @@ export function CustomerVerificationsPage() {
             <div className="p-4">
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-ink-900">{item.transactionNo}</p>
+                  <p className="font-mono text-[13px] font-medium text-ink-900">{item.transactionNo}</p>
                   <p className="mt-0.5 text-xs text-ink-500">
                     {TRANSACTION_TYPE_LABEL[item.transactionType]}
                   </p>
                 </div>
-                <p className="shrink-0 text-xl font-bold tabular text-ink-900">
+                <p className="shrink-0 text-xl font-semibold tracking-[-0.02em] tabular text-ink-900">
                   {formatMoney(item.amount, item.currency)}
                 </p>
               </div>
@@ -124,7 +110,7 @@ export function CustomerVerificationsPage() {
               </dl>
 
               <p className="mt-3 text-xs text-ink-400">
-                Son yanıt: {formatRelative(item.expiresAt)}
+                Son yanıt zamanı: {formatDateTime(item.expiresAt)}
               </p>
 
               <div className="mt-4 grid grid-cols-2 gap-2.5">

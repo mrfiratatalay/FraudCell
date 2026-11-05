@@ -22,10 +22,10 @@ export function CustomerNotificationsPage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[90rem] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
+    <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:py-10">
       <CustomerPageHeader
         title="Bildirimler"
-        description="Bu oturumdaki işlem ve güvenlik güncellemelerini takip et."
+        description="İşlemlerinle ilgili güncellemeler, en yenisi üstte."
         actions={notifications.data.length > 0 ? (
           <Button
             size="sm"
@@ -40,7 +40,7 @@ export function CustomerNotificationsPage() {
       />
 
       {notifications.data.length === 0 ? (
-        <div className="surface-elevated">
+        <div className="surface-panel">
           <EmptyState
             illustration="inbox"
             title="Yeni bildirim yok"
@@ -48,23 +48,25 @@ export function CustomerNotificationsPage() {
           />
         </div>
       ) : (
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,32rem),1fr))] gap-3">
+        <div className="surface-panel divide-y divide-line overflow-hidden">
           {notifications.data.map((item) => {
             const content = (
               <article
-                className={`surface-card flex items-start gap-3 p-4 ${item.read ? '' : 'border-brand-200 bg-brand-100/30'}`}
+                className={`flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-subtle sm:px-5 ${item.read ? '' : 'bg-brand-50/60'}`}
               >
                 <span
                   className={`mt-1 size-2 shrink-0 rounded-full ${item.read ? 'bg-ink-200' : 'bg-brand-600'}`}
                   aria-hidden
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-ink-900">{item.title}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-ink-600">{item.message}</p>
-                  <p className="mt-2 text-xs text-ink-400">{formatRelative(item.occurredAt)}</p>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <p className="text-sm font-medium text-ink-900">{item.title}</p>
+                    <p className="shrink-0 text-xs text-ink-500">{formatRelative(item.occurredAt)}</p>
+                  </div>
+                  <p className="mt-0.5 text-[13px] leading-relaxed text-ink-600">{item.message}</p>
                 </div>
                 {item.resourceType === 'TRANSACTION' && item.resourceId ? (
-                  <ChevronRight className="mt-1 size-5 shrink-0 text-ink-400" aria-hidden />
+                  <ChevronRight className="mt-0.5 size-4 shrink-0 text-ink-400" aria-hidden />
                 ) : null}
               </article>
             );

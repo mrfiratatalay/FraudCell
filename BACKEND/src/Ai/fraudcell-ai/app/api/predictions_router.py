@@ -55,7 +55,7 @@ async def _resolve_explanation(prediction: Prediction, session: AsyncSession) ->
 async def get_prediction(assessment_id: str, session: AsyncSession = Depends(get_session)) -> dict:
     prediction = await session.get(Prediction, assessment_id)
     if prediction is None:
-        raise HTTPException(status_code=404, detail="Tahmin bulunamadi.")
+        raise HTTPException(status_code=404, detail="Tahmin bulunamadı.")
 
     return ok({
         "assessmentId": prediction.id,
@@ -81,7 +81,7 @@ async def get_prediction_explanation(
     """
     prediction = await session.get(Prediction, assessment_id)
     if prediction is None:
-        raise HTTPException(status_code=404, detail="Tahmin bulunamadi.")
+        raise HTTPException(status_code=404, detail="Tahmin bulunamadı.")
 
     return ok(await _resolve_explanation(prediction, session))
 
@@ -106,6 +106,6 @@ async def get_explanation_by_transaction(
     )
     prediction = result.scalar_one_or_none()
     if prediction is None:
-        raise HTTPException(status_code=404, detail="Bu islem icin tahmin bulunamadi.")
+        raise HTTPException(status_code=404, detail="Bu işlem için tahmin bulunamadı.")
 
     return ok(await _resolve_explanation(prediction, session))

@@ -32,7 +32,7 @@ public static class LeaderboardEndpoint
 
         if (period is not ("daily" or "weekly"))
         {
-            throw AppException.Validation("period 'daily' veya 'weekly' olmalidir.");
+            throw AppException.Validation("period 'daily' veya 'weekly' olmalıdır.");
         }
 
         var now = DateTimeOffset.UtcNow;

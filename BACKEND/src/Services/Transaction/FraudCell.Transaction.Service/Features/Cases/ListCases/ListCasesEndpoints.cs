@@ -47,7 +47,7 @@ public static class ListCasesEndpoints
         {
             if (!Enum.TryParse<CaseStatus>(status, out var parsedStatus))
             {
-                throw AppException.Validation("Gecersiz status.");
+                throw AppException.Validation("Geçersiz status.");
             }
 
             query = query.Where(c => c.Status == parsedStatus);
@@ -57,7 +57,7 @@ public static class ListCasesEndpoints
         {
             if (!Enum.TryParse<RiskLevel>(riskLevel, out var parsedLevel))
             {
-                throw AppException.Validation("Gecersiz riskLevel.");
+                throw AppException.Validation("Geçersiz riskLevel.");
             }
 
             query = query.Where(c => c.EffectiveRiskLevel == parsedLevel);
@@ -86,7 +86,7 @@ public static class ListCasesEndpoints
         {
             if (!Enum.TryParse<CaseStatus>(status, out var parsedStatus))
             {
-                throw AppException.Validation("Gecersiz status.");
+                throw AppException.Validation("Geçersiz status.");
             }
 
             query = query.Where(c => c.Status == parsedStatus);
@@ -96,22 +96,34 @@ public static class ListCasesEndpoints
             query = query.Where(c => c.Status != CaseStatus.KAPANDI);
         }
 
-        var cases = await query.OrderBy(c => c.SlaDeadlineAt).Take(limit).ToListAsync(cancellationToken);
+        // Case §11.2: the analyst works the riskiest case first; a breached SLA (KRITIK on top, §4.4) jumps the line.
+        var cases = await query
+            .OrderByDescending(c => c.SlaBreachedAt != null)
+            .ThenByDescending(c => c.EffectiveRiskScore ?? 0m)
+            .ThenBy(c => c.SlaDeadlineAt)
+            .Take(limit)
+            .ToListAsync(cancellationToken);
         return await BuildPageAsync(cases, limit, db, clock, correlation, cancellationToken);
     }
 
     private static async Task<IResult> ListAssignmentQueueAsync(
         TransactionServiceDbContext db, CorrelationContext correlation, CancellationToken cancellationToken,
-        string queueType = "QUEUED", int limit = 20)
+        string queueType = "ALL", int limit = 20)
     {
         limit = Math.Clamp(limit, 1, 100);
-        if (!Enum.TryParse<AssignmentStatus>(queueType, out var parsedQueue) || parsedQueue is not (AssignmentStatus.QUEUED or AssignmentStatus.MANUAL_QUEUE))
+
+        // Case §7: the waiting queue holds both BELIRSIZ cases (AI down → MANUAL_QUEUE)
+        // and cases waiting for analyst capacity (QUEUED); ALL shows them together.
+        AssignmentStatus[] statuses = queueType switch
         {
-            throw AppException.Validation("queueType QUEUED veya MANUAL_QUEUE olmalidir.");
-        }
+            "ALL" => [AssignmentStatus.QUEUED, AssignmentStatus.MANUAL_QUEUE],
+            nameof(AssignmentStatus.QUEUED) => [AssignmentStatus.QUEUED],
+            nameof(AssignmentStatus.MANUAL_QUEUE) => [AssignmentStatus.MANUAL_QUEUE],
+            _ => throw AppException.Validation("queueType ALL, QUEUED veya MANUAL_QUEUE olmalıdır."),
+        };
 
         var cases = await db.RiskCases.AsNoTracking()
-            .Where(c => c.AssignmentStatus == parsedQueue)
+            .Where(c => statuses.Contains(c.AssignmentStatus))
             .OrderBy(c => c.SlaDeadlineAt)
             .Take(limit)
             .Join(db.Transactions, c => c.TransactionId, t => t.Id, (c, t) => new AssignmentQueueItemResponse(

@@ -77,7 +77,7 @@ public static class CreateTransactionEndpoint
         var idempotencyKey = httpContext.Request.Headers["Idempotency-Key"].ToString();
         if (string.IsNullOrWhiteSpace(idempotencyKey))
         {
-            throw AppException.Validation("Idempotency-Key header'i zorunludur.");
+            throw AppException.Validation("Idempotency-Key header'ı zorunludur.");
         }
 
         if (idempotencyKey.Length > 100)
@@ -98,7 +98,7 @@ public static class CreateTransactionEndpoint
                 throw new AppException(
                     System.Net.HttpStatusCode.Conflict,
                     ErrorCodes.IdempotencyKeyReusedWithDifferentPayload,
-                    "Bu Idempotency-Key farkli bir istek govdesiyle daha once kullanilmis.");
+                    "Bu Idempotency-Key farklı bir istek gövdesiyle daha önce kullanılmış.");
             }
 
             httpContext.Response.Headers["Idempotency-Replayed"] = "true";
@@ -192,7 +192,7 @@ public static class CreateTransactionEndpoint
                 throw;
             }
 
-            throw new AppException(System.Net.HttpStatusCode.Conflict, ErrorCodes.IdempotencyConflict, "Ayni istek paralel olarak zaten isleniyor.");
+            throw new AppException(System.Net.HttpStatusCode.Conflict, ErrorCodes.IdempotencyConflict, "Aynı istek paralel olarak zaten işleniyor.");
         }
 
         return ApiResults.Created($"/api/v1/transactions/{transactionId}", response, correlation);
@@ -202,7 +202,7 @@ public static class CreateTransactionEndpoint
     {
         if (request.Amount <= 0)
         {
-            throw AppException.Validation("Tutar sifirdan buyuk olmalidir.",
+            throw AppException.Validation("Tutar sıfırdan büyük olmalıdır.",
                 new Dictionary<string, object?> { ["field"] = "amount", ["code"] = "MUST_BE_GREATER_THAN_ZERO" });
         }
 
@@ -228,7 +228,7 @@ public static class CreateTransactionEndpoint
 
         if (request.OccurredAt > DateTimeOffset.UtcNow.AddMinutes(FutureToleranceMinutes))
         {
-            throw AppException.Validation("Islem zamani gelecekte olamaz.", new Dictionary<string, object?> { ["field"] = "occurredAt" });
+            throw AppException.Validation("İşlem zamanı gelecekte olamaz.", new Dictionary<string, object?> { ["field"] = "occurredAt" });
         }
     }
 

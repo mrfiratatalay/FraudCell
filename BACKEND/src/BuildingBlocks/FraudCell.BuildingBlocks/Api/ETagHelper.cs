@@ -26,7 +26,7 @@ public static class ETagHelper
         var value = raw.Trim().Trim('"');
         if (!long.TryParse(value, out var version) || version < 0)
         {
-            throw AppException.Validation("If-Match header'i gecerli bir kaynak versiyonu icermelidir.");
+            throw AppException.Validation("If-Match header'ı geçerli bir kaynak versiyonu içermelidir.");
         }
 
         return version;

@@ -18,7 +18,7 @@ router = APIRouter(prefix="/api/v1/ai/models", tags=["AI Models"])
 async def get_active_bundle(session: AsyncSession = Depends(get_session)) -> dict:
     bundle = (await session.execute(select(ModelBundle).where(ModelBundle.status == "ACTIVE"))).scalar_one_or_none()
     if bundle is None:
-        raise HTTPException(status_code=404, detail="Aktif model bundle bulunamadi.")
+        raise HTTPException(status_code=404, detail="Aktif model bundle bulunamadı.")
 
     risk = await session.get(ModelVersion, bundle.risk_model_id)
     fraud_type = await session.get(ModelVersion, bundle.fraud_type_model_id)
@@ -45,7 +45,7 @@ async def get_model_version(model_version: str, session: AsyncSession = Depends(
     ).scalar_one_or_none()
 
     if version is None:
-        raise HTTPException(status_code=404, detail="Model versiyonu bulunamadi.")
+        raise HTTPException(status_code=404, detail="Model versiyonu bulunamadı.")
 
     return ok({
         "version": version.semantic_version,

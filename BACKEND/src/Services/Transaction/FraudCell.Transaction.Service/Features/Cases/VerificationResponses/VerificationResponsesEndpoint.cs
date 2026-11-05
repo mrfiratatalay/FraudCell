@@ -54,7 +54,7 @@ public static class VerificationResponsesEndpoint
 
         if (verification.Status != VerificationStatus.PENDING)
         {
-            throw new AppException(System.Net.HttpStatusCode.Conflict, ErrorCodes.VerificationNotPending, "Bu dogrulama zaten cevaplanmis veya suresi dolmus.");
+            throw new AppException(System.Net.HttpStatusCode.Conflict, ErrorCodes.VerificationNotPending, "Bu doğrulama zaten cevaplanmış veya süresi dolmuş.");
         }
 
         var now = clock.UtcNow;
@@ -85,7 +85,7 @@ public static class VerificationResponsesEndpoint
         }
 
         transitions.Record(riskCase, previousStatus, customerId, RoleNames.Customer, TransitionSource.CUSTOMER,
-            $"Musteri cevabi: {request.Response}", null, versionBefore);
+            $"Müşteri cevabı: {request.Response}", null, versionBefore);
 
         outboxWriter.Enqueue(TransactionEventTypes.CustomerVerificationResponded, caseId, new
         {

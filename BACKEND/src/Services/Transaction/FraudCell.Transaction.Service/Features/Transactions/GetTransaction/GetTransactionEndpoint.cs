@@ -16,7 +16,7 @@ public sealed record AssessmentResponse(
 public sealed record TransactionDetailResponse(
     string TransactionId, string TransactionNo, decimal Amount, string Currency, string TransactionType,
     RecipientResponse Recipient, LocationResponse Location, DateTimeOffset OccurredAt,
-    AssessmentResponse Assessment, string ControlStatus, string? CaseId, DateTimeOffset CreatedAt, long Version);
+    AssessmentResponse Assessment, string ControlStatus, string? CaseId, string? CaseStatus, int? FeedbackRating, DateTimeOffset CreatedAt, long Version);
 
 public sealed record RecipientResponse(string Reference);
 
@@ -72,6 +72,14 @@ public static class GetTransactionEndpoint
             ? []
             : System.Text.Json.JsonSerializer.Deserialize<List<ReasonCodeResponse>>(assessment.ReasonCodesJson, JsonDefaults.Events) ?? [];
 
+        // The customer rates a closed case once (case §4.6); the screen needs to know whether it already did.
+        int? feedbackRating = riskCase is null
+            ? null
+            : await db.CustomerFeedbacks.AsNoTracking()
+                .Where(f => f.CaseId == riskCase.Id)
+                .Select(f => (int?)f.Rating)
+                .SingleOrDefaultAsync(cancellationToken);
+
         httpContext.Response.Headers.ETag = $"\"{txn.Version}\"";
 
         var response = new TransactionDetailResponse(
@@ -81,7 +89,7 @@ public static class GetTransactionEndpoint
                 txn.AssessmentStatus.ToString(), txn.EffectiveRiskScore, txn.EffectiveRiskLevel?.ToString(),
                 txn.AssessmentStatus == AssessmentStatus.COMPLETED ? txn.ScreeningDecision.ToString() : null,
                 txn.EffectiveFraudType?.ToString(), assessment?.ModelVersion, reasonCodes, assessment?.AssessedAt),
-            txn.ControlStatus.ToString(), riskCase?.Id, txn.CreatedAt, txn.Version);
+            txn.ControlStatus.ToString(), riskCase?.Id, riskCase?.Status.ToString(), feedbackRating, txn.CreatedAt, txn.Version);
 
         return ApiResults.Ok(response, correlation);
     }

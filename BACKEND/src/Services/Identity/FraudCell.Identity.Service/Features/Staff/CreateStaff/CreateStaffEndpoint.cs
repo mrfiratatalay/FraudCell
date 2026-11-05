@@ -55,19 +55,19 @@ public static class CreateStaffEndpoint
 
         if (!RoleNames.StaffRoles.Contains(request.Role, StringComparer.Ordinal))
         {
-            throw AppException.Validation("Rol ANALYST, SUPERVISOR veya ADMIN olmalidir.",
+            throw AppException.Validation("Rol ANALYST, SUPERVISOR veya ADMIN olmalıdır.",
                 new Dictionary<string, object?> { ["field"] = "role" });
         }
 
         // Only analysts are matched to cases by specialty (case §5.3); supervisors and admins may have none.
         if (request.Role == RoleNames.Analyst && request.Specialties.Count == 0)
         {
-            throw AppException.Validation("Analist icin en az bir uzmanlik alani atanmalidir.");
+            throw AppException.Validation("Analist için en az bir uzmanlık alanı atanmalıdır.");
         }
 
         if (request.Regions.Count == 0)
         {
-            throw AppException.Validation("En az bir bolge atanmalidir.");
+            throw AppException.Validation("En az bir bölge atanmalıdır.");
         }
 
         var existing = await userManager.FindByEmailAsync(request.Email.Trim());
@@ -91,7 +91,7 @@ public static class CreateStaffEndpoint
         var createResult = await userManager.CreateAsync(user, request.Password);
         if (!createResult.Succeeded)
         {
-            throw AppException.Validation("Sifre politikasi ihlal edildi.",
+            throw AppException.Validation("Şifre politikası ihlal edildi.",
                 new Dictionary<string, object?>
                 {
                     ["violations"] = createResult.Errors.Select(e => e.Code).ToArray(),

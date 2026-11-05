@@ -27,7 +27,7 @@ export function BarList({
   const max = Math.max(1, ...data.map((item) => item.value));
 
   if (data.length === 0) {
-    return <p className="py-8 text-center text-sm text-ink-400">{emptyLabel}</p>;
+    return <p className="py-6 text-center text-sm text-ink-500">{emptyLabel}</p>;
   }
 
   return (
@@ -37,11 +37,11 @@ export function BarList({
           <div className="mb-1 flex items-baseline justify-between gap-3 text-sm">
             <span className="min-w-0 truncate text-ink-700">{item.label}</span>
             <span className="flex shrink-0 items-baseline gap-2">
-              {item.meta && <span className="text-caption text-ink-400">{item.meta}</span>}
-              <span className="font-semibold tabular text-ink-900">{formatNumber(item.value)}</span>
+              {item.meta && <span className="text-xs text-ink-500">{item.meta}</span>}
+              <span className="font-medium tabular text-ink-900">{formatNumber(item.value)}</span>
             </span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-ink-100">
+          <div className="h-1.5 overflow-hidden rounded-full bg-ink-100">
             <div
               className="h-full rounded-full transition-[width] duration-500"
               style={{
