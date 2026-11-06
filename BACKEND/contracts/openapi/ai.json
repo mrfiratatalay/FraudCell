@@ -656,13 +656,37 @@
                                                                                                                               }
                                                                                                                           ],
                                                                                                                 "title":  "Accuracy"
+                                                                                                            },
+                                                                                               "precision":  {
+                                                                                                                "anyOf":  [
+                                                                                                                              {
+                                                                                                                                  "type":  "number"
+                                                                                                                              },
+                                                                                                                              {
+                                                                                                                                  "type":  "null"
+                                                                                                                              }
+                                                                                                                          ],
+                                                                                                                "title":  "Precision"
+                                                                                                            },
+                                                                                               "recall":  {
+                                                                                                                "anyOf":  [
+                                                                                                                              {
+                                                                                                                                  "type":  "number"
+                                                                                                                              },
+                                                                                                                              {
+                                                                                                                                  "type":  "null"
+                                                                                                                              }
+                                                                                                                          ],
+                                                                                                                "title":  "Recall"
                                                                                                             }
                                                                                            },
                                                                             "type":  "object",
                                                                             "required":  [
                                                                                              "fraudType",
                                                                                              "sampleCount",
-                                                                                             "accuracy"
+                                                                                             "accuracy",
+                                                                                             "precision",
+                                                                                             "recall"
                                                                                          ],
                                                                             "title":  "CategoryAccuracyItemResponse"
                                                                         },

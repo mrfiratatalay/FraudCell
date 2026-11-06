@@ -151,7 +151,7 @@ export interface paths {
         put?: never;
         /**
          * Score Internal
-         * @description Diagnostic/contract-test amaclidir; ana transaction akisi HTTP'ye bagli DEGILDIR.
+         * @description Diagnostic/contract-test amaclidir; ana transaction akisi HTTP'ye bagli DEGILDIR (dokuman §58).
          */
         post: operations["score_internal_internal_v1_assessments_score_post"];
         delete?: never;
@@ -275,6 +275,10 @@ export interface components {
             accuracy: number | null;
             /** Fraudtype */
             fraudType: string;
+            /** Precision */
+            precision: number | null;
+            /** Recall */
+            recall: number | null;
             /** Samplecount */
             sampleCount: number;
         };
