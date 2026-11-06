@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace FraudCell.Transaction.Service.BackgroundJobs;
 
 /// <summary>
-/// Dokuman §23.2: musteri dogrulama suresi dolduginda vaka otomatik olarak
+/// musteri dogrulama suresi dolduginda vaka otomatik olarak
 /// INCELENIYOR durumuna doner; nihai karar otomatik verilmez.
 /// </summary>
 public sealed partial class VerificationExpiryWorker(IServiceScopeFactory scopeFactory, IClock clock, ILogger<VerificationExpiryWorker> logger) : BackgroundService

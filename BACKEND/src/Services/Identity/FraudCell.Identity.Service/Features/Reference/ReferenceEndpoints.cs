@@ -9,8 +9,8 @@ namespace FraudCell.Identity.Service.Features.Reference;
 public sealed record ReferenceItemResponse(string Code, string DisplayName);
 
 /// <summary>
-/// Rol/uzmanlik/bolge lookup endpoint'leri (dokuman `07-API-DESIGN.md` §22).
-/// Kisa private cache kullanabilir (dokuman §66.2).
+/// Rol/uzmanlik/bolge lookup endpoint'leri.
+/// Kisa private cache kullanabilir.
 /// </summary>
 public static class ReferenceEndpoints
 {

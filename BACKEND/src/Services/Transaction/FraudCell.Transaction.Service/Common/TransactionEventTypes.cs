@@ -1,6 +1,6 @@
 namespace FraudCell.Transaction.Service.Common;
 
-/// <summary>Transaction Service'in yayinladigi/tukettigi event tipleri (dokuman `04-SERVICE-BOUNDARIES.md` §8.5-8.6).</summary>
+/// <summary>Transaction Service'in yayinladigi/tukettigi event tipleri.</summary>
 public static class TransactionEventTypes
 {
     // --- Yayinlanan ---

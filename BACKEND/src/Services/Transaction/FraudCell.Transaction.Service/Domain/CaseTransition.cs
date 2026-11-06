@@ -1,6 +1,6 @@
 namespace FraudCell.Transaction.Service.Domain;
 
-/// <summary><c>txn.case_transitions</c> (dokuman §27). Append-only gecmis; runtime user'a UPDATE/DELETE verilmez.</summary>
+/// <summary><c>txn.case_transitions</c>. Append-only gecmis; runtime user'a UPDATE/DELETE verilmez.</summary>
 public sealed class CaseTransition
 {
     public required string Id { get; set; }

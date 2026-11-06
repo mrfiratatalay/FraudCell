@@ -22,7 +22,7 @@ public sealed record AuditLogResponse(
     string? DetailsJson);
 
 /// <summary>
-/// <c>GET /api/v1/audit-logs</c> ve <c>/audit-logs/{auditId}</c> (dokuman §22/§32).
+/// <c>GET /api/v1/audit-logs</c> ve <c>/audit-logs/{auditId}</c>.
 /// Yalnizca admin sorgulayabilir. Kayitlar append-only'dir; bu endpoint yalnizca okur.
 /// </summary>
 public static class GetAuditLogsEndpoint

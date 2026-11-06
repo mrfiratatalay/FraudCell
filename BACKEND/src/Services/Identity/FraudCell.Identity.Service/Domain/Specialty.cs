@@ -2,7 +2,7 @@ using FraudCell.Identity.Service.Common;
 
 namespace FraudCell.Identity.Service.Domain;
 
-/// <summary><c>identity.specialties</c> (dokuman §13.1). Fraud turleriyle uyumlu seed degerleri; <c>TEMIZ</c> haric.</summary>
+/// <summary><c>identity.specialties</c>. Fraud turleriyle uyumlu seed degerleri; <c>TEMIZ</c> haric.</summary>
 public sealed class Specialty
 {
     public required string Id { get; set; }

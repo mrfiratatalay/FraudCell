@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore;
 namespace FraudCell.Identity.Service.Persistence;
 
 /// <summary>
-/// Identity Service'in TEK veritabani baglantisi (dokuman `06-DATA-ARCHITECTURE.md`
-/// §2/§3: <c>fraudcell_identity</c> database, <c>identity</c> schema). Bu servis
+/// Identity Service'in TEK veritabani baglantisi:
+/// <c>fraudcell_identity</c> database, <c>identity</c> schema). Bu servis
 /// disinda hicbir servis bu baglanti dizesine erisemez; network izolasyonu
 /// docker-compose seviyesinde ayrica uygulanir.
 /// </summary>
@@ -249,7 +249,7 @@ public sealed class IdentityServiceDbContext(DbContextOptions<IdentityServiceDbC
             entity.HasIndex(e => new { e.ResourceType, e.ResourceId, e.OccurredAt }).HasDatabaseName("ix_audit_resource");
             entity.HasIndex(e => e.CorrelationId).HasDatabaseName("ix_audit_correlation");
 
-            // Append-only: runtime user icin UPDATE/DELETE verilmez (dokuman §18.4).
+            // Append-only: runtime user icin UPDATE/DELETE verilmez.
             // Bu, veritabani GRANT script'lerinde (migration disinda) uygulanir.
         });
 

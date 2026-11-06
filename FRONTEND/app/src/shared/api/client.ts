@@ -1,7 +1,7 @@
 /**
  * FraudCell HTTP client.
  *
- * DESIGN.MD "Axios kullanmazdım": native `fetch` + tipli sarmalayıcı yeterli.
+ * native `fetch` + tipli sarmalayıcı yeterli.
  *
  * Sorumlulukları:
  *   - `ApiEnvelope` açma: `data`yı döndürür, `error`ı `ApiRequestError`a çevirir

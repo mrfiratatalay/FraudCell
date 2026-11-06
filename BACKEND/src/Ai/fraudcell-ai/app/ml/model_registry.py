@@ -1,8 +1,8 @@
-"""Egitilmis model artifact'larini yukler ve inference saglar (dokuman §14.4).
+"""Egitilmis model artifact'larini yukler ve inference saglar.
 
 Model yalnizca takim tarafindan uretilmis artifact'i yukler; kullanicidan
 gelen bir artifact ASLA yuklenmez. Checksum, `metadata.json` ile karsilastirilir;
-uyusmazlikta servis "not ready" olur (dokuman §14.4/§33.2).
+uyusmazlikta servis "not ready" olur.
 """
 
 from __future__ import annotations

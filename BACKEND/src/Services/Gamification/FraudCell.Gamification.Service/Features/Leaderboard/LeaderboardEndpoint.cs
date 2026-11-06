@@ -10,7 +10,7 @@ public sealed record LeaderboardItemResponse(int Rank, string AnalystId, string?
 
 public sealed record LeaderboardResponse(string Period, DateTimeOffset PeriodStart, DateTimeOffset PeriodEnd, IReadOnlyList<LeaderboardItemResponse> Items);
 
-/// <summary><c>GET /api/v1/game/leaderboard?period=daily|weekly</c> (dokuman §63). Maksimum limit 10.</summary>
+/// <summary><c>GET /api/v1/game/leaderboard?period=daily|weekly</c>. Maksimum limit 10.</summary>
 public static class LeaderboardEndpoint
 {
     private const int MaxLimit = 10;

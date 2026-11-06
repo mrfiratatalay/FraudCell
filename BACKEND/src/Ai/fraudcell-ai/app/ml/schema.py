@@ -1,4 +1,4 @@
-"""Ozellik semasi (dokuman 00-START-HERE.md §8, 10-AI-SERVICE-DESIGN.md taslagi).
+"""Ozellik semasi.
 
 Kolon sirasi egitim ve inference arasinda BIREBIR ayni olmalidir; bu yuzden
 tek bir kaynaktan (bu liste) uretilir.

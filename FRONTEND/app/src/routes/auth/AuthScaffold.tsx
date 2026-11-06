@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { lazy, Suspense, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import { cn } from '@/shared/lib/cn';
 import { LogoWordmark } from '@/shared/ui/Logo';
@@ -14,6 +14,8 @@ import { ThemeToggle } from '@/shared/ui/ThemeToggle';
 
 export type AuthTab = 'customer' | 'staff';
 
+const DemoAccess = import.meta.env.VITE_API_MODE !== 'live' ? lazy(() => import('@/demo/DemoAccess')) : null;
+
 export function AuthScaffold({ children, tab }: { children: ReactNode; tab?: AuthTab }) {
   return (
     <div className="min-h-dvh w-full bg-surface lg:grid lg:h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)] lg:overflow-hidden">
@@ -27,6 +29,11 @@ export function AuthScaffold({ children, tab }: { children: ReactNode; tab?: Aut
 
         <main className="flex flex-1 items-center justify-center py-10">
           <div className="w-full max-w-[400px]">
+            {DemoAccess ? (
+              <Suspense fallback={null}>
+                <DemoAccess />
+              </Suspense>
+            ) : null}
             {tab ? <AuthTabs active={tab} /> : null}
             {children}
           </div>

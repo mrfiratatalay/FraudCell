@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FraudCell.Identity.Service.Features.Staff.ListStaff;
 
-/// <summary><c>GET /api/v1/staff</c> (dokuman `07-API-DESIGN.md` §22, Admin/Supervisor).</summary>
+/// <summary><c>GET /api/v1/staff</c>.</summary>
 public static class ListStaffEndpoint
 {
     public static void MapListStaff(this IEndpointRouteBuilder app)

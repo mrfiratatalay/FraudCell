@@ -22,7 +22,7 @@ public sealed record RecipientResponse(string Reference);
 
 public sealed record LocationResponse(string City, string CountryCode);
 
-/// <summary><c>GET /api/v1/transactions/{transactionId}</c> (dokuman §35). Musteri yalnizca kendi islemini gorur.</summary>
+/// <summary><c>GET /api/v1/transactions/{transactionId}</c>. Musteri yalnizca kendi islemini gorur.</summary>
 public static class GetTransactionEndpoint
 {
     public static void MapGetTransaction(this IEndpointRouteBuilder app)

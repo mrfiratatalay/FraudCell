@@ -8,7 +8,7 @@ namespace FraudCell.BuildingBlocks.Messaging.RabbitMq;
 
 /// <summary>
 /// Event'leri broker'a veren tek bilesen. YALNIZCA outbox worker tarafindan
-/// kullanilir; business kodu dogrudan publish etmez (dokuman §46).
+/// kullanilir; business kodu dogrudan publish etmez.
 ///
 /// Kanal publisher confirm ile acilir: <c>BasicPublishAsync</c> tamamlandiginda
 /// broker mesaji kabul etmis demektir. Ancak o zaman outbox satiri

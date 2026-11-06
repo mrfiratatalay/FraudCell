@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 namespace FraudCell.BuildingBlocks.Correlation;
 
 /// <summary>
-/// Bir HTTP isteginin veya event isleyisinin ucdan uca kimligi (dokuman §35).
+/// Bir HTTP isteginin veya event isleyisinin ucdan uca kimligi.
 /// Scoped kayitlidir; ayni request icindeki her bilesen ayni degeri gorur.
 /// </summary>
 public sealed class CorrelationContext

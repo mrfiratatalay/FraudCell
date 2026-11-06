@@ -1,7 +1,7 @@
 # FraudCell: Case Uyum Kontrol Listesi
 
 Kaynak: [Turkcell CodeNight 2026 Final case dokümanı][case PDF] (18 sayfa).
-Denetim tarihi: 2026-11-05. Başlangıç noktası, hackathon bitişindeki kod: tag
+Denetim tarihi: 2026-11-05; Part 7 sonunda (2026-11-06) güncellendi. Başlangıç noktası, hackathon bitişindeki kod: tag
 [`allstar-final-2026-07-23`](https://github.com/mrfiratatalay/FraudCell/tree/allstar-final-2026-07-23)
 (`b139a9c`, 2026-07-23 04:52).
 
@@ -25,20 +25,20 @@ yapılan uçtan uca çalıştırmayı gösterir (iki kurulum engeli geçici olar
 
 | Bölüm | ✅ | ⚠️ | ❌ | 🐛 |
 |---|---:|---:|---:|---:|
-| 2. Mimari | 7 | 4 | 0 | 0 |
+| 2. Mimari | 11 | 0 | 0 | 0 |
 | 3. Identity | 19 | 1 | 0 | 0 |
-| 4. Transaction | 18 | 2 | 0 | 0 |
+| 4. Transaction | 20 | 0 | 0 | 0 |
 | 5. AI | 14 | 0 | 0 | 0 |
-| 6. Gamification | 12 | 1 | 0 | 0 |
-| 7. Süpervizör paneli | 1 | 4 | 0 | 1 |
+| 6. Gamification | 13 | 0 | 0 | 0 |
+| 7. Süpervizör paneli | 4 | 2 | 0 | 0 |
 | 8. API tasarımı | 2 | 2 | 0 | 0 |
-| 9. Event akışı | 2 | 1 | 0 | 0 |
+| 9. Event akışı | 3 | 0 | 0 | 0 |
 | 10. Güvenlik | 7 | 0 | 0 | 0 |
-| 11. Demo senaryosu | 6 | 3 | 0 | 1 |
-| 12. Değerlendirme ve bonus | 3 | 3 | 0 | 1 |
-| 13. Diskalifiye koşulları | 4 | 1 | 0 | 0 |
-| 14. Teslimat | 4 | 3 | 2 | 0 |
-| **Toplam (129 satır)** | **99** | **25** | **2** | **3** |
+| 11. Demo senaryosu | 10 | 0 | 0 | 0 |
+| 12. Değerlendirme ve bonus | 7 | 0 | 0 | 0 |
+| 13. Diskalifiye koşulları | 5 | 0 | 0 | 0 |
+| 14. Teslimat | 9 | 0 | 0 | 0 |
+| **Toplam (129 satır)** | **124** | **5** | **0** | **0** |
 
 Bazı satırlar aynı kök nedene bağlıdır. Örneğin `docker compose up` sorunu 2.2-d, 11.3-1 ve 13.2-b'de
 ayrı ayrı görünür.
@@ -48,37 +48,25 @@ ayrı ayrı görünür.
 1. ~~Analistin AI kararını değiştirmesi AI servisine ulaşmıyor (4.3-c, 5.4).~~ Part 5'te düzeltildi.
 2. ~~"+15 doğrulanmış dolandırıcılık" puanı her blok kararına veriliyor (6.1-c).~~ Part 3'te düzeltildi.
 3. ~~AI servisinin endpoint'leri token olmadan erişilebilir (10-b).~~ Part 4'te gateway'de kapatıldı.
-4. Veritabanları tek PostgreSQL container'ında; jüri bunu "ortak veritabanı" sayabilir (2.2-a).
+4. ~~Veritabanları tek PostgreSQL container'ında (2.2-a).~~ Part 2'de düzeltildi.
 
-## Yol haritası
-
-| Part | Kapsam |
-|---|---|
-| 0 | Hackathon tag'i, eski branch temizliği, bu liste, CI'ın yeşile çekilmesi |
-| 1 | Her makinede tek komutla açılış: init script, Docker içinde model eğitimi, demo seed, compose E2E job'u |
-| 2 | Gerçek mikroservis sınırları: kök compose, 4 ayrı PostgreSQL, JWKS, notification ve web servislerinin ayrılması, dayanıklılık testleri |
-| 3 | İş kuralları: puanlama, ground-truth tanımı, kapanış ve geri bildirim, rozetler; önce başarısız test, sonra düzeltme |
-| 4 | Güvenlik: jüri senaryoları otomatik test olarak, rol sızıntıları, refresh token, rate limit |
-| 5 | AI: veri seti repoda, override ile doğruluk döngüsü, kategori bazlı doğruluk, model kartı |
-| 6 | Frontend: dört rolün akışları Playwright ile, SLA renkleri, geri bildirim ekranı, kuyruk |
-| 7 | Dokümantasyon: servis README'leri, EVENTS.md, servis başına `.env.example`, eski AI dokümanlarının temizliği |
-| 8 | Temiz makinede final prova ve v1.0.0 |
+Her part ayrı bir PR'dır (PR #4–#11); satırlardaki "Part" sütunu kapandığı adımı gösterir.
 
 ## 2. Mimari gereksinimler
 
 | # | Gereksinim | Durum | Kanıt | Plan |
 |---|---|:---:|---|---|
 | 2.1-a | En az 4 bağımsız mikroservis ve 1 API Gateway | ✅ | Identity, Transaction, Gamification (.NET 10), AI (FastAPI), Edge Gateway (YARP). Her biri ayrı image ve container ([docker-compose.yml]). | |
-| 2.1-b | Gateway: tek giriş noktası, routing, rate limiting, JWT doğrulama | ⚠️ | Routing ve rate limit var ([Edge/Program.cs#L73-L90]). JWT kontrolü yalnızca *geçersiz* token'ı reddediyor ([Edge/Program.cs#L149-L170]); token'sız istek downstream'e geçiyor ve AI servisi kendisi de doğrulamıyor (10-b). Gateway SPA ve SSE de sunuyor; sorumluluğu fazla. | Part 2, 4 |
+| 2.1-b | Gateway: tek giriş noktası, routing, rate limiting, JWT doğrulama | ✅ | Gateway JWT'yi Identity'nin JWKS'iyle doğrular, rotalara rol politikası uygular; [security.py](../scripts/security.py) token'sız 401 ve yanlış rol 403 matrisini her PR'da dener. | Part 2, 4 |
 | 2.1-c | Identity: kayıt, giriş, token, rol/yetki, audit log, hesap kilitleme | ✅ | §3 | |
 | 2.1-d | Transaction: işlem kaydı, vaka yaşam döngüsü, SLA, analist notu | ✅ | §4 | |
 | 2.1-e | AI: risk skorlama, tür sınıflandırma, akıllı atama | ✅ | §5 | |
 | 2.1-f | Gamification: puan, rozet, seviye, liderlik; event ile tetiklenir | ✅ | §6 | |
-| 2.2-a | Database-per-service; bir servis başka servisin DB'sine erişemez | ⚠️ | 4 ayrı database ve 4 ayrı login rolü var; `CONNECT` yetkisi yalnızca sahibinde ([init-multiple-databases.sh]). Dördü tek PostgreSQL container'ında çalıştığı için "ortak veritabanı" olarak yorumlanabilir (13.2-d). | Part 2 |
+| 2.2-a | Database-per-service; bir servis başka servisin DB'sine erişemez | ✅ | Dört ayrı PostgreSQL container'ı, her biri yalnızca kendi servisinin özel ağında ([docker-compose.yml]). | Part 2 |
 | 2.2-b | Servisler arası iletişim: message queue tercih edilir | ✅ | RabbitMQ topic exchange, transactional outbox, idempotent inbox, TTL tabanlı retry kuyrukları ve DLQ ([RabbitMqTopology.cs], [OutboxPublisherService.cs]). Servisler arasında senkron REST çağrısı yok. | |
-| 2.2-c | Bir servis çökünce diğerleri çalışır; AI kapalıyken işlem oluşturulur, BELIRSIZ olarak işaretlenip manuel atamaya düşer | ⚠️ | canlı: `ai-service` durdurulunca işlem 201 döndü, `TIMED_OUT` oldu, vaka `MANUAL_QUEUE`'ya düştü ([AssessmentWatchdogWorker.cs], [ManualFallbackCaseCreator.cs]). AI kapalı senaryosu artık CI'da her PR'da test ediliyor (`scripts/demo.py ai-down`). Gateway yalnızca Identity'yi bekliyor. Diğer servislerin ve RabbitMQ'nun kapatılması henüz test edilmedi. | Part 2 |
+| 2.2-c | Bir servis çökünce diğerleri çalışır; AI kapalıyken işlem oluşturulur, BELIRSIZ olarak işaretlenip manuel atamaya düşer | ✅ | CI'da `demo.py ai-down` AI'ı durdurur: işlem kaydedilir, `TIMED_OUT`, vaka `MANUAL_QUEUE`; `demo.py resilience` her container'ı sırayla durdurur. | Part 1, 2 |
 | 2.2-d | `docker compose up` ile tüm sistem ayağa kalkar | ✅ | Part 1'de düzeltildi: [init-multiple-databases.sh] çalıştırılabilir, AI modeli image build'inde eğitiliyor (model dosyaları hâlâ gitignore'da: [BACKEND/.gitignore#L30-L31]), gateway yalnızca Identity'yi bekliyor. CI'daki `demo-e2e` job'u her PR'da temiz makinede `docker compose up` yapıp demoyu çalıştırıyor. | |
-| 2.2-e | Her servisin README'si: sorumluluk, endpoint listesi, environment değişkenleri | ⚠️ | 5 README var ama 13–24 satır; endpoint ve env listeleri yok. | Part 7 |
+| 2.2-e | Her servisin README'si: sorumluluk, endpoint listesi, environment değişkenleri | ✅ | Altı servisin README'si ve [docs/](README.md) altındaki 12 doküman. | Part 7 |
 
 ## 3. Identity Service
 
@@ -122,12 +110,12 @@ ayrı ayrı görünür.
 | 4.3-c | Tür değişikliği AI Service'e bildirilir (doğruluk metriği için) | ✅ | AI `case.fraud_type.overridden`'ı tüketip vakanın `prediction_feedback` satırını yanlış sınıflandırma olarak işaretliyor ([feedback_consumers.py]). | |
 | 4.3-d | Risk seviyeleri DUSUK/ORTA/YUKSEK/KRITIK; skor > 0.9 → KRITIK ve otomatik geçici blok; süpervizör değiştirebilir | ✅ | [RiskThresholds.cs], [AiAssessmentCompletedConsumer.cs#L166-L184], [RiskLevelOverrideEndpoint.cs] (yalnızca süpervizör) | |
 | 4.4-a | SLA: KRITIK 15 dk, YUKSEK 1 sa, ORTA 4 sa, DUSUK 24 sa | ✅ | [RiskCase.cs#L63-L69] | |
-| 4.4-b | Aşımda: KRITIK işlem geçici bloklanır ve panelde en üstte kırmızı görünür; YUKSEK turuncu; ORTA ve DUSUK görsel uyarı | ⚠️ | Backend KRITIK aşımda geçici blok koyuyor ([SlaBreachWorker.cs#L67-L86]). UI'da SLA rozetleri var ([SlaCountdown.tsx]); "en üstte kırmızı" sıralaması ve renkler doğrulanmadı. | Part 6 |
+| 4.4-b | Aşımda: KRITIK işlem geçici bloklanır ve panelde en üstte kırmızı görünür; YUKSEK turuncu; ORTA ve DUSUK görsel uyarı | ✅ | Aşılan SLA listelerde ve panelde en üstte; KRITIK kırmızı, YUKSEK turuncu, ORTA/DUSUK uyarı rengiyle. | Part 6 |
 | 4.4-c | SLA vaka oluşturulunca başlar, kararla durur; kalan süre analist ve süpervizör ekranında görünür | ✅ | `StartSla` vaka oluşturulurken, `SlaStoppedAt` kararda; geri sayım [SlaCountdown.tsx] | |
 | 4.5-a | Şüpheli işlemde müşteriye uygulama içi doğrulama bildirimi | ✅ | [VerificationRequestsEndpoint.cs] ve `user.notification.requested` → SSE | |
 | 4.5-b | Müşteri "ben yaptım" ya da "ben yapmadım" der; yanıt karara girdi olur | ✅ | [VerificationResponsesEndpoint.cs] | |
 | 4.5-c | "Ben yapmadım" cevabında işlem BLOK'a yaklaşır, risk skoru yükselir | ✅ | Skor en az 0.91'e çıkar, seviye KRITIK olur, SLA yeniden hesaplanır, geçici blok konur ([VerificationResponsesEndpoint.cs#L71-L85]) | |
-| 4.6-a | Vaka KAPANDI olduktan sonra müşteri tek seferlik 1–5 yıldız verir | ⚠️ | Backend tam: KAPANDI şartı ve tek seferlik kısıt var ([SubmitFeedbackEndpoint.cs#L52-L61]). **Frontend'de geri bildirim ekranı yok.** | Part 6 |
+| 4.6-a | Vaka KAPANDI olduktan sonra müşteri tek seferlik 1–5 yıldız verir | ✅ | Kapanan vakada müşteri ekranında 1–5 yıldız formu; tarayıcı testi bu adımı yürütür. | Part 6 |
 | 4.6-b | Puan verilince Gamification'a event gider | ✅ | `customer.feedback.submitted` ([SubmitFeedbackEndpoint.cs#L77-L86]) | |
 
 ## 5. AI Service
@@ -164,7 +152,7 @@ ayrı ayrı görünür.
 | 6.3 | Seviyeler: Bronz 0–499, Gümüş 500–1.499, Altın 1.500–2.999, Platin 3.000+ | ✅ | [Gamification/Domain/Enums.cs#L31-L40]; test [LevelThresholdsTests.cs] | |
 | 6.4-a | Günlük ve haftalık liderlik tablosu, ilk 10, puana göre | ✅ | [LeaderboardEndpoint.cs] | |
 | 6.4-b | Liderlik tablosu gerçek zamanlı ya da sayfa yenilemede güncel | ✅ | SSE ve sorgu yenileme ([useRealtime.ts]) | |
-| 6.4-c | Profil: toplam puan, seviye, rozetler, günlük/haftalık sıra, çözülen vaka, ortalama puan | ⚠️ | [ProfilesEndpoints.cs], [AnalystPointsPage.tsx]; alanların tamamı doğrulanmadı. | Part 6 |
+| 6.4-c | Profil: toplam puan, seviye, rozetler, günlük/haftalık sıra, çözülen vaka, ortalama puan | ✅ | Profil sayfası: toplam puan, seviye çubuğu, rozetler, günlük/haftalık sıra, çözülen vaka, vaka başına ortalama puan. | Part 6 |
 | 6.4-d | Rozet kazanılınca toast/modal | ✅ | `badge.earned` → toast ([useRealtime.ts#L99]) | Part 6 |
 
 ## 7. Süpervizör paneli
@@ -173,10 +161,10 @@ ayrı ayrı görünür.
 |---|---|:---:|---|---|
 | 7-a | Dolandırıcılık türüne göre dağılım (pasta/bar) | ✅ | "Fraud tipi kırılımı" ([SupervisorDashboardPage.tsx#L192]) | |
 | 7-b | Risk seviyesi dağılımı **ve trendi** | ⚠️ | Dağılım var, trend yok. | Part 6 |
-| 7-c | SLA uyum oranı ve SLA'sı aşılmış aktif vakalar | ⚠️ | "SLA sağlığı" ve "Acil / aşılmış SLA" kartları var; uyum oranı yüzdesi yok. | Part 6 |
-| 7-d | AI doğruluğu: risk kararı isabet oranı, yanlış pozitif oranı | 🐛 | Kart var, veri hiç dolmuyor (5.4-b). | Part 5 |
+| 7-c | SLA uyum oranı ve SLA'sı aşılmış aktif vakalar | ✅ | KPI şeridinde "SLA uyumu" yüzdesi ve "Acil / aşılmış SLA" sayısı; aşılanlar listede en üstte. | Part 6 |
+| 7-d | AI doğruluğu: risk kararı isabet oranı, yanlış pozitif oranı | ✅ | Karar uyumu, yanlış pozitif ve tür doğruluğu `prediction_feedback`'ten hesaplanıp panelde gösterilir. | Part 5, 6 |
 | 7-e | Analist performansı: karar sayısı, ortalama süre, doğru karar oranı | ⚠️ | Performans endpoint'i var ([GetPerformanceEndpoint.cs]); panelde analist tablosu doğrulanmadı. | Part 6 |
-| 7-f | Bekleyen kuyruk: BELIRSIZ ya da kapasite bekleyen vakalar ve manuel atama | ⚠️ | Kuyruk ekranı var ([AssignmentQueuePage.tsx]). Varsayılan sekme `QUEUED`; AI kapalıyken düşen `MANUAL_QUEUE` vakaları ayrı sekmede kalıyor. | Part 6 |
+| 7-f | Bekleyen kuyruk: BELIRSIZ ya da kapasite bekleyen vakalar ve manuel atama | ✅ | Kuyruk varsayılan olarak BELIRSIZ ve kapasite bekleyen vakaları birlikte gösterir; vaka detayından manuel atama. | Part 6 |
 
 ## 8. API tasarımı
 
@@ -193,7 +181,7 @@ ayrı ayrı görünür.
 |---|---|:---:|---|---|
 | 9-a | Olay tabanlı tasarım; örnek `transaction.blocked` akışı | ✅ | `case.decision.made` → Gamification puan ve rozet → `badge.earned` → SSE → toast. Event adı farklı. | |
 | 9-b | Diğer event'ler: işlem oluşturuldu, tür değiştirildi, müşteri doğruladı, SLA aşıldı | ✅ | `transaction.created`, `case.fraud_type.overridden`, `customer.verification.responded`, `case.sla.breached` | |
-| 9-c | EVENTS.md: tüm event'ler ve payload'ları | ⚠️ | [BACKEND/EVENTS.md] 21 satır ve payload şeması yok; ayrıntı 4.000 satırlık bir taslak dokümanda kalmış. | Part 7 |
+| 9-c | EVENTS.md: tüm event'ler ve payload'ları | ✅ | [BACKEND/EVENTS.md]: bütün olaylar, temel payload'lar ve `case.decision.made` örneği (`customerVerification` dahil). | Part 7 |
 
 ## 10. Güvenlik (jürinin canlı testi)
 
@@ -211,26 +199,26 @@ ayrı ayrı görünür.
 
 | # | Adım | Durum | Kanıt | Plan |
 |---|---|:---:|---|---|
-| 11.1 | Müşteri akışı: GSM + OTP → işlem → AI analizi → doğrulama → takip → 1–5 yıldız | ⚠️ | Son adımın ekranı yok (4.6-a). | Part 6 |
-| 11.2 | Analist akışı: panel → atanan vakalar risk sıralı → AI skoru ve tür → müşteri doğrulaması → karar ve not → puan ve rozet | ⚠️ | API üzerinden canlı çalışıyor. Atanan vakalar risk skoruna göre değil SLA bitişine göre sıralı ([ListCasesEndpoints.cs#L99]). | Part 6 |
+| 11.1 | Müşteri akışı: GSM + OTP → işlem → AI analizi → doğrulama → takip → 1–5 yıldız | ✅ | Uçtan uca: OTP → işlem → AI → doğrulama → takip → 1–5 yıldız; `roles.spec.ts` CI'da yürütür. | Part 6 |
+| 11.2 | Analist akışı: panel → atanan vakalar risk sıralı → AI skoru ve tür → müşteri doğrulaması → karar ve not → puan ve rozet | ✅ | Atanan vakalar en riskli ve SLA'sı aşılan önce; karar paneli, müşteri doğrulaması, not, puan ve rozet toast'ı. | Part 3, 6 |
 | 11.3-1 | `docker compose up` ile tüm sistem ayağa kalkar | ✅ | 2.2-d | |
 | 11.3-2 | Müşteri olarak gece, yurt dışından, yüksek tutarlı işlem | ✅ | canlı | |
 | 11.3-3 | AI risk skoru, türü ve kararı gösterilir | ✅ | canlı: 0.71 / YUKSEK / CALINTI_KART / İNCELEME | |
 | 11.3-4 | Vaka doğru uzmanlıktaki analiste atanır | ✅ | `demo-seed` her uzmanlık için bir analist açıyor; `scripts/demo.py smoke` vakanın AI'ın bulduğu türün uzmanına atandığını assert ediyor. | |
 | 11.3-5 | Analist vakayı inceler ve blok kararı verir | ✅ | canlı | |
-| 11.3-6 | Puan liderlik tablosuna yansır | 🐛 | Yansıyor ama puan yanlış (6.1-c): tek blok kararı 30 puan getiriyor, rozet sayısı 0 kalıyor (6.2). | Part 3 |
-| 11.3-7 | Bir servis `docker stop` ile kapatılır, geri kalanı çalışır | ⚠️ | AI'ın kapatılması canlı doğrulandı; diğer servisler için senaryo ve otomatik test yok. | Part 2 |
+| 11.3-6 | Puan liderlik tablosuna yansır | ✅ | Puan müşteri cevabına göre (+15 yalnızca doğrulanmış dolandırıcılık); rozet ilk doğru blokta. | Part 3 |
+| 11.3-7 | Bir servis `docker stop` ile kapatılır, geri kalanı çalışır | ✅ | `demo.py resilience` RabbitMQ dahil her container'ı sırayla durdurur ve sistemin toparlandığını CI'da doğrular. | Part 2 |
 | 11.3-8 | Jürinin güvenlik testlerine hazır olmak | ✅ | §10 senaryolarının hepsi `scripts/security.py` (CI demo-e2e) ile her PR'da koşuyor (`make security`). | |
 
 ## 12. Değerlendirme kriterleri ve bonus
 
 | # | Kriter | Durum | Kanıt | Plan |
 |---|---|:---:|---|---|
-| 12-a | Unit ve integration testleri | ⚠️ | C# tarafında 5 test metodu (yalnızca state machine ve eşikler), Python 10, frontend unit 6, Playwright 9. Outbox/inbox, gamification kuralları ve yetki matrisi testsiz. | Part 2, 3, 4 |
-| 12-b | Anlamlı commit geçmişi | ⚠️ | Hackathon geçmişi tag'de korunuyor; sonrası part başına PR ve Conventional Commits ile ilerliyor. | Her part |
-| B-1 | Kendi eğitilen ML modeli, veri ve süreç dokümante (+8) | ⚠️ | Model var; veri ve süreç repoda değil (5.1-d). | Part 5 |
+| 12-a | Unit ve integration testleri | ✅ | 51 .NET (Testcontainers ile outbox/inbox, puan kuralları, refresh), 49 Python, 11 Vitest, 2 Playwright testi; 47 demo ve 96 güvenlik kontrolü. | Part 2–6 |
+| 12-b | Anlamlı commit geçmişi | ✅ | Hackathon hâli tag'de; sonrası part başına PR, Conventional Commits, yeşil CI ile merge. | Her part |
+| B-1 | Kendi eğitilen ML modeli, veri ve süreç dokümante (+8) | ✅ | Eğitim verisi, 120 Türkçe senaryo ve model kartı repoda. | Part 5 |
 | B-2 | Message queue ile event iletimi (+5) | ✅ | RabbitMQ (2.2-b) | |
-| B-3 | Panelde kategori bazlı AI doğruluk kırılımı (+3) | 🐛 | 5.4-c | Part 5 |
+| B-3 | Panelde kategori bazlı AI doğruluk kırılımı (+3) | ✅ | Panelde türe göre isabet ve yakalama oranı. | Part 5, 6 |
 | B-4 | Gerçek zamanlı bildirim, WebSocket/SSE (+2) | ✅ | SSE, kısa ömürlü tek kullanımlık ticket ile ([RealtimeEndpoints.cs]) | Part 2 |
 | B-5 | CI/CD pipeline (+2) | ✅ | [ci.yml]: .NET build + test, AI lint/typecheck/test, frontend test/typecheck/build, compose doğrulaması. Part 0'da düzeltildi: CA1873 hataları `LoggerMessage` ile giderildi, npm lock yenilendi, SDK `global.json`'dan ve Node `.nvmrc`'den okunuyor. | Part 1 (compose E2E job'u) |
 
@@ -241,7 +229,7 @@ ayrı ayrı görünür.
 | 13.2-a | Monolith değil | ✅ | 5 ayrı deploy edilen servis | |
 | 13.2-b | `docker compose up` ile sistem ayağa kalkar | ✅ | 2.2-d | |
 | 13.2-c | AI servisi mock ya da sabit çıktılı değil | ✅ | Eğitilmiş model ve özellik çıkarımı; farklı girdiler farklı skor üretiyor. Bunu kanıtlayan test yok. | Part 5 |
-| 13.2-d | Servisler tek/ortak veritabanı paylaşmaz | ⚠️ | 2.2-a | Part 2 |
+| 13.2-d | Servisler tek/ortak veritabanı paylaşmaz | ✅ | 2.2-a | Part 2 |
 | 13.2-e | Proje build edilebilir | ✅ | SDK 10.0.403 ile `dotnet build` 0 uyarıyla geçiyor; CI ve Dockerfile'lar aynı sürüme sabit. | |
 
 ## 14. Teslimat
@@ -249,12 +237,12 @@ ayrı ayrı görünür.
 | # | Gereksinim | Durum | Kanıt | Plan |
 |---|---|:---:|---|---|
 | 14.1-a | Public ya da davetli GitHub repo | ✅ | github.com/mrfiratatalay/FraudCell | |
-| 14.1-b | Ana branch'te çalışır kod, anlamlı commit geçmişi | ⚠️ | 2.2-d, 12-b | Part 1 |
-| 14.1-c | **Kök dizinde** `docker-compose.yml` (servisler, veritabanları, gateway) | ❌ | Compose dosyası `BACKEND/` altında. | Part 2 |
-| 14.1-d | Servis başına `.env.example` | ❌ | Tek ve ortak bir dosya var ([BACKEND/.env.example]). | Part 7 |
-| 14.2-a | Ana README: genel bakış, mimari diyagram, kurulum (`docker compose up` + seed), demo kullanıcıları | ✅ | [README.MD]: her işletim sistemi için kurulum, otomatik seed, 7 demo kullanıcısı. | Part 7 |
-| 14.2-b | Servis başına README | ⚠️ | 2.2-e | Part 7 |
-| 14.2-c | EVENTS.md | ⚠️ | 9-c | Part 7 |
+| 14.1-b | Ana branch'te çalışır kod, anlamlı commit geçmişi | ✅ | 2.2-d, 12-b | Part 1 |
+| 14.1-c | **Kök dizinde** `docker-compose.yml` (servisler, veritabanları, gateway) | ✅ | Kök dizindeki `docker-compose.yml`, `BACKEND/docker-compose.yml`'ı `include` eder; `docker compose up` kökten çalışır. | Part 7 |
+| 14.1-d | Servis başına `.env.example` | ✅ | Her servis klasöründe `.env.example`; ortak sırlar [BACKEND/.env.example]'da. | Part 7 |
+| 14.2-a | Ana README: genel bakış, mimari diyagram, kurulum (`docker compose up` + seed), demo kullanıcıları | ✅ | [README.md]: her işletim sistemi için kurulum, otomatik seed, 7 demo kullanıcısı. | Part 7 |
+| 14.2-b | Servis başına README | ✅ | 2.2-e | Part 7 |
+| 14.2-c | EVENTS.md | ✅ | 9-c | Part 7 |
 | 14.2-d | AI yaklaşım dokümanı (yöntem, gerekçe, çalışma şekli, eğitim verisi ve süreç) | ✅ | [MODEL_CARD.md]: veri, özellikler, eşikler, offline ve canlı metrikler, sınırlar. Eğitim verisi repoda. | |
 | 14.2-e | Swagger/OpenAPI (en az Transaction ve AI) | ✅ | 8-d | |
 
@@ -269,7 +257,7 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 4. ~~"Gece" özelliği UTC saatine göre hesaplanıyor.~~ Part 5'te düzeltildi: İstanbul saati.
 5. ~~Analist, kendisine atanmamış işlemin detayını okuyabiliyor.~~ Part 4'te düzeltildi.
 6. ~~Refresh token yeniden kullanıldığında yalnızca o token ailesi iptal ediliyor.~~ Part 4'te düzeltildi: kullanıcının tüm oturumları iptal ediliyor.
-7. Müşterinin 1–5 yıldız vereceği ekran yok. (Part 6)
+7. ~~Müşterinin 1–5 yıldız vereceği ekran yok.~~ Part 6'da eklendi.
 8. Personel oluşturma tek bir transaction değil: kullanıcı ve profil ayrı `SaveChanges` çağrılarında; profil adımı hata verirse profilsiz kullanıcı kalıyor ([CreateStaffEndpoint.cs]). (Part 3)
 9. ~~CI tag push'larında da çalışıyor.~~ Part 0'da düzeltildi: CI yalnızca main ve PR'larda çalışıyor.
 
@@ -281,7 +269,7 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 [BACKEND/.env.example]: ../BACKEND/.env.example
 [BACKEND/EVENTS.md]: ../BACKEND/EVENTS.md
 [BACKEND/contracts/openapi/]: ../BACKEND/contracts/openapi
-[README.MD]: ../README.MD
+[README.md]: ../README.md
 [ci.yml]: ../.github/workflows/ci.yml
 
 [RabbitMqTopology.cs]: ../BACKEND/src/BuildingBlocks/FraudCell.BuildingBlocks/Messaging/RabbitMq/RabbitMqTopology.cs
@@ -291,7 +279,7 @@ başarısız bir testle gösterilip sonra düzeltilecek.
 [Edge/Program.cs#L73-L90]: ../BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/Program.cs#L73-L90
 [Edge/Program.cs#L149-L170]: ../BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/Program.cs#L149-L170
 [Edge/appsettings.json#L21-L75]: ../BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/appsettings.json#L21-L75
-[RealtimeEndpoints.cs]: ../BACKEND/src/Services/Edge/FraudCell.Edge.Gateway/Realtime/RealtimeEndpoints.cs
+[RealtimeEndpoints.cs]: ../BACKEND/src/Services/Notification/FraudCell.Notification.Service/Realtime/RealtimeEndpoints.cs
 
 [Identity/Program.cs#L68-L73]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Program.cs#L68-L73
 [Identity/Program.cs#L75-L78]: ../BACKEND/src/Services/Identity/FraudCell.Identity.Service/Program.cs#L75-L78

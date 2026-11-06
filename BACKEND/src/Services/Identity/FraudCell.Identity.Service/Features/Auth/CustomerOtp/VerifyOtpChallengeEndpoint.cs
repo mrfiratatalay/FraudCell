@@ -21,7 +21,7 @@ public sealed record VerifiedUserResponse(string Id, string Role, string? FirstN
 public sealed record VerifyOtpChallengeResponse(string AccessToken, DateTimeOffset AccessTokenExpiresAt, VerifiedUserResponse User);
 
 /// <summary>
-/// <c>POST /api/v1/auth/customer/otp/verifications</c> (dokuman `07-API-DESIGN.md` §24).
+/// <c>POST /api/v1/auth/customer/otp/verifications</c>.
 /// <c>customer</c> alani yalnizca <c>CUSTOMER_REGISTER</c> challenge'i icin gereklidir.
 /// </summary>
 public static class VerifyOtpChallengeEndpoint

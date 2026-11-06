@@ -1,10 +1,10 @@
 namespace FraudCell.Transaction.Service.Domain;
 
 /// <summary>
-/// Risk skoru esikleri dokuman `05-DOMAIN-AND-STATE-MACHINE.md` §10-11'de
+/// Risk skoru esikleri 'de
 /// KESIN olarak sabitlenmistir. AI Service bir <c>decision</c>/<c>riskLevel</c>
-/// alani gonderse bile, nihai iş kararının otoritesi Transaction Service'tir
-/// (dokuman `04-SERVICE-BOUNDARIES.md` §9.9); bu yuzden skor burada BAGIMSIZ
+/// alani gonderse bile, nihai iş kararının otoritesi Transaction Service'tir;
+/// bu yuzden skor burada BAGIMSIZ
 /// olarak yeniden esiklenir.
 /// </summary>
 public static class RiskThresholds

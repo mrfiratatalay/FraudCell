@@ -1,7 +1,7 @@
 namespace FraudCell.Identity.Service.Common;
 
 /// <summary>
-/// Dokuman §5 (00-START-HERE) dort rolu tanimlar. Roller ortogonal izin degil,
+/// dort rolu tanimlar. Roller ortogonal izin degil,
 /// birbirini disleyen kullanici siniflaridir; bu yuzden bir kullanicinin tam
 /// olarak bir rolu vardir.
 /// </summary>

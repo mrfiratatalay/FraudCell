@@ -15,7 +15,7 @@ public sealed record ManualAssignmentResponse(
     string CaseId, string AssignedAnalystId, string AssignmentStatus, string CaseStatus,
     DateTimeOffset AssignedAt, string AssignmentSource, long Version);
 
-/// <summary><c>PUT /api/v1/cases/{caseId}/assignment</c> (dokuman §48, Supervisor).</summary>
+/// <summary><c>PUT /api/v1/cases/{caseId}/assignment</c>.</summary>
 public static class ManualAssignmentEndpoint
 {
     public static void MapManualAssignment(this IEndpointRouteBuilder app)

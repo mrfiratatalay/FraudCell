@@ -10,10 +10,10 @@ using Microsoft.Extensions.Logging;
 namespace FraudCell.Transaction.Service.BackgroundJobs;
 
 /// <summary>
-/// Dokuman `02-ARCHITECTURE-OVERVIEW.md` §17: AI degerlendirmesi belirlenen
+/// AI degerlendirmesi belirlenen
 /// sure icinde gelmezse (varsayilan 2sn) islemi <c>TIMED_OUT</c> isaretler ve
 /// manuel inceleme vakasi olusturur. Bu, "AI kapaliyken islem kaybolmaz"
-/// gereksiniminin (dokuman TRX-009/010/011/012) calisma zamani kanitidir.
+/// gereksiniminin calisma zamani kanitidir.
 /// </summary>
 public sealed class AssessmentWatchdogWorker(IServiceScopeFactory scopeFactory, IClock clock, ILogger<AssessmentWatchdogWorker> logger) : BackgroundService
 {

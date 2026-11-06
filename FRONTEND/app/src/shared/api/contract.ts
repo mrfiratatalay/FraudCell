@@ -291,7 +291,7 @@ export interface AuditLogResponse {
 
 /**
  * Değerlendirme tamamlanmadığında backend `displayRiskLevel` alanına
- * `"BELIRSIZ"` yazar; uydurma bir skor göstermez (doküman §2, §21).
+ * `"BELIRSIZ"` yazar; uydurma bir skor göstermez.
  */
 export type DisplayRiskLevel = RiskLevel | 'BELIRSIZ';
 
@@ -333,7 +333,7 @@ export interface AssessmentResponse {
   screeningDecision: ScreeningDecision | null;
   fraudType: FraudType | null;
   modelVersion: string | null;
-  /** Model açıklaması değildir; rule/feature katmanından üretilir (doküman §12). */
+  /** Model açıklaması değildir; rule/feature katmanından üretilir. */
   reasonCodes: ReasonCodeResponse[];
   assessedAt: string | null;
 }
@@ -523,7 +523,7 @@ export interface NoteResponse {
   noteId: string;
   caseId: string;
   authorId: string;
-  /** Düz metin. HTML kabul edilmez (doküman §20 — XSS). */
+  /** Düz metin. HTML kabul edilmez. */
   text: string;
   createdAt: string;
 }
@@ -590,7 +590,7 @@ export interface PendingVerificationResponse {
 /**
  * `PATCH /api/v1/cases/{caseId}/decision` — INCELENIYOR → ONAYLANDI | BLOKLANDI.
  *
- * DESIGN.MD kural 1: bu işlem optimistic YAPILMAZ. Backend cevabı beklenir,
+ * bu işlem optimistic YAPILMAZ. Backend cevabı beklenir,
  * 409/412 gerçek kullanıcı durumu olarak gösterilir.
  */
 export interface SubmitDecisionBody {

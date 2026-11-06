@@ -1,8 +1,8 @@
-"""FraudCell AI Service giris noktasi (dokuman `03-TECH-STACK.md` §12: FastAPI).
+"""FraudCell AI Service giris noktasi.
 
 Ana transaction degerlendirme akisi bu HTTP surecinin ICINDE, arka planda
 calisan RabbitMQ consumer'lari araciligiyla ilerler; public API yalnizca
-sorgu/health/internal-diagnostic amaclidir (dokuman §12.1).
+sorgu/health/internal-diagnostic amaclidir.
 """
 
 from __future__ import annotations
@@ -38,7 +38,7 @@ _background_tasks: list[asyncio.Task] = []
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Servis kendi database'inin semasini kendi uygular; baska hicbir servisin
-    # database'ine dokunmaz (dokuman §06: veri sahipligi).
+    # database'ine dokunmaz.
     await migrate()
 
     try:

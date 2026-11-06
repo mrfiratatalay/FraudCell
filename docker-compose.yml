@@ -1,0 +1,6 @@
+# Root entry point required by the case (14.1-c). The system itself is defined in
+# BACKEND/docker-compose.yml; this file only includes it so `docker compose up` works from the repo root.
+#   cp BACKEND/.env.example BACKEND/.env && docker compose up -d --build
+include:
+  - path: BACKEND/docker-compose.yml
+    env_file: BACKEND/.env

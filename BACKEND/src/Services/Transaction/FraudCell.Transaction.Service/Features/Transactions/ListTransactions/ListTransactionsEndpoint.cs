@@ -11,7 +11,7 @@ public sealed record TransactionListItemResponse(
     string TransactionId, string TransactionNo, decimal Amount, string Currency, string TransactionType,
     string AssessmentStatus, string DisplayRiskLevel, string ScreeningDecision, string ControlStatus, DateTimeOffset CreatedAt);
 
-/// <summary><c>GET /api/v1/transactions</c> (dokuman §36). Musteri yalnizca kendi islemlerini gorur.</summary>
+/// <summary><c>GET /api/v1/transactions</c>. Musteri yalnizca kendi islemlerini gorur.</summary>
 public static class ListTransactionsEndpoint
 {
     public static void MapListTransactions(this IEndpointRouteBuilder app)

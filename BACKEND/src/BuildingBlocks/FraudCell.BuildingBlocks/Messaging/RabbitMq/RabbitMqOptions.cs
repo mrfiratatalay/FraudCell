@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FraudCell.BuildingBlocks.Messaging.RabbitMq;
 
-/// <summary>RabbitMQ baglanti ve topoloji ayarlari (dokuman §24).</summary>
+/// <summary>RabbitMQ baglanti ve topoloji ayarlari.</summary>
 public sealed class RabbitMqOptions
 {
     public const string SectionName = "RabbitMq";
@@ -32,7 +32,7 @@ public sealed class RabbitMqOptions
     public ushort PrefetchCount { get; set; } = 10;
 
     /// <summary>
-    /// Dokuman §15: 5sn -> 30sn -> 2dk, sonra DLQ. Liste uzunlugu ayni zamanda
+    /// 5sn -> 30sn -> 2dk, sonra DLQ. Liste uzunlugu ayni zamanda
     /// maksimum deneme sayisini belirler.
     /// </summary>
     public int[] RetryDelaysSeconds { get; set; } = [5, 30, 120];

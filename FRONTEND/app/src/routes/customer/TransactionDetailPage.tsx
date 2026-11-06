@@ -79,7 +79,7 @@ export function TransactionDetailPage({ transactionId }: { transactionId: string
         <ArrowLeft className="size-3.5" aria-hidden /> İşlemlerim
       </Link>
 
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="space-y-5">
           {/* Receipt */}
           <section className="surface-panel p-5 sm:p-6" aria-labelledby="tx-title">

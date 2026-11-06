@@ -1,4 +1,4 @@
-"""Outbox publisher worker (dokuman §58.4/§19). .NET'teki OutboxPublisherService'in
+"""Outbox publisher worker. .NET'teki OutboxPublisherService'in
 Python esdegeri: SKIP LOCKED benzeri kira mekanizmasi ile bekleyen kayitlari yayinlar.
 """
 

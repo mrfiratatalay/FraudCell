@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Outlet } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
@@ -9,13 +9,16 @@ import { useRealtime } from '@/features/realtime/useRealtime';
  * Uygulama kökü.
  *
  * İki işi var:
- *   1. SSE bağlantısını BİR KEZ kurmak (DESIGN.MD: tek kullanıcı = tek bağlantı)
+ *   1. SSE bağlantısını BİR KEZ kurmak
  *   2. Açılıştaki oturum tazeleme bitene kadar route'ları çizmemek
  *
  * (2) olmazsa şu olurdu: token henüz gelmemişken guard "anonim" görür ve
  * kullanıcıyı giriş ekranına atar, hemen ardından refresh başarılı olur ve
  * kullanıcı geri fırlar. Ekranda bir titreme oluşur.
  */
+// Live builds compare the constant to 'live' and drop the demo chunk entirely.
+const DemoBar = import.meta.env.VITE_API_MODE !== 'live' ? lazy(() => import('@/demo/DemoBar')) : null;
+
 export function RootLayout() {
   const { status } = useSession();
   const queryClient = useQueryClient();
@@ -37,5 +40,14 @@ export function RootLayout() {
     );
   }
 
-  return <Outlet />;
+  return (
+    <>
+      {DemoBar ? (
+        <Suspense fallback={null}>
+          <DemoBar />
+        </Suspense>
+      ) : null}
+      <Outlet />
+    </>
+  );
 }

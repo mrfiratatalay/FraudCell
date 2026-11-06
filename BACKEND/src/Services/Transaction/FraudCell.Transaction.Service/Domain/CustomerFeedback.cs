@@ -1,6 +1,6 @@
 namespace FraudCell.Transaction.Service.Domain;
 
-/// <summary><c>txn.customer_feedback</c> (dokuman §32). Case basina tek kayit; yalnizca KAPANDI vakada verilebilir.</summary>
+/// <summary><c>txn.customer_feedback</c>. Case basina tek kayit; yalnizca KAPANDI vakada verilebilir.</summary>
 public sealed class CustomerFeedback
 {
     public required string Id { get; set; }

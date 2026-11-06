@@ -8,9 +8,9 @@ public enum AuditResult
 }
 
 /// <summary>
-/// <c>identity.audit_logs</c> (dokuman §18). Append-only; API'den guncellenemez
+/// <c>identity.audit_logs</c>. Append-only; API'den guncellenemez
 /// veya silinemez. <see cref="SourceEventId"/>'nin unique olmasi ayni event'in
-/// ikinci kez kaydedilmesini engeller (dokuman §18.3).
+/// ikinci kez kaydedilmesini engeller.
 /// </summary>
 public sealed class AuditLog
 {

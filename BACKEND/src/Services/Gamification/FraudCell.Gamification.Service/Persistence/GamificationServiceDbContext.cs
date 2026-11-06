@@ -7,8 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace FraudCell.Gamification.Service.Persistence;
 
 /// <summary>
-/// Gamification Service'in TEK veritabani baglantisi (dokuman `06-DATA-ARCHITECTURE.md`
-/// §2/§3: <c>fraudcell_gamification</c> database, <c>game</c> schema).
+/// Gamification Service'in TEK veritabani baglantisi:
+/// <c>fraudcell_gamification</c> database, <c>game</c> schema).
 /// </summary>
 public sealed class GamificationServiceDbContext(DbContextOptions<GamificationServiceDbContext> options)
     : DbContext(options), IMessagingDbContext

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FraudCell.Transaction.Service.Features.Cases.GetCase;
 
-/// <summary><c>GET /api/v1/cases/{caseId}</c> (dokuman §38). Erisim: case customer'i, atanmis analyst, supervisor/admin.</summary>
+/// <summary><c>GET /api/v1/cases/{caseId}</c>. Erisim: case customer'i, atanmis analyst, supervisor/admin.</summary>
 public static class GetCaseEndpoint
 {
     public static void MapGetCase(this IEndpointRouteBuilder app)

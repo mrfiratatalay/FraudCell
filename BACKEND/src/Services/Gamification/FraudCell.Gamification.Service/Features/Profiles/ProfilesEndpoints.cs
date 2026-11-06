@@ -17,7 +17,7 @@ public sealed record PointLedgerItemResponse(string LedgerId, string? CaseId, st
 
 /// <summary>
 /// <c>GET /api/v1/game/profiles/me</c>, <c>/{analystId}</c>, <c>/{analystId}/points</c>,
-/// <c>/{analystId}/badges</c> (dokuman `07-API-DESIGN.md` §60-62).
+/// <c>/{analystId}/badges</c>.
 /// </summary>
 public static class ProfilesEndpoints
 {
@@ -80,7 +80,7 @@ public static class ProfilesEndpoints
         where TStat : Domain.IPeriodStat
     {
         // Basit ve acik siralama: puanina gore azalan. Buyuk veri setlerinde
-        // window function tercih edilebilir; leaderboard olcegi kucuktur (dokuman §10.3).
+        // window function tercih edilebilir; leaderboard olcegi kucuktur.
         var ordered = await query.OrderByDescending(s => s.Points).ToListAsync(cancellationToken);
         var index = ordered.FindIndex(s => s.AnalystId == analystId);
         return index < 0 ? null : index + 1;

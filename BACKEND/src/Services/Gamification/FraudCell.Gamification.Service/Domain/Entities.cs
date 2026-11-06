@@ -1,6 +1,6 @@
 namespace FraudCell.Gamification.Service.Domain;
 
-/// <summary><c>game.analyst_profiles_projection</c> (dokuman §48). Identity Service authoritative sahibidir.</summary>
+/// <summary><c>game.analyst_profiles_projection</c>. Identity Service authoritative sahibidir.</summary>
 public sealed class AnalystProfileProjection
 {
     public required string AnalystId { get; set; }
@@ -16,7 +16,7 @@ public sealed class AnalystProfileProjection
     public string? LastSourceEventId { get; set; }
 }
 
-/// <summary><c>game.point_ledger</c> (dokuman §49). Immutable; ayni source_event_id+rule_code ikinci kez puan uretmez.</summary>
+/// <summary><c>game.point_ledger</c>. Immutable; ayni source_event_id+rule_code ikinci kez puan uretmez.</summary>
 public sealed class PointLedgerEntry
 {
     public required string Id { get; set; }
@@ -40,7 +40,7 @@ public sealed class PointLedgerEntry
     public required DateTimeOffset CreatedAt { get; set; }
 }
 
-/// <summary><c>game.rule_evaluations</c> (dokuman §50). Demo/hata ayiklamada puanin nedenini aciklar.</summary>
+/// <summary><c>game.rule_evaluations</c>. Demo/hata ayiklamada puanin nedenini aciklar.</summary>
 public sealed class RuleEvaluation
 {
     public required string Id { get; set; }
@@ -60,7 +60,7 @@ public sealed class RuleEvaluation
     public required DateTimeOffset EvaluatedAt { get; set; }
 }
 
-/// <summary><c>game.badge_definitions</c> (dokuman §51).</summary>
+/// <summary><c>game.badge_definitions</c>.</summary>
 public sealed class BadgeDefinition
 {
     public required string Id { get; set; }
@@ -80,7 +80,7 @@ public sealed class BadgeDefinition
     public DateTimeOffset UpdatedAt { get; set; }
 }
 
-/// <summary><c>game.earned_badges</c> (dokuman §52). Bir badge ayni analiste yalnizca bir kez verilir.</summary>
+/// <summary><c>game.earned_badges</c>. Bir badge ayni analiste yalnizca bir kez verilir.</summary>
 public sealed class EarnedBadge
 {
     public required string Id { get; set; }
@@ -98,7 +98,7 @@ public sealed class EarnedBadge
     public required DateTimeOffset CreatedAt { get; set; }
 }
 
-/// <summary><c>game.analyst_score_summaries</c> (dokuman §53). <c>total_points</c> minimum 0 gosterilir.</summary>
+/// <summary><c>game.analyst_score_summaries</c>. <c>total_points</c> minimum 0 gosterilir.</summary>
 public sealed class AnalystScoreSummary
 {
     public required string AnalystId { get; set; }
@@ -140,7 +140,7 @@ public interface IPeriodStat
     long Version { get; set; }
 }
 
-/// <summary><c>game.analyst_daily_stats</c> (dokuman §54). Composite key: analyst_id+stat_date.</summary>
+/// <summary><c>game.analyst_daily_stats</c>. Composite key: analyst_id+stat_date.</summary>
 public sealed class AnalystDailyStat : IPeriodStat
 {
     public required string AnalystId { get; set; }
@@ -166,7 +166,7 @@ public sealed class AnalystDailyStat : IPeriodStat
     public long Version { get; set; }
 }
 
-/// <summary><c>game.analyst_weekly_stats</c> (dokuman §55). Hafta baslangici Pazartesi (Europe/Istanbul).</summary>
+/// <summary><c>game.analyst_weekly_stats</c>. Hafta baslangici Pazartesi (Europe/Istanbul).</summary>
 public sealed class AnalystWeeklyStat : IPeriodStat
 {
     public required string AnalystId { get; set; }
@@ -192,7 +192,7 @@ public sealed class AnalystWeeklyStat : IPeriodStat
     public long Version { get; set; }
 }
 
-/// <summary><c>game.analyst_performance_summaries</c> (dokuman §56). AI Service'e <c>analyst.performance.updated</c> uretmek icin kullanilir.</summary>
+/// <summary><c>game.analyst_performance_summaries</c>. AI Service'e <c>analyst.performance.updated</c> uretmek icin kullanilir.</summary>
 public sealed class AnalystPerformanceSummary
 {
     public required string AnalystId { get; set; }
@@ -218,7 +218,7 @@ public sealed class AnalystPerformanceSummary
     public long Version { get; set; }
 }
 
-/// <summary><c>game.analyst_fraud_type_stats</c> (dokuman §57). Composite key: analyst_id+fraud_type.</summary>
+/// <summary><c>game.analyst_fraud_type_stats</c>. Composite key: analyst_id+fraud_type.</summary>
 public sealed class AnalystFraudTypeStat
 {
     public required string AnalystId { get; set; }

@@ -6,7 +6,7 @@ namespace FraudCell.BuildingBlocks.Messaging.RabbitMq;
 /// Exchange ve kuyruk tanimlarini kurar. Declare islemleri idempotenttir; her
 /// servis kendi ihtiyaci olan parcayi acilista bildirir, sira onemli degildir.
 ///
-/// Retry tasarimi (dokuman §15) — mesaj sonsuz donguye GIRMEZ:
+/// Retry tasarimi — mesaj sonsuz donguye GIRMEZ:
 ///
 ///   fraudcell.events (topic)
 ///        -> q                                  ana kuyruk

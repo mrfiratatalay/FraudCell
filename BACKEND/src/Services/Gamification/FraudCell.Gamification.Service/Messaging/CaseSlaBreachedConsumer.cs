@@ -13,7 +13,7 @@ namespace FraudCell.Gamification.Service.Messaging;
 
 public sealed record CaseSlaBreachedPayload(string CaseId, string? AnalystId, string SlaPriority, DateTimeOffset BreachedAt);
 
-/// <summary><c>case.sla.breached</c> tuketicisi: atanmis analiste -5 ceza uygular (dokuman §17).</summary>
+/// <summary><c>case.sla.breached</c> tuketicisi: atanmis analiste -5 ceza uygular.</summary>
 public sealed class CaseSlaBreachedConsumer(
     RabbitMqConnectionProvider connectionProvider,
     IOptions<RabbitMqOptions> options,

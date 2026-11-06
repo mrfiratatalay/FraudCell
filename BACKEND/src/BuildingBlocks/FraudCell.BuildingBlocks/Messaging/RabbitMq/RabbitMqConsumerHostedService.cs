@@ -9,7 +9,7 @@ using RabbitMQ.Client.Events;
 namespace FraudCell.BuildingBlocks.Messaging.RabbitMq;
 
 /// <summary>
-/// Tek bir kuyrugu tuketen arka plan servisi icin ortak iskelet (dokuman §15/§23).
+/// Tek bir kuyrugu tuketen arka plan servisi icin ortak iskelet.
 ///
 /// Retry/DLQ mantigi burada merkezilestirilmistir: her tuketici servis
 /// (Identity, Transaction, Gamification, ...) yalnizca <see cref="HandleAsync"/>
@@ -18,7 +18,7 @@ namespace FraudCell.BuildingBlocks.Messaging.RabbitMq;
 ///
 /// Bir mesaj basarisiz olduğunda ORIJINAL mesaj ACK edilir ve icerigi manuel
 /// olarak retry/DLQ kuyruguna yeniden yayinlanir; bu sayede TTL tabanli gecikme
-/// (dokuman §15: 5sn -> 30sn -> 2dk) native RabbitMQ mekanizmasiyla saglanir.
+/// native RabbitMQ mekanizmasiyla saglanir.
 /// </summary>
 public abstract partial class RabbitMqConsumerHostedService(
     RabbitMqConnectionProvider connectionProvider,

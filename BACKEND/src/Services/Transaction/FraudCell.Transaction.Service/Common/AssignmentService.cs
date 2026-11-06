@@ -6,11 +6,10 @@ using Microsoft.EntityFrameworkCore;
 namespace FraudCell.Transaction.Service.Common;
 
 /// <summary>
-/// AI'nin sundugu aday listesini kapasiteye gore kesinlestirir (dokuman
-/// `05-DOMAIN-AND-STATE-MACHINE.md` §33, `04-SERVICE-BOUNDARIES.md` §8.9).
+/// AI'nin sundugu aday listesini kapasiteye gore kesinlestirir (dokuman.
 /// AI yalnizca ONERIR; kapasiteyi authoritative olarak bu servis dogrular.
 ///
-/// Caller bu metodu ACIK bir transaction icinde cagirmalidir (dokuman §60.2);
+/// Caller bu metodu ACIK bir transaction icinde cagirmalidir;
 /// aksi halde <c>FOR UPDATE</c> kilidi SELECT sonrasinda hemen serbest kalir
 /// ve yaris korumasi saglamaz.
 /// </summary>
@@ -53,7 +52,7 @@ public sealed class AssignmentService(TransactionServiceDbContext db)
         return null;
     }
 
-    /// <summary>Manuel/supervisor atamasinda tek bir analyst icin kapasite kontrolu (dokuman §48 ANALYST_CAPACITY_EXCEEDED).</summary>
+    /// <summary>Manuel/supervisor atamasinda tek bir analyst icin kapasite kontrolu.</summary>
     public async Task AssignSpecificAnalystAsync(string analystId, DateTimeOffset now, CancellationToken cancellationToken)
     {
         // The supervisor screen only offers active analysts open to assignment; the API holds the same line.

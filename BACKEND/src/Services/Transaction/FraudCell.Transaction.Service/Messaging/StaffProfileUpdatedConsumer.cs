@@ -18,9 +18,9 @@ public sealed record StaffProfileUpdatedPayload(
     string UserId, bool IsActive, bool AssignmentEnabled, string[] Specialties, string[] Regions, string? DisplayName, DateTimeOffset UpdatedAt);
 
 /// <summary>
-/// <c>identity.staff.profile.updated</c> tuketicisi (dokuman `04-SERVICE-BOUNDARIES.md`
-/// §7.8). Identity Service authoritative sahibidir; bu yalnizca assignment
-/// icin kullanilan bir local projection'dir (dokuman §25).
+/// <c>identity.staff.profile.updated</c> tuketicisi.
+/// Identity Service authoritative sahibidir; bu yalnizca assignment
+/// icin kullanilan bir local projection'dir.
 /// </summary>
 public sealed class StaffProfileUpdatedConsumer(
     RabbitMqConnectionProvider connectionProvider,
@@ -67,7 +67,7 @@ public sealed class StaffProfileUpdatedConsumer(
         }
         else if (payload.UpdatedAt >= projection.SourceUpdatedAt)
         {
-            // Eski event yeni veriyi ezmesin (dokuman `04-SERVICE-BOUNDARIES.md` §18.2).
+            // Eski event yeni veriyi ezmesin.
             projection.SpecialtiesJson = JsonSerializer.Serialize(payload.Specialties, JsonDefaults.Events);
             projection.RegionsJson = JsonSerializer.Serialize(payload.Regions, JsonDefaults.Events);
             projection.SourceUpdatedAt = payload.UpdatedAt;

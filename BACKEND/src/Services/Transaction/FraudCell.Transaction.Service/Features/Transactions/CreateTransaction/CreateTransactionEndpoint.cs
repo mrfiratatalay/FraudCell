@@ -42,10 +42,9 @@ public sealed record CreateTransactionResponse(
     DateTimeOffset CreatedAt);
 
 /// <summary>
-/// <c>POST /api/v1/transactions</c> (dokuman `07-API-DESIGN.md` §34,
-/// `05-DOMAIN-AND-STATE-MACHINE.md` §45-46). AI sonucunu HTTP request icinde
+/// <c>POST /api/v1/transactions</c>. AI sonucunu HTTP request icinde
 /// BEKLEMEZ: islem PENDING olarak kaydedilir, event-driven degerlendirme
-/// arka planda ilerler (dokuman §14 TRX-009/010/011).
+/// arka planda ilerler.
 /// </summary>
 public static class CreateTransactionEndpoint
 {
@@ -183,7 +182,7 @@ public static class CreateTransactionEndpoint
         }
         catch (DbUpdateException)
         {
-            // Paralel istek ayni key ile yaristi; unique constraint ikinci INSERT'i reddetti (dokuman §46.3).
+            // Paralel istek ayni key ile yaristi; unique constraint ikinci INSERT'i reddetti.
             var raced = await db.IdempotencyRecords.AsNoTracking().AnyAsync(
                 r => r.Scope == "transaction.create" && r.ActorId == customerId && r.IdempotencyKey == idempotencyKey, cancellationToken);
 

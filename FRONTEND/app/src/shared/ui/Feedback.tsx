@@ -6,7 +6,7 @@ import { Button } from './Button';
 import { Illustration, type IllustrationName } from './Illustration';
 
 /**
- * DESIGN.MD kural 4: query kullanan her ekran loading/error/empty durumlarını
+ * query kullanan her ekran loading/error/empty durumlarını
  * İLK implementasyondan itibaren taşır. Bu dosya o üç durumun ortak karşılığı.
  */
 

@@ -2,7 +2,7 @@ namespace FraudCell.BuildingBlocks.Time;
 
 /// <summary>
 /// SLA, token suresi ve hesap kilidi hesaplari sistem saatine dogrudan
-/// baglanmaz (dokuman §36). Testlerde saat ileri sarilabilir olmalidir.
+/// baglanmaz. Testlerde saat ileri sarilabilir olmalidir.
 /// </summary>
 public interface IClock
 {

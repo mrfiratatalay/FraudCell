@@ -3,8 +3,8 @@ using System.Text;
 namespace FraudCell.Transaction.Service.Common;
 
 /// <summary>
-/// Opaque keyset cursor: <c>base64url(ISO-8601 timestamp)</c> (dokuman
-/// `07-API-DESIGN.md` §17.3). Client bunu parse etmeye calismamalidir.
+/// Opaque keyset cursor: <c>base64url(ISO-8601 timestamp)</c> (dokuman.
+/// Client bunu parse etmeye calismamalidir.
 /// </summary>
 public static class CursorCodec
 {

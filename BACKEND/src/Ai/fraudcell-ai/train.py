@@ -1,4 +1,4 @@
-"""Egitim script'i (dokuman `00-START-HERE.md` §12, `03-TECH-STACK.md` §14).
+"""Egitim script'i.
 
 Calistirma:
     uv run python train.py

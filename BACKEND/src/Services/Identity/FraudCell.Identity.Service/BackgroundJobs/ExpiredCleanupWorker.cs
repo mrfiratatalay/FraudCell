@@ -8,7 +8,7 @@ namespace FraudCell.Identity.Service.BackgroundJobs;
 
 /// <summary>
 /// Suresi dolmus OTP challenge, refresh session ve inbox kayitlarini periyodik
-/// olarak temizler (dokuman §34 Identity Service worker listesi).
+/// olarak temizler.
 ///
 /// Temizlik yalnizca hacim/performans amaclidir; guvenlik kontrolleri
 /// (expiry, revoked_at) zaten sorgu seviyesinde uygulanir. Bu worker

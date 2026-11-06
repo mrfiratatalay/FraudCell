@@ -17,9 +17,9 @@ public sealed record CaseDecisionMadePayload(
     string? CustomerVerification = null);
 
 /// <summary>
-/// <c>case.decision.made</c> tuketicisi (dokuman §17 puan kurallari). Bu servis
+/// <c>case.decision.made</c> tuketicisi. Bu servis
 /// puanı Transaction Service'in kararindan SONRA, event uzerinden hesaplar;
-/// hicbir zaman dogrudan bir "add-points" komutu kabul etmez (dokuman §7.2).
+/// hicbir zaman dogrudan bir "add-points" komutu kabul etmez.
 /// </summary>
 public sealed class CaseDecisionMadeConsumer(
     RabbitMqConnectionProvider connectionProvider,

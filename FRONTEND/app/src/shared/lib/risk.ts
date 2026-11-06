@@ -90,7 +90,7 @@ const TONES: Record<DisplayRiskLevel, Tone> = {
  *
  * Risk paletinden AYRIDIR ve öyle kalmalıdır: aynı grafikte hem kategori hem
  * risk rengi görünürse izleyici yeşili "düşük risk" sanır. Risk grafikleri
- * `riskTone().chartFill` kullanır, kategori grafikleri bunu.
+ * `riskTone.chartFill` kullanır, kategori grafikleri bunu.
  */
 export const CHART_SERIES = [
   'var(--color-chart-1)',
@@ -113,7 +113,7 @@ export function riskTone(level: DisplayRiskLevel | RiskLevel | null | undefined)
 
 /**
  * Değerlendirme bitmemişse "BELIRSIZ" gösteririz — uydurma bir skor ya da
- * sahte "düşük risk" göstermeyiz (doküman §2, §21).
+ * sahte "düşük risk" göstermeyiz.
  */
 export function displayRisk(
   status: AssessmentStatus,

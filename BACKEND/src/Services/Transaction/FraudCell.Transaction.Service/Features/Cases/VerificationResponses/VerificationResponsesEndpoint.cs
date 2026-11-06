@@ -19,8 +19,8 @@ public sealed record PendingVerificationResponse(
     string TransactionType, string City, string CountryCode, DateTimeOffset OccurredAt, DateTimeOffset RequestedAt, DateTimeOffset ExpiresAt);
 
 /// <summary>
-/// <c>POST /api/v1/cases/{caseId}/verification-responses</c> (dokuman §43) ve
-/// <c>GET /api/v1/customer/verifications/pending</c> (dokuman §42).
+/// <c>POST /api/v1/cases/{caseId}/verification-responses</c> ve
+/// <c>GET /api/v1/customer/verifications/pending</c>.
 /// </summary>
 public static class VerificationResponsesEndpoint
 {

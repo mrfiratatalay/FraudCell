@@ -7,8 +7,8 @@ namespace FraudCell.Transaction.Service.Common;
 
 /// <summary>
 /// AI degerlendirmesi zamaninda gelmediginde (timeout) veya acikca basarisiz
-/// olduğunda kullanilan ortak fallback (dokuman `05-DOMAIN-AND-STATE-MACHINE.md`
-/// §9.3/§13.3, `02-ARCHITECTURE-OVERVIEW.md` §17): risk BELIRSIZ gosterilir,
+/// olduğunda kullanilan ortak fallback:
+/// risk BELIRSIZ gosterilir,
 /// guvenli karar INCELEME kalir, vaka MANUAL_QUEUE'ya duser.
 /// </summary>
 public sealed class ManualFallbackCaseCreator(TransactionServiceDbContext db, OutboxWriter outboxWriter, CrossCuttingEventPublisher crossCutting)

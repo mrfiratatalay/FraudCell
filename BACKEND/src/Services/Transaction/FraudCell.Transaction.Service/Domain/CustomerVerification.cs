@@ -1,6 +1,6 @@
 namespace FraudCell.Transaction.Service.Domain;
 
-/// <summary><c>txn.customer_verifications</c> (dokuman §30). Bir case'te ayni anda en fazla bir PENDING kayit olur.</summary>
+/// <summary><c>txn.customer_verifications</c>. Bir case'te ayni anda en fazla bir PENDING kayit olur.</summary>
 public sealed class CustomerVerification
 {
     public required string Id { get; set; }

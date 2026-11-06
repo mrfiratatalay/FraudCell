@@ -11,7 +11,7 @@ import { recordLiveNotification } from '@/features/notifications/model';
 import { parseRealtimeEvent, type RealtimeEvent } from './events';
 
 /**
- * Tek kullanıcı = tek SSE bağlantısı (DESIGN.MD).
+ * Tek kullanıcı = tek SSE bağlantısı.
  *
  * Bu hook uygulama kökünde BİR KEZ çağrılır. Ekranlar kendi bağlantısını
  * açmaz; hepsi query cache üzerinden güncellenir.
@@ -19,7 +19,7 @@ import { parseRealtimeEvent, type RealtimeEvent } from './events';
  * ── Token sorunu ──────────────────────────────────────────────────────────
  * Native `EventSource` arbitrary `Authorization` header gönderemez. Uzun ömürlü
  * JWT'yi query string'e koymak yanlış olur: URL log'lara, Referer'a ve tarayıcı
- * geçmişine sızar. DESIGN.MD'nin çözümü kısa ömürlü, tek kullanımlık bir
+ * geçmişine sızar. Çözüm kısa ömürlü, tek kullanımlık bir
  * "stream ticket" üretmektir.
  *
  * Gateway'den JWT ile kısa ömürlü, tek kullanımlık ticket alınır. Native

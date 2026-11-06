@@ -15,7 +15,7 @@ public sealed record RequestOtpChallengeResponse(
     string? DemoHint);
 
 /// <summary>
-/// <c>POST /api/v1/auth/customer/otp/challenges</c> (dokuman `07-API-DESIGN.md` §23).
+/// <c>POST /api/v1/auth/customer/otp/challenges</c>.
 ///
 /// GSM'nin sistemde kayitli olup olmadigi saldirgana acik edilmez: hem yeni
 /// hem mevcut numaralar icin ayni sekil ve statuyle challenge uretilir.

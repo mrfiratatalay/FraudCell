@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace FraudCell.BuildingBlocks.Messaging;
 
 /// <summary>
-/// Dokuman §25'teki standart event zarfi. Tum servisler (Python AI dahil) bu
+/// 'teki standart event zarfi. Tum servisler (Python AI dahil) bu
 /// formati uretir ve tuketir; alan adlari sozlesmenin parcasidir.
 /// </summary>
 public sealed record EventEnvelope

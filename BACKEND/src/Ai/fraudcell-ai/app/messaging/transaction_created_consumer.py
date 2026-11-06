@@ -1,5 +1,5 @@
 """`transaction.created` tuketicisi: risk skorlama + fraud-type + analist siralamasi
-uretip `ai.assessment.completed` yayinlar (dokuman `02-ARCHITECTURE-OVERVIEW.md` §14).
+uretip `ai.assessment.completed` yayinlar.
 
 Hata durumunda (model hazir degil, beklenmeyen exception) `ai.assessment.failed`
 yayinlanir; Transaction Service ayni guvenli fallback'i (BELIRSIZ/INCELEME) uygular.

@@ -9,7 +9,7 @@ export interface ChipOption<T extends string> {
  * Tekli-seçim çip filtresi.
  *
  * Seçili değer üst bileşenden gelir ve URL search param'ına bağlanmalıdır
- * (DESIGN.MD "URL bir state kaynağı"): `undefined` → "Tümü". Bileşen kendi
+ *: `undefined` → "Tümü". Bileşen kendi
  * state'ini tutmaz; seçimi `onChange` ile yukarı bildirir.
  */
 export function FilterChips<T extends string>({

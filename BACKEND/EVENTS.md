@@ -6,8 +6,7 @@ Tüm domain event'leri RabbitMQ `fraudcell.events` topic exchange'i üzerinden
 `correlationId`, `causationId`, `payload`. Domain producer'ları transactional outbox,
 consumer'lar idempotent inbox kullanır. DB tutmayan gateway'in 403 audit producer'ı
 publisher-confirm ile doğrudan yayınlar ve broker hatasını güvenlik loguna yazar.
-Ayrıntılı payload örnekleri ve akış diyagramları
-[docs/08-EVENT-DRIVEN-ARCHITECTURE.md](docs/08-EVENT-DRIVEN-ARCHITECTURE.md) dosyasındadır.
+Akış diyagramları ve tasarım kararları [docs/03-mimari.md](../docs/03-mimari.md) dosyasındadır.
 
 | Producer | Event'ler | Temel payload |
 |---|---|---|
@@ -17,5 +16,34 @@ Ayrıntılı payload örnekleri ve akış diyagramları
 | AI | `ai.assessment.completed`, `ai.assessment.failed` | assessment/transaction id, risk skoru, fraud türü, model sürümü, reason codes ve analyst candidates |
 | Gamification | `gamification.points.awarded`, `gamification.points.deducted`, `badge.earned`, `analyst.level.changed`, `leaderboard.updated`, `analyst.performance.updated` | analyst id, delta/total, badge/level/period ve source event |
 | Ortak | `audit.entry.requested`, `user.notification.requested` | actor/action/result/resource veya recipient/title/body/reference |
+
+## Örnek: `case.decision.made`
+
+Gamification puanları ve AI'ın doğruluk metrikleri bu olaydan hesaplanır. `customerVerification`, müşterinin
+doğrulama cevabıdır (`MINE`, `NOT_MINE`; sorulmadıysa `null`) ve kararın doğru olup olmadığının tek kaynağıdır.
+
+```json
+{
+  "eventType": "case.decision.made",
+  "eventVersion": 1,
+  "producer": "transaction-service",
+  "subjectId": "01M6PK...",
+  "payload": {
+    "caseId": "01M6PK...",
+    "transactionId": "01M6PJ...",
+    "analystId": "01M6NQ...",
+    "decision": "BLOCK",
+    "fraudType": "CALINTI_KART",
+    "riskLevel": "KRITIK",
+    "amount": 50000,
+    "decidedAt": "2026-11-06T09:12:40Z",
+    "createdAt": "2026-11-06T09:03:10Z",
+    "slaCompliant": true,
+    "customerVerification": "NOT_MINE"
+  }
+}
+```
+
+Tüketiciler: Gamification (puan, rozet, liderlik) ve AI (`prediction_feedback`).
 
 Event şeması değişirse `eventVersion` artırılır; eski consumer sözleşmesi kırılmaz.

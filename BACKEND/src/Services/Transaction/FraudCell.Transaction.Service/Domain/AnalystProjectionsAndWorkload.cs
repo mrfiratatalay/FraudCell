@@ -3,7 +3,7 @@ using FraudCell.BuildingBlocks.Api;
 namespace FraudCell.Transaction.Service.Domain;
 
 /// <summary>
-/// <c>txn.analyst_eligibility_projection</c> (dokuman §25). Identity Service'ten
+/// <c>txn.analyst_eligibility_projection</c>. Identity Service'ten
 /// gelen analist aktiflik/uzmanlik/bolge bilgisinin local projection'i.
 /// Authoritative degildir; assignment sirasinda kullanilir.
 /// </summary>
@@ -31,9 +31,9 @@ public sealed class AnalystEligibilityProjection
 }
 
 /// <summary>
-/// <c>txn.analyst_workloads</c> (dokuman §26). Analist basina AUTHORITATIVE
+/// <c>txn.analyst_workloads</c>. Analist basina AUTHORITATIVE
 /// aktif vaka sayisi; AI'nin kendi projection'i degil, atamayi kesinlestiren
-/// tek gercek kaynak budur (dokuman `05-DOMAIN-AND-STATE-MACHINE.md` §33).
+/// tek gercek kaynak budur.
 /// </summary>
 public sealed class AnalystWorkload
 {
@@ -50,7 +50,7 @@ public sealed class AnalystWorkload
     public long Version { get; set; }
 
     /// <summary>
-    /// Atomik kapasite kontrolu (dokuman §26.2). Caller bu satiri
+    /// Atomik kapasite kontrolu. Caller bu satiri
     /// <c>SELECT ... FOR UPDATE</c> ile kilitledikten sonra cagirmalidir.
     /// </summary>
     public void Increment(DateTimeOffset now)

@@ -16,7 +16,7 @@ public enum OtpStatus
 }
 
 /// <summary>
-/// <c>identity.otp_challenges</c> (dokuman §15). GSM + OTP dogrulama surecini
+/// <c>identity.otp_challenges</c>. GSM + OTP dogrulama surecini
 /// yonetir. Kod hash'i saklanir, ham deger asla veritabaninda tutulmaz; demo
 /// profilinde sabit "1234" kabul edilse bile yalnizca hash saklanir.
 /// </summary>

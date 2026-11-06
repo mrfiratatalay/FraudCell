@@ -3,8 +3,8 @@ using System.Text.RegularExpressions;
 namespace FraudCell.Identity.Service.Common;
 
 /// <summary>
-/// Turkcell GSM numaralarini kanonik "90XXXXXXXXXX" formatina cevirir
-/// (dokuman §7.1 IDN-001). Farkli girdi bicimlerini (0555..., +90555...,
+/// Turkcell GSM numaralarini kanonik "90XXXXXXXXXX" formatina cevirir.
+/// Farkli girdi bicimlerini (0555..., +90555...,
 /// 555...) tek bir unique kolona indirger.
 /// </summary>
 public static partial class MsisdnNormalizer

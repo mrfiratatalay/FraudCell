@@ -20,7 +20,7 @@ public sealed record SessionResponse(
 
 /// <summary>
 /// Kullanicinin kendi aktif oturumlarini listeler/iptal eder (dokuman
-/// `07-API-DESIGN.md` §22 <c>/auth/sessions</c>). Yalnizca oturum sahibi
+/// <c>/auth/sessions</c>). Yalnizca oturum sahibi
 /// kendi kayitlarina erisir; baska kullanicinin session ID'si 404 doner.
 /// </summary>
 public static class SessionsEndpoints

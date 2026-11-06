@@ -11,7 +11,7 @@ BACKEND/.env:
 
 up: BACKEND/.env ## Build and start everything; demo staff are seeded automatically
 	$(COMPOSE) up -d --build
-	@echo "FraudCell is starting at http://127.0.0.1:8080 (demo users: README.MD)"
+	@echo "FraudCell is starting at http://127.0.0.1:8080 (demo users: README.md)"
 
 down: ## Stop everything, keep the data
 	$(COMPOSE) down

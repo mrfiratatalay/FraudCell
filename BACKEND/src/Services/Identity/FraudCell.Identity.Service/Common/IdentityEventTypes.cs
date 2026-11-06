@@ -1,6 +1,6 @@
 namespace FraudCell.Identity.Service.Common;
 
-/// <summary>Identity Service'in yayinladigi event tipleri (dokuman §7.5).</summary>
+/// <summary>Identity Service'in yayinladigi event tipleri.</summary>
 public static class IdentityEventTypes
 {
     public const string CustomerRegistered = "identity.customer.registered";
@@ -10,10 +10,10 @@ public static class IdentityEventTypes
     public const string AccountUnlocked = "identity.account.unlocked";
     public const string TokenReuseDetected = "identity.token.reuse.detected";
 
-    /// <summary>Bu servis tuketir: diger servislerin ürettigi audit talebi (dokuman §7.6).</summary>
+    /// <summary>Bu servis tuketir: diger servislerin ürettigi audit talebi.</summary>
     public const string AuditEntryRequested = "audit.entry.requested";
 
-    /// <summary>Edge'e giden bildirim talebi (dokuman §16).</summary>
+    /// <summary>Edge'e giden bildirim talebi.</summary>
     public const string UserNotificationRequested = "user.notification.requested";
 }
 

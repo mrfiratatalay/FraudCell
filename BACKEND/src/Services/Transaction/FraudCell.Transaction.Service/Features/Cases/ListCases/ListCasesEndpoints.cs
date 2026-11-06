@@ -14,7 +14,7 @@ public sealed record AssignmentQueueItemResponse(
 
 /// <summary>
 /// <c>GET /api/v1/cases</c> (Supervisor/Admin), <c>GET /api/v1/cases/assigned</c>
-/// (Analyst) ve <c>GET /api/v1/cases/assignment-queue</c> (Supervisor) — dokuman §33/§37/§51.
+/// (Analyst) ve <c>GET /api/v1/cases/assignment-queue</c> (Supervisor) — 
 /// </summary>
 public static class ListCasesEndpoints
 {

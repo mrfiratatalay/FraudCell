@@ -5,7 +5,7 @@ import type { SessionState } from '@/features/authentication/session';
 /**
  * Route koruması.
  *
- * ⚠️ DESIGN.MD kural 3: BU GÜVENLİK DEĞİLDİR. Kullanıcının göremeyeceği
+ * ⚠️ BU GÜVENLİK DEĞİLDİR. Kullanıcının göremeyeceği
  * ekranları göstermemek içindir; gerçek yetkilendirme her zaman Gateway ve
  * servistedir. Buradaki bir hata veri sızdırmaz — API yine 403 döner.
  */

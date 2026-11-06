@@ -12,7 +12,7 @@ public sealed record AddNoteRequest(string Text);
 
 public sealed record NoteResponse(string NoteId, string CaseId, string AuthorId, string Text, DateTimeOffset CreatedAt);
 
-/// <summary><c>GET/POST /api/v1/cases/{caseId}/notes</c> (dokuman §33/§40, Assigned Analyst/Supervisor).</summary>
+/// <summary><c>GET/POST /api/v1/cases/{caseId}/notes</c>.</summary>
 public static class NotesEndpoints
 {
     private const int MaxNoteLength = 4000;

@@ -15,7 +15,7 @@ public enum LoginAttemptResult
 }
 
 /// <summary>
-/// <c>identity.login_attempts</c> (dokuman §16). Guvenlik incelemesi, audit
+/// <c>identity.login_attempts</c>. Guvenlik incelemesi, audit
 /// uretimi, brute-force analizi ve login metrikleri icin kullanilir.
 /// <see cref="LoginIdentifierHash"/>, bilinmeyen kullanici denemelerinde
 /// e-posta/GSM'nin plaintext loglanmasini onler.

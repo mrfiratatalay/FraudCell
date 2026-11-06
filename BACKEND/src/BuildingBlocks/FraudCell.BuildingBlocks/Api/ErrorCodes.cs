@@ -1,7 +1,7 @@
 namespace FraudCell.BuildingBlocks.Api;
 
 /// <summary>
-/// Sistem genelinde kullanilan hata kodlari (dokuman `07-API-DESIGN.md` §79
+/// Sistem genelinde kullanilan hata kodlari (
 /// katalogla birebir eslesir). Frontend bu kodlara gore davranis degistirdigi
 /// icin (ornegin ACCOUNT_LOCKED ekrani) string'ler sabittir.
 /// </summary>

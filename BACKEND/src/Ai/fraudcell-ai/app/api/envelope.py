@@ -1,4 +1,4 @@
-"""Standart API zarfi (dokuman `07-API-DESIGN.md` §8). Tum servislerde ayni sekil."""
+"""Standart API zarfi. Tum servislerde ayni sekil."""
 
 from __future__ import annotations
 

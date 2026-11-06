@@ -13,7 +13,7 @@ public sealed record ReassignmentRequest(string NewAnalystId, string Reason);
 
 public sealed record ReassignmentResponse(string CaseId, string? PreviousAnalystId, string AssignedAnalystId, DateTimeOffset ReassignedAt, string CaseStatus, long Version);
 
-/// <summary><c>POST /api/v1/cases/{caseId}/reassignments</c> (dokuman §49, Supervisor). Case state korunur.</summary>
+/// <summary><c>POST /api/v1/cases/{caseId}/reassignments</c>. Case state korunur.</summary>
 public static class ReassignmentEndpoint
 {
     public static void MapReassignment(this IEndpointRouteBuilder app)

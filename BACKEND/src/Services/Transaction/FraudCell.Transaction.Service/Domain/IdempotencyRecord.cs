@@ -1,7 +1,7 @@
 namespace FraudCell.Transaction.Service.Domain;
 
 /// <summary>
-/// <c>txn.idempotency_records</c> (dokuman §33). Ayni key+farkli payload
+/// <c>txn.idempotency_records</c>. Ayni key+farkli payload
 /// 409 IDEMPOTENCY_KEY_REUSED_WITH_DIFFERENT_PAYLOAD dondurur.
 /// </summary>
 public sealed class IdempotencyRecord
@@ -32,7 +32,7 @@ public sealed class IdempotencyRecord
     public long Version { get; set; }
 }
 
-/// <summary><c>txn.transaction_number_counters</c> (dokuman §20). Yillik sayac; <c>TRX-{year}-{000000}</c> uretir.</summary>
+/// <summary><c>txn.transaction_number_counters</c>. Yillik sayac; <c>TRX-{year}-{000000}</c> uretir.</summary>
 public sealed class TransactionNumberCounter
 {
     public required int Year { get; set; }

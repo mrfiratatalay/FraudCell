@@ -11,7 +11,7 @@ namespace FraudCell.Transaction.Service.Features.Cases.StartReview;
 
 public sealed record StartReviewResponse(string CaseId, string PreviousStatus, string Status, DateTimeOffset? ReviewStartedAt, long Version);
 
-/// <summary><c>POST /api/v1/cases/{caseId}/review</c> (dokuman §39). ATANDI -&gt; INCELENIYOR.</summary>
+/// <summary><c>POST /api/v1/cases/{caseId}/review</c>. ATANDI -&gt; INCELENIYOR.</summary>
 public static class StartReviewEndpoint
 {
     public static void MapStartReview(this IEndpointRouteBuilder app)

@@ -7,7 +7,7 @@ namespace FraudCell.Identity.Service.Common;
 
 /// <summary>
 /// Identity Service audit persistence otoritesidir (dokuman
-/// `04-SERVICE-BOUNDARIES.md` §7.9): kendi eylemlerini dogrudan yazar, baska
+/// kendi eylemlerini dogrudan yazar, baska
 /// servislerin eylemlerini ise <c>audit.entry.requested</c> tuketicisi
 /// araciligiyla yazar (bkz. Messaging/AuditEntryRequestedConsumer).
 ///

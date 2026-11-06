@@ -275,6 +275,10 @@ export interface components {
             accuracy: number | null;
             /** Fraudtype */
             fraudType: string;
+            /** Precision */
+            precision: number | null;
+            /** Recall */
+            recall: number | null;
             /** Samplecount */
             sampleCount: number;
         };

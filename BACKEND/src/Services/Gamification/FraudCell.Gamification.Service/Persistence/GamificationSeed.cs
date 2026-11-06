@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FraudCell.Gamification.Service.Persistence;
 
-/// <summary>Dokuman `06-DATA-ARCHITECTURE.md` §51 seed rozet tanimlari.</summary>
+/// <summary>Seed rozet tanimlari.</summary>
 public static class GamificationSeed
 {
     private static readonly (string Code, string DisplayName, string Description)[] Badges =
