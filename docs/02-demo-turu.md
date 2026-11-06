@@ -1,6 +1,6 @@
 # 02. Demo turu (5 dakika)
 
-Bu tur teknik bilgi istemez. Canlı demoyu açın; giriş ekranında dört rol kartı var, her biri tek tıkla ve şifresiz
+Bu tur teknik bilgi istemez. [Canlı demoyu](https://fraud-cell.vercel.app) açın; giriş ekranında dört rol kartı var, her biri tek tıkla ve şifresiz
 giriş yapar. Sağ alttaki **Demoyu sıfırla** düğmesi her şeyi başa döndürür.
 
 ## Dört rol, tek hikâye

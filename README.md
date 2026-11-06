@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="__DEMO_URL__"><b>Canlı demo</b></a> ·
+  <a href="https://fraud-cell.vercel.app"><b>Canlı demo</b></a> ·
   <a href="docs/README.md"><b>Dokümanlar</b></a> ·
   <a href="README.en.md">English</a>
 </p>
@@ -41,7 +41,7 @@ gibi yeniden kurdum. Kodun önemli bir kısmını yapay zekâyla (Claude Code), 
 
 | Süre | Ne | Nereden |
 |---|---|---|
-| 1 dk | Dört rolle tek tıkla, şifresiz gir | [Canlı demo](__DEMO_URL__) |
+| 1 dk | Dört rolle tek tıkla, şifresiz gir | [Canlı demo](https://fraud-cell.vercel.app) |
 | 5 dk | Teknik olmayan tur | [02 Demo turu](docs/02-demo-turu.md) |
 | 15 dk | Mimari ve çözdüğüm problemler | [03 Mimari](docs/03-mimari.md), [11 Çözdüğüm problemler](docs/11-cozdugum-problemler.md) |
 | Gerçek sistem | Tek komut: `make up` | [10 Çalıştırma ve API](docs/10-calistirma-ve-api.md) |

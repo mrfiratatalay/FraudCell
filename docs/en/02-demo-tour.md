@@ -1,6 +1,6 @@
 # 02. Demo tour (5 minutes)
 
-No technical knowledge needed. Open the live demo: the sign-in page has four role cards, each signs you in with one click
+No technical knowledge needed. Open the [live demo](https://fraud-cell.vercel.app): the sign-in page has four role cards, each signs you in with one click
 and no password. **Demoyu sıfırla** (reset demo) at the bottom right starts everything over. The interface is in
 Turkish.
 

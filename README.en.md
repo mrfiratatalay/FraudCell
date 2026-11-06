@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="__DEMO_URL__"><b>Live demo</b></a> ·
+  <a href="https://fraud-cell.vercel.app"><b>Live demo</b></a> ·
   <a href="docs/en/README.md"><b>Documentation</b></a> ·
   <a href="README.md">Türkçe</a>
 </p>
@@ -41,7 +41,7 @@ merge without green CI.
 
 | Time | What | Where |
 |---|---|---|
-| 1 min | Sign in as any of the four roles, one click, no password | [Live demo](__DEMO_URL__) |
+| 1 min | Sign in as any of the four roles, one click, no password | [Live demo](https://fraud-cell.vercel.app) |
 | 5 min | A non-technical tour | [02 Demo tour](docs/en/02-demo-tour.md) |
 | 15 min | Architecture and the problems I solved | [03 Architecture](docs/en/03-architecture.md), [11 Problems I solved](docs/en/11-problems-i-solved.md) |
 | The real system | One command: `make up` | [10 Running and API](docs/en/10-running-and-api.md) |
