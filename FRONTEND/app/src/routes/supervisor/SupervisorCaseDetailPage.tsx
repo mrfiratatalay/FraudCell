@@ -119,7 +119,7 @@ export function SupervisorCaseDetailPage({ caseId }: { caseId: string }) {
       <CaseHeader item={riskCase} />
       <CaseFacts item={riskCase} />
 
-      <div className="mt-5 grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="mt-5 grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <RiskAssessmentPanel item={riskCase} />
 
         <aside className="surface-panel overflow-hidden lg:sticky lg:top-20 lg:col-start-2 lg:row-span-2 lg:row-start-1" aria-labelledby="assignment-title">

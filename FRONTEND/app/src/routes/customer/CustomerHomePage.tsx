@@ -64,7 +64,7 @@ export function CustomerHomePage() {
         </section>
       ) : null}
 
-      <div className="mt-8 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_17rem]">
+      <div className="mt-8 grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_17rem]">
         <section aria-labelledby="recent-title">
           <div className="mb-3 flex items-center justify-between gap-4">
             <h2 id="recent-title" className="text-h2 text-ink-900">

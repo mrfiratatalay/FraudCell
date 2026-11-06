@@ -153,7 +153,7 @@ export function SupervisorDashboardPage() {
         />
       )}
 
-      <div className="mt-6 grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="mt-6 grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_20rem]">
         <section aria-labelledby="priority-cases-title" className="min-w-0">
           <div className="mb-3 flex items-end justify-between gap-4">
             <div>

@@ -122,7 +122,7 @@ export function CaseDetailPage({ caseId }: { caseId: string }) {
 
       <CaseFacts item={item} />
 
-      <div className="mt-5 grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="mt-5 grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <RiskAssessmentPanel item={item} />
 
         <aside
