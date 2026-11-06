@@ -19,7 +19,7 @@ flowchart LR
   T <--> R
   GM <--> R
   A <--> R
-  N <-- R
+  R --> N
 ```
 
 | Servis | Sorumluluk | Teknoloji |

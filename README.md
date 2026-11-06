@@ -111,7 +111,7 @@ flowchart LR
   T <--> R
   GM <--> R
   A <--> R
-  N <-- R
+  R --> N
 ```
 
 Her servisin kendi Postgres'i var. Ayrıntısı: [03 Mimari](docs/03-mimari.md).

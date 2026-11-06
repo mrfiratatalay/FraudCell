@@ -114,7 +114,7 @@ flowchart LR
   T <--> R
   GM <--> R
   A <--> R
-  N <-- R
+  R --> N
 ```
 
 Every service has its own Postgres. Details: [03 Architecture](docs/en/03-architecture.md).
